@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reaction Mechanism — ecNetSim</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #0a1929;
+  color: #c8d8e8;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 16px 32px;
+}
+.back-btn {
+  padding: 7px 24px;
+  background: rgba(51,136,255,0.18);
+  border: 2px solid #55aaff;
+  color: #77ccff;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+.back-btn:hover { background: rgba(51,136,255,0.35); border-color: #88bbff; color: #aaddff; }
+h1 {
+  font-size: 14px;
+  color: #3388ff;
+  letter-spacing: 1px;
+  margin-bottom: 3px;
+  text-align: center;
+}
+.mech-label {
+  font-size: 11px;
+  color: #00bb66;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+#errorMsg {
+  color: #ff6666;
+  font-size: 14px;
+  text-align: center;
+  line-height: 2;
+  display: none;
+}
+#diagramWrap {
+  width: 100%;
+  max-width: 900px;
+  display: none;
+}
+#flowSvg {
+  width: 100%;
+  display: block;
+  overflow: visible;
+  cursor: default;
+}
+.zone-lbl {
+  font-weight: bold;
+  text-anchor: start;
+}
+.zone-lbl-e { fill: #00ff88; }
+.zone-lbl-c { fill: #ffaa00; }
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.blink-warn {
+  animation: blink 1s infinite;
+  fill: #ffff00 !important;
+}
+</style>
+</head>
+<body>
+
+<a class="back-btn" onclick="window.close()" href="javascript:void(0)">← Back to Simulator</a>
+<h1>⚗️ Reaction Mechanism</h1>
+<div class="mech-label" id="mechLabel"></div>
+
+<div id="errorMsg">
+  ⚠️ No ATN data found.<br>
+  Please load an ATN file in the simulator first.
+</div>
+
+<div id="diagramWrap">
+  <svg id="flowSvg"></svg>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  ATN parser
+// ══════════════════════════════════════════════
+function parseATN(text) {
+  var D = { n: 0, eRxns: [], cRxns: [], conc: {}, diff: {} };
+  var lines = text.split(/\r?\n/);
+
+  function block(tag) {
+    var re = new RegExp(tag, 'i');
+    for (var i = 0; i < lines.length; i++) {
+      if (re.test(lines[i])) {
+        var buf = [];
+        for (var j = i + 1; j < lines.length; j++) {
+          var l = lines[j].trim();
+          if (!l) continue;
+          if (l.startsWith('[')) break;
+          buf.push(l);
+        }
+        return buf.join('\n');
+      }
+    }
+    return '';
+  }
+
+  D.n = parseInt(block('Number of Reaction-diffusion Species')) || 0;
+
+  // Detect if eRxn header has arfa2 (5-param) or not (4-param)
+  // Header line: "...arfa|arfa2|na|k0..." vs "...arfa|na|k0..."
+  var eHdrLine = '';
+  (function() {
+    var re = /Electron Transfer Reactions/i;
+    for (var i = 0; i < lines.length; i++) {
+      if (re.test(lines[i])) { eHdrLine = lines[i]; break; }
+    }
+  })();
+  var hasArfa2 = /arfa2/i.test(eHdrLine);
+
+  var etb = block('Electron Transfer Reactions');
+  if (etb) {
+    etb.replace(/\.\s*$/, '').split(/;/).forEach(function(r, i) {
+      r = r.replace(/\.$/, '').trim();
+      if (!r) return;
+      var pp = r.split('|');
+      var eq = pp[0].trim();
+      // Support formats:
+      //   "1+e-->2", "1+e->2", "1+e<->2"       (reduction, 1 electron)
+      //   "1+2e<->2", "1+ne<->2"                 (reduction, n electrons)
+      //   "e+1->2"                                (alternative reduction)
+      //   "1-e<->2", "1-ne<->2"                  (oxidation: species loses electron)
+      var rev = /<->/.test(eq);
+      var isOxidation = /-\s*\d*\s*e/i.test(eq);  // "-e" or "-2e" means oxidation
+      // Match: ox + [n]e <-> red  OR  [n]e + ox <-> red  OR  ox - [n]e <-> red
+      var m = eq.match(/^(\d+)\s*\+\s*\d*\s*e\s*(?:<->|-{1,3}>)\s*(\d+)$/i)
+            || eq.match(/^\d*\s*e\s*\+\s*(\d+)\s*(?:<->|-{1,3}>)\s*(\d+)$/i)
+            || eq.match(/^(\d+)\s*-\s*\d*\s*e\s*(?:<->|-{1,3}>)\s*(\d+)$/i);
+      // Extract electron count (n) from equation, e.g. "2e" → 2, "e" → 1
+      var eCountM = eq.match(/(\d+)\s*e/i);
+      var eCount = eCountM ? parseInt(eCountM[1]) : 1;
+
+      // Parameter indices depend on whether arfa2 column is present
+      // 4-param: eq|E0|arfa|na|k0    (pp[1..4])
+      // 5-param: eq|E0|arfa|arfa2|na|k0  (pp[1..5])
+      var pE0, pAlpha, pAlpha2Input, pNa, pK0;
+      if (hasArfa2) {
+        pE0          = pp[1] ? pp[1].trim() : '?';
+        pAlpha       = pp[2] ? pp[2].trim() : '?';
+        pAlpha2Input = pp[3] ? pp[3].trim() : '?';
+        pNa          = pp[4] ? pp[4].trim() : '?';
+        pK0          = pp[5] ? pp[5].trim() : '?';
+      } else {
+        pE0          = pp[1] ? pp[1].trim() : '?';
+        pAlpha       = pp[2] ? pp[2].trim() : '?';
+        pAlpha2Input = null;
+        pNa          = pp[3] ? pp[3].trim() : '?';
+        pK0          = pp[4] ? pp[4].trim() : '?';
+      }
+
+      // Compute final arfa2 per BASIC source logic:
+      // 4-param: arfa2 = 1 - arfa (always)
+      // 5-param:
+      //   if |enum| >= 2 and na != enum: arfa2 = input value
+      //   if |na| == |enum|: arfa2 = 1 - arfa (override)
+      var pAlpha2;
+      var pNaVal = pNa !== '?' ? parseFloat(pNa) : 0;
+      var eCountSigned = isOxidation ? -eCount : eCount;  // sign: reduction positive, oxidation negative
+      if (!hasArfa2) {
+        // 4-param: arfa2 = 1 - arfa
+        var arfaVal = pAlpha !== '?' ? parseFloat(pAlpha) : 0;
+        pAlpha2 = String((1 - arfaVal).toFixed(4)).replace(/\.?0+$/, '');
+      } else {
+        // 5-param: follow BASIC logic
+        if (Math.abs(eCount) >= 2) {
+          if (Math.abs(pNaVal) === Math.abs(eCount)) {
+            // Override: na == enum  → arfa2 = 1 - arfa
+            var arfaVal2 = pAlpha !== '?' ? parseFloat(pAlpha) : 0;
+            pAlpha2 = String((1 - arfaVal2).toFixed(4)).replace(/\.?0+$/, '');
+          } else {
+            // Use input arfa2
+            pAlpha2 = pAlpha2Input;
+          }
+        } else {
+          // |enum| < 2: ignore input arfa2, use 1 - arfa
+          var arfaVal3 = pAlpha !== '?' ? parseFloat(pAlpha) : 0;
+          pAlpha2 = String((1 - arfaVal3).toFixed(4)).replace(/\.?0+$/, '');
+        }
+      }
+
+      D.eRxns.push({
+        id:     i + 1,
+        ox:     m ? parseInt(m[1]) : null,
+        red:    m ? parseInt(m[2]) : null,
+        ne:     eCount,
+        rev:    rev,
+        isOx:   isOxidation,
+        E0:     pE0,
+        alpha:  pAlpha,
+        alpha2: pAlpha2,
+        n:      pNa,
+        k0:     pK0,
+      });
+    });
+  }
+
+  var crb = block('Homogeneous Chemical Reactions');
+  if (crb) {
+    crb.replace(/\.\s*$/, '').split(/;/).forEach(function(r, i) {
+      r = r.replace(/\.$/, '').trim();
+      if (!r) return;
+      var pp = r.split('|');
+      var eq = pp[0].trim();
+      if (!eq) return;
+      var rev = /<->/.test(eq);
+      var sides = eq.split(rev ? '<->' : '->');
+      var lhs = [], rhs = [];
+      if (sides.length >= 2) {
+        lhs = sides[0].split('+').map(function(s){ return parseInt(s.trim()); }).filter(Boolean);
+        rhs = sides[1].split('+').map(function(s){ return parseInt(s.trim()); }).filter(Boolean);
+      }
+      var kfStr = pp[1] ? pp[1].trim() : '?';
+      var kbStr = pp[2] ? pp[2].trim() : '?';
+      var kfNum = parseFloat(kfStr) || 0;
+      var kbNum = parseFloat(kbStr) || 0;
+      D.cRxns.push({ id: i + 1, rawEq: eq, lhs: lhs, rhs: rhs, rev: rev,
+        kf: kfStr, kb: kbStr, kfNum: kfNum, kbNum: kbNum,
+      });
+    });
+  }
+
+  parseMap(block('Initial Concentrations'), D.conc, parseFloat);
+  parseMap(block('Diffusion Coefficients'), D.diff, function(v){ return v; });
+
+  return D;
+}
+
+function parseMap(blk, map, conv) {
+  if (!blk) return;
+  blk.replace(/\.\s*$/, '').split(/;/).forEach(function(line) {
+    line = line.replace(/\.$/, '').trim();
+    if (!line) return;
+    var pp = line.split('|');
+    if (pp.length < 2) return;
+    var val = conv(pp[1].trim());
+    pp[0].split(',').forEach(function(s) {
+      s = s.trim();
+      if (s.indexOf('-') !== -1) {
+        var rng = s.split('-');
+        for (var i = parseInt(rng[0]); i <= parseInt(rng[1]); i++) map[i] = val;
+      } else { map[parseInt(s)] = val; }
+    });
+  });
+}
+
+// ══════════════════════════════════════════════
+//  Draw — E left, C right; dark bg
+// ══════════════════════════════════════════════
+function draw(D) {
+  var svg = document.getElementById('flowSvg');
+  if (D.n === 0) return;
+
+  // Scale 2× when both eRxns and cRxns are ≤ 10 reactions
+  var scale = (D.eRxns.length <= 10 && D.cRxns.length <= 10) ? 2 : 1;
+  document.querySelector('h1').style.fontSize = (14 * (scale === 2 ? 1.3 : 1)) + 'px';
+  document.getElementById('mechLabel').style.fontSize = (11 * (scale === 2 ? 1.5 : 1)) + 'px';
+  var FS   = (window.innerWidth < 500 ? 10 : 11) * scale;
+  var PAD  = 16 * scale;
+  var lblH = 14 * scale;
+  var ROW  = 22 * scale;
+  var GAP  = 1 * scale;
+
+  var specW = FS * 3.2;
+  var arrW  = 50;
+  var colW  = specW + arrW + specW;
+  var cColW = 180;
+
+  var eRows = D.eRxns.length;
+  var cRows = D.cRxns.length;
+  var maxRows = Math.max(eRows, cRows, 1);
+
+  var colGap = 40;
+  var svgW   = PAD + colW + colGap + cColW + PAD;
+  var svgH   = lblH + maxRows * ROW + (maxRows - 1) * GAP + 16;
+
+  svg.setAttribute('viewBox', '0 0 ' + svgW + ' ' + svgH);
+  svg.setAttribute('height', svgH);
+
+  var h = '';
+
+  function mkArrow(id, color, op) {
+    var o = op ? ' opacity="'+op+'"' : '';
+    return '<marker id="'+id+'" markerWidth="7" markerHeight="6" refX="5" refY="3" orient="auto">' +
+           '<path d="M0,0 L0,6 L7,3 z" fill="'+color+'"'+o+'/></marker>';
+  }
+  function mkDoubleArrow(id, color) {
+    return '<marker id="'+id+'" markerWidth="9" markerHeight="7" refX="4.5" refY="3.5" orient="auto">' +
+           '<path d="M0,3.5 L4,0 L4,7 z M9,3.5 L5,0 L5,7 z" fill="'+color+'"/>' +
+           '</marker>';
+  }
+  function ln(x1,y1,x2,y2,color,sw,dash,mEnd,op) {
+    return '<line x1="'+x1.toFixed(1)+'" y1="'+y1.toFixed(1)+'"' +
+           ' x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'"' +
+           ' stroke="'+color+'" stroke-width="'+sw+'"' +
+           (dash ? ' stroke-dasharray="'+dash+'"' : '') +
+           (mEnd ? ' marker-end="'+mEnd+'"' : '') +
+           (op  ? ' opacity="'+op+'"' : '') + '/>';
+  }
+
+  // Species number — with a highlight rect overlay for hover
+  function num(x, y, n, color) {
+    if (n === null || n === undefined) return '';
+    var bx = (x - FS * 0.75).toFixed(1);
+    var by = (y - FS * 0.85).toFixed(1);
+    var bw = (FS * 1.5).toFixed(1);
+    var bh = (FS * 1.5).toFixed(1);
+    return '<g class="sp-node" data-sid="'+n+'" style="cursor:pointer">' +
+           '<rect x="'+bx+'" y="'+by+'" width="'+bw+'" height="'+bh+'" rx="'+(4*scale)+'"' +
+           ' fill="none" stroke="'+color+'" stroke-width="'+(1.5*scale)+'" stroke-dasharray="'+(4*scale)+','+(2*scale)+'" opacity="0" class="sp-hl"/>' +
+           '<text x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'"' +
+           ' text-anchor="middle" dominant-baseline="central"' +
+           ' font-size="'+FS+'" font-weight="bold" fill="'+color+'">'+n+'</text>' +
+           '</g>';
+  }
+
+  // Reaction pill (box label)
+  function pill(cx, cy, label, color, detail) {
+    var lw = label.length * 6.5 + 12;
+    var esc = (detail||'').replace(/"/g,'&quot;');
+    var rect = '<rect x="'+(cx - lw/2)+'" y="'+(cy-7)+'" width="'+lw+'" height="14" rx="3"' +
+               ' fill="rgba(255,255,255,0.06)" stroke="'+color+'" stroke-width="1"/>';
+    var txt  = '<text x="'+cx.toFixed(1)+'" y="'+(cy+3.5)+'" text-anchor="middle"' +
+               ' font-size="10" font-weight="bold" fill="'+color+'">'+label+'</text>';
+    return '<g class="rxn-node" data-tip="'+esc+'" style="cursor:pointer">' +
+           rect + txt + '</g>';
+  }
+
+  // Reaction label with parentheses (no box)
+  function paren(label, color) {
+    return '<tspan fill="'+color+'" font-weight="bold">('+label+')</tspan>';
+  }
+
+  h += '<defs>';
+  h += mkArrow('aE',     '#00ff88');
+  h += mkDoubleArrow('aE2', '#00ff88');
+  h += mkArrow('aC',     '#ffaa00');
+  h += mkArrow('aCr',    '#ffaa00', 0.5);
+  h += '</defs>';
+
+  var eCX = PAD + colW / 2;
+  var cCX = PAD + colW + colGap + cColW / 2;
+
+  // Left edge of each column (for equation alignment)
+  var colOff = 10; // extra offset to push columns apart
+  var eLeft = PAD - colOff;
+  var cLeft = PAD + colW + colGap + colOff;
+
+  h += '<text class="zone-lbl zone-lbl-e" x="'+eLeft+'" y="'+(scale===2?22:10)+'" dominant-baseline="auto" style="font-size:'+(11*(scale===2?1.5:1))+'px;letter-spacing:2px">ELECTRON TRANSFER</text>';
+  h += '<text class="zone-lbl zone-lbl-c" x="'+cLeft+'" y="'+(scale===2?22:10)+'" dominant-baseline="auto" style="font-size:'+(11*(scale===2?1.5:1))+'px;letter-spacing:2px">CHEMICAL REACTION</text>';
+
+  var eSpecX_L = eCX - arrW/2 - specW/2;
+  var eSpecX_R = eCX + arrW/2 + specW/2;
+
+  // Format value as scientific notation "a×10^b" (superscript)
+  var SUP = ['\u2070','\u00B9','\u00B2','\u00B3','\u2074',
+             '\u2075','\u2076','\u2077','\u2078','\u2079'];
+  function fmt(v, sci) {
+    if (v === '?' || v === undefined || v === null) return '?';
+    v = String(v).trim();
+    // Already in scientific notation: 1.23e-4
+    var m = v.match(/^([\d.]+)e([+-]?\d+)$/i);
+    if (m) {
+      var base = parseFloat(m[1]).toFixed(2).replace(/\.?0+$/, '');
+      var exp  = parseInt(m[2]);
+      if (!sci || exp === 0) return base;  // no ×10⁰
+      var neg = exp < 0;
+      exp = Math.abs(exp);
+      var sup = '';
+      if (neg) sup += '\u207B';  // ⁻
+      String(exp).split('').forEach(function(d){ sup += SUP[parseInt(d)]; });
+      return base + '\u00D710' + sup;
+    }
+    // Convert ordinary float to scientific notation if needed
+    var num = parseFloat(v);
+    if (isNaN(num) || !isFinite(num)) return v;
+    if (num === 0) return '0';
+    if (!sci) {
+      // Plain format: show as-is with reasonable precision
+      var base2 = parseFloat(num.toFixed(4)).toString();
+      return base2.replace(/\.?0+$/, '');
+    }
+    var exp = Math.floor(Math.log10(Math.abs(num)));
+    var base = num / Math.pow(10, exp);
+    base = parseFloat(base.toFixed(2));
+    if (Math.abs(base) >= 10) { base /= 10; exp++; }
+    base = base.toString().replace(/\.?0+$/, '');
+    if (exp === 0) return base;  // no ×10⁰
+    var neg = exp < 0;
+    exp = Math.abs(exp);
+    var sup = '';
+    if (neg) sup += '\u207B';
+    String(exp).split('').forEach(function(d){ sup += SUP[parseInt(d)]; });
+    return base + '\u00D710' + sup;
+  }
+  var allSids = {};
+  D.eRxns.forEach(function(r) {
+    if (r.ox  !== null) allSids[r.ox]  = true;
+    if (r.red !== null) allSids[r.red] = true;
+  });
+  D.cRxns.forEach(function(r) {
+    r.lhs.forEach(function(s){ allSids[s] = true; });
+    r.rhs.forEach(function(s){ allSids[s] = true; });
+  });
+
+  var PALETTE = [
+    '#ff6666','#66aaff','#66dd77','#ffaa44',
+    '#cc88ff','#44dddd','#ff88aa','#aacc44',
+    '#ffdd44','#88ddff','#ff7788','#99bbcc',
+  ];
+  var spColors = {};
+  Object.keys(allSids).map(Number).sort(function(a,b){ return a-b; })
+    .forEach(function(sid, i) {
+      spColors[sid] = PALETTE[i % PALETTE.length];
+    });
+
+  // ── E reactions — inline: (E1) 1 + e⁻ → 2 ──
+  for (var ei = 0; ei < eRows; ei++) {
+    var r   = D.eRxns[ei];
+    var cy2 = lblH + lblH - ROW + ei * (ROW + GAP) + ROW;
+
+    // Determine arrow direction and electron notation based on oxidation/reduction
+    // ne: number of electrons (e.g. 2 for "1+2e<->2")
+    var neStr = (r.ne && r.ne > 1) ? String(r.ne) : '';
+    var eSym = r.isOx ? (' - ' + neStr + 'e    ') : (' + ' + neStr + 'e    ');
+    var eqOxStr  = r.ox  !== null ? String(r.ox)  : '?';
+    var eqRedStr = r.red !== null ? String(r.red) : '?';
+    var arrSymE = r.rev ? '\u21CC' : '\u2192';
+    var eElectron = neStr + 'e\u207B';   // e.g. "2e⁻" or "e⁻"
+    var eDetail;
+    var rxnType = r.isOx ? (r.rev ? 'Reversible / Forward oxidation' : 'Irreversible oxidation') : (r.rev ? 'Reversible / Forward reduction' : 'Irreversible reduction');
+    if (r.isOx) {
+      eDetail = 'Equation:  ' + eqOxStr + ' - ' + eElectron + ' ' + arrSymE + ' ' + eqRedStr +
+                '\nType: ' + rxnType +
+                '\nE\u2070\u2032 = ' + fmt(r.E0, false) + ' V' +
+                '\nn = ' + r.ne +
+                '\n\u03B1<sub>a</sub> = ' + fmt(r.alpha, false) +
+                (r.alpha2 !== null ? '\n\u03B1<sub>c</sub> = ' + fmt(r.alpha2, false) : '') +
+                '\nn\u2090 = ' + r.n +
+                '\nk\u2070 = ' + fmt(r.k0) + ' cm\u00B7s\u207B\u00B9';
+    } else {
+      eDetail = 'Equation:  ' + eqOxStr + ' + ' + eElectron + ' ' + arrSymE + ' ' + eqRedStr +
+                '\nType: ' + rxnType +
+                '\nE\u2070\u2032 = ' + fmt(r.E0, false) + ' V' +
+                '\nn = ' + r.ne +
+                '\n\u03B1<sub>c</sub> = ' + fmt(r.alpha, false) +
+                (r.alpha2 !== null ? '\n\u03B1<sub>a</sub> = ' + fmt(r.alpha2, false) : '') +
+                '\nn\u2090 = ' + r.n +
+                '\nk\u2070 = ' + fmt(r.k0) + ' cm\u00B7s\u207B\u00B9';
+    }
+
+    var eTextFS = FS;
+    var eTspanParts = [];
+    // (E1) label — no tooltip
+    eTspanParts.push('<tspan fill="#00ff88" font-weight="bold">(E'+r.id+')</tspan>');
+    eTspanParts.push('<tspan fill="#00ff88">   </tspan>');
+    // ox species
+    var oxColor = r.ox !== null ? (spColors[r.ox] || '#88bbff') : '#888888';
+    eTspanParts.push('<tspan fill="'+oxColor+'" font-weight="bold" class="sp-node" data-sid="'+r.ox+'" data-rxn-sid="'+r.id+'-ox">'+eqOxStr+'</tspan>');
+    eTspanParts.push('<tspan fill="#00ff88">'+eSym+'</tspan>');
+    // arrow — shows reaction tooltip
+    eTspanParts.push('<tspan stroke="#00ff88" stroke-width="1.2" fill="#00ff88" class="rxn-arrow" data-tip="'+eDetail.replace(/"/g,'&quot;')+'">'+arrSymE+'</tspan>');
+    eTspanParts.push('<tspan fill="#00ff88">    </tspan>');
+    // red species
+    var redColor = r.red !== null ? (spColors[r.red] || '#88bbff') : '#888888';
+    eTspanParts.push('<tspan fill="'+redColor+'" font-weight="bold" class="sp-node" data-sid="'+r.red+'" data-rxn-sid="'+r.id+'-red">'+eqRedStr+'</tspan>');
+
+    h += '<text x="'+(eLeft+4).toFixed(1)+'" y="'+cy2.toFixed(1)+'"' +
+         ' text-anchor="start" dominant-baseline="central"' +
+         ' font-size="'+eTextFS+'">' +
+         eTspanParts.join('') + '</text>';
+    // E reaction highlight rects (placeholders, will be positioned after rendering)
+    h += '<rect class="rxn-hl" data-sid="'+r.ox+'" data-rxn-sid="'+r.id+'-ox" rx="'+(3*scale)+'" fill="none" stroke="'+oxColor+'" stroke-width="0" stroke-dasharray="'+(4*scale)+','+(2*scale)+'"/>';
+    h += '<rect class="rxn-hl" data-sid="'+r.red+'" data-rxn-sid="'+r.id+'-red" rx="'+(3*scale)+'" fill="none" stroke="'+redColor+'" stroke-width="0" stroke-dasharray="'+(4*scale)+','+(2*scale)+'"/>';
+  }
+
+  // ── C reactions — inline: (C1) 1 + 2 → 3 ──
+  var cTextFS = FS;
+  for (var ci = 0; ci < cRows; ci++) {
+    var r   = D.cRxns[ci];
+    var cy2 = lblH + lblH - ROW + ci * (ROW + GAP) + ROW;
+
+    var lhs = r.lhs;
+    var rhs = r.rhs;
+    var lhsStr = lhs.join(' + ');
+    var rhsStr = rhs.join(' + ');
+    var fOrder = lhs.length;  // forward reaction order
+    var bOrder = rhs.length;  // backward reaction order
+    var SUP = ['\u2070','\u00B9','\u00B2','\u00B3','\u2074',
+              '\u2075','\u2076','\u2077','\u2078','\u2079'];
+    function getKUnit(order) {
+      if (order === 1) return 's\u207B\u00B9';
+      return 'mM\u207B' + String(order - 1).split('').map(function(d){ return SUP[parseInt(d)]; }).join('') + '\u00B7s\u207B\u00B9';
+    }
+    var kfUnit = getKUnit(fOrder);
+    var kbUnit = getKUnit(bOrder);
+    // Determine arrow based on kf and kb values (not input arrow symbol)
+    var kfZero = (r.kfNum === 0);
+    var kbZero = (r.kbNum === 0);
+    var bothZero = kfZero && kbZero;  // kfc=0 and kbc=0 = no input
+    var isRev = !kfZero && !kbZero;  // both non-zero = reversible
+    var isIrrev = kfZero || kbZero;  // either zero = irreversible
+    var cArrSym = bothZero ? '\u2014' : (isRev ? '\u21CC' : (kfZero ? '\u2190' : '\u2192'));
+    var typeLabel = bothZero ? 'n/a' : (isRev ? 'Reversible' : 'Irreversible');
+    // Unicode subscript mapping
+    var SUB = ['\u2080','\u2081','\u2082','\u2083','\u2084',
+               '\u2085','\u2086','\u2087','\u2088','\u2089'];
+    function toSub(n) {
+      return String(n).split('').map(function(d){ return SUB[parseInt(d)] || d; }).join('');
+    }
+    var cDetail = 'Equation:  ' + lhsStr + ' ' + cArrSym + ' ' + rhsStr +
+                 '\nType: ' + typeLabel +
+                 '\nk' + toSub(r.id) + ' = ' + fmt(r.kf, true) + ' ' + kfUnit +
+                 '\nk\u208B' + toSub(r.id) + ' = ' + fmt(r.kb, true) + ' ' + kbUnit;
+
+    // Build equation as a single text with tspans
+    var tspanParts = [];
+    // (C1) label — no tooltip
+    tspanParts.push('<tspan fill="#ffaa00" font-weight="bold">(C'+r.id+')</tspan>');
+    tspanParts.push('<tspan fill="#ffaa00">   </tspan>');
+    // LHS
+    lhs.forEach(function(sid, si) {
+      if (si > 0) tspanParts.push('<tspan fill="#ffaa00"> + </tspan>');
+      tspanParts.push('<tspan fill="'+spColors[sid]+'" font-weight="bold" class="sp-node" data-sid="'+sid+'" data-rxn-sid="c'+r.id+'-lhs'+si+'">'+sid+'</tspan>');
+    });
+    tspanParts.push('<tspan fill="#ffaa00">    </tspan>');
+    // arrow — shows reaction tooltip
+    tspanParts.push('<tspan stroke="#ffaa00" stroke-width="1.2" fill="#ffaa00" class="rxn-arrow" data-tip="'+cDetail.replace(/"/g,'&quot;')+'">'+cArrSym+'</tspan>');
+    tspanParts.push('<tspan fill="#ffaa00">    </tspan>');
+    // RHS
+    rhs.forEach(function(sid, si) {
+      if (si > 0) tspanParts.push('<tspan fill="#ffaa00"> + </tspan>');
+      tspanParts.push('<tspan fill="'+spColors[sid]+'" font-weight="bold" class="sp-node" data-sid="'+sid+'" data-rxn-sid="c'+r.id+'-rhs'+si+'">'+sid+'</tspan>');
+    });
+    // Warning label for kfc=kbc=0 reactions
+    if (bothZero) {
+      var warnTip = 'Both kfc=0 and kbc=0!';
+      tspanParts.push('<tspan class="blink-warn warning-label" data-tip="'+warnTip.replace(/"/g,'&quot;')+'" font-weight="bold"> (Warning!)</tspan>');
+    }
+    h += '<text x="'+(cLeft+4).toFixed(1)+'" y="'+cy2.toFixed(1)+'"' +
+         ' text-anchor="start" dominant-baseline="central"' +
+         ' font-size="'+cTextFS+'">' +
+         tspanParts.join('') + '</text>';
+    // C reaction highlight rects (placeholders, will be positioned after rendering)
+    lhs.forEach(function(sid, si) {
+      h += '<rect class="rxn-hl" data-sid="'+sid+'" data-rxn-sid="c'+r.id+'-lhs'+si+'" rx="'+(3*scale)+'" fill="none" stroke="'+spColors[sid]+'" stroke-width="0" stroke-dasharray="'+(4*scale)+','+(2*scale)+'"/>';
+    });
+    rhs.forEach(function(sid, si) {
+      h += '<rect class="rxn-hl" data-sid="'+sid+'" data-rxn-sid="c'+r.id+'-rhs'+si+'" rx="'+(3*scale)+'" fill="none" stroke="'+spColors[sid]+'" stroke-width="0" stroke-dasharray="'+(4*scale)+','+(2*scale)+'"/>';
+    });
+  }
+
+  svg.innerHTML = h;
+
+  // ── Position rxn-hl rects based on actual tspan positions ──
+  svg.querySelectorAll('.rxn-hl').forEach(function(rect) {
+    var rxnSid = rect.getAttribute('data-rxn-sid');
+    var tspan = svg.querySelector('.sp-node[data-rxn-sid="'+rxnSid+'"]');
+    if (tspan) {
+      var bbox = tspan.getBBox();
+      var pad = 2 * scale;
+      rect.setAttribute('x', (bbox.x - pad).toFixed(1));
+      rect.setAttribute('y', (bbox.y - pad).toFixed(1));
+      rect.setAttribute('width', (bbox.width + pad * 2).toFixed(1));
+      rect.setAttribute('height', (bbox.height + pad * 2).toFixed(1));
+    }
+  });
+
+  // ── Tooltip ──
+  var tip = document.createElement('div');
+  tip.style.cssText = 'position:fixed;background:#0d2035;border:1px solid #2244aa;' +
+    'border-radius:6px;padding:8px 14px;font-size:14px;color:#aaccee;pointer-events:none;' +
+    'z-index:9999;display:none;line-height:2.0;max-width:320px;box-shadow:0 3px 12px rgba(0,0,0,0.5)';
+  document.body.appendChild(tip);
+
+  // Species tooltip — all species (sp-node tspans in equations + standalone)
+  svg.querySelectorAll('.sp-node').forEach(function(el) {
+    el.addEventListener('mouseenter', function() { svg.style.cursor = 'pointer'; });
+    el.addEventListener('mouseleave', function() { svg.style.cursor = 'default'; });
+    el.addEventListener('mousemove', function(ev) {
+      var sid  = parseInt(el.getAttribute('data-sid'));
+      var conc = D.conc[sid] !== undefined ? D.conc[sid] : '?';
+      var diff = D.diff[sid] !== undefined ? D.diff[sid] : '?';
+      var color = spColors[sid] || '#88bbff';
+
+      var parts = ['<b style="color:' + color + '">S' + sid + '</b>',
+                   'c\u2080 = ' + fmt(conc, true) + ' mM',
+                   'D = ' + fmt(diff, true) + ' cm\u00B2\u00B7s\u207B\u00B9'];
+
+      tip.innerHTML = parts.join('\n').replace(/\n/g, '<br>');
+      tip.style.display = 'block';
+      var tw = tip.offsetWidth, th = tip.offsetHeight;
+      var elBox = el.getBoundingClientRect();
+      var midX = (elBox.left + elBox.right) / 2;
+      if (midX < window.innerWidth / 2) {
+        tip.style.left = '8px';
+      } else {
+        tip.style.left = Math.max(8, window.innerWidth - tw - 8) + 'px';
+      }
+      tip.style.top = Math.max(8, Math.min(ev.clientY - th / 2, window.innerHeight - th - 8)) + 'px';
+
+      // Highlight all species with same sid: standalone sp-hl rects + rxn-hl rects
+      svg.querySelectorAll('.sp-hl').forEach(function(hl) {
+        var parent = hl.parentElement;
+        hl.setAttribute('opacity', parent.getAttribute('data-sid') == sid ? '1' : '0');
+      });
+      svg.querySelectorAll('.rxn-hl').forEach(function(hl) {
+        hl.setAttribute('stroke-width', hl.getAttribute('data-sid') == sid ? '1.5' : '0');
+      });
+    });
+    el.addEventListener('mouseleave', function() {
+      tip.style.display = 'none';
+      svg.querySelectorAll('.sp-hl').forEach(function(hl){ hl.setAttribute('opacity','0'); });
+      svg.querySelectorAll('.rxn-hl').forEach(function(hl){ hl.setAttribute('stroke-width','0'); });
+    });
+  });
+
+  // Reaction arrow tooltip — E and C reactions
+  svg.querySelectorAll('.rxn-arrow').forEach(function(el) {
+    el.addEventListener('mouseenter', function() { svg.style.cursor = 'pointer'; });
+    el.addEventListener('mouseleave', function() { svg.style.cursor = 'default'; });
+    el.addEventListener('mousemove', function(ev) {
+      var detail = el.getAttribute('data-tip').replace(/\n/g, '<br>');
+      tip.innerHTML = detail;
+      tip.style.display = 'block';
+      var tw = tip.offsetWidth, th = tip.offsetHeight;
+      tip.style.left = Math.min(ev.clientX + 14, window.innerWidth - tw - 8) + 'px';
+      tip.style.top  = Math.min(ev.clientY - 10, window.innerHeight - th - 8) + 'px';
+      svg.querySelectorAll('.sp-hl').forEach(function(hl){ hl.setAttribute('opacity','0'); });
+      svg.querySelectorAll('.rxn-hl').forEach(function(hl){ hl.setAttribute('stroke-width','0'); });
+    });
+    el.addEventListener('mouseleave', function() {
+      tip.style.display = 'none';
+    });
+  });
+
+  // Warning label tooltip — for kfc=kbc=0 reactions
+  svg.querySelectorAll('.warning-label').forEach(function(el) {
+    el.addEventListener('mouseenter', function() { svg.style.cursor = 'pointer'; });
+    el.addEventListener('mouseleave', function() { svg.style.cursor = 'default'; });
+    el.addEventListener('mousemove', function(ev) {
+      var detail = el.getAttribute('data-tip').replace(/\n/g, '<br>');
+      tip.innerHTML = detail;
+      tip.style.display = 'block';
+      var tw = tip.offsetWidth, th = tip.offsetHeight;
+      tip.style.left = Math.min(ev.clientX + 14, window.innerWidth - tw - 8) + 'px';
+      tip.style.top  = Math.min(ev.clientY - 10, window.innerHeight - th - 8) + 'px';
+    });
+    el.addEventListener('mouseleave', function() {
+      tip.style.display = 'none';
+    });
+  });
+}
+
+// ══════════════════════════════════════════════
+//  Mechanism label
+// ══════════════════════════════════════════════
+function mechLabel(D) {
+  var e = D.eRxns.length, c = D.cRxns.length;
+  if (e === 0 && c === 0) return '—';
+  if (e > 0 && c === 0) return 'E'.repeat(e) + ' Mechanism';
+  if (e === 0 && c > 0) return 'C'.repeat(c) + ' Mechanism';
+  return 'EC-type (' + e + 'E + ' + c + 'C) Mechanism';
+}
+
+// ══════════════════════════════════════════════
+//  Entry point
+// ══════════════════════════════════════════════
+(function() {
+  var atn = sessionStorage.getItem('_ecnetsim_atn') || '';
+  if (!atn.trim()) {
+    document.getElementById('errorMsg').style.display = 'block';
+    return;
+  }
+  var D = parseATN(atn);
+  if (D.n === 0 && D.eRxns.length === 0 && D.cRxns.length === 0) {
+    document.getElementById('errorMsg').style.display = 'block';
+    return;
+  }
+  document.getElementById('mechLabel').textContent = mechLabel(D);
+  document.getElementById('diagramWrap').style.display = 'block';
+  draw(D);
+})();
+</script>
+</body>
+</html>
