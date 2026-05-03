@@ -1199,9 +1199,9 @@ document.getElementById('btnDownload').onclick = function() {
     (function() {
       var pfgContent;
       if (methodForPlot === 'CV') {
-        pfgContent = '{{' + yAxisVar + ' 0}{{"V(eapp)",0,1,-1,0.1,1,1, ,1,0,V}{"V",-0.5,0.1,0.3,0.001,m,1,0}}}';
+        pfgContent = '{{' + yAxisVar + ' 0, 1}{{"V(eapp)",0,1,-1,0.1,1,1, ,1,0,V}{"V",-0.5,0.1,0.3,0.001,m,1,0}}}';
       } else if (methodForPlot === 'CA') {
-        pfgContent = '{{' + yAxisVar + ' 0}{{"",0,1,0,0.1,1,1, ,1,0,s}{"V",-0.5,0.1,0.3,0.001,m,1,0}}}';
+        pfgContent = '{{' + yAxisVar + ' 0, 1}{{"",0,1,0,0.1,1,1, ,1,0,s}{"V",-0.5,0.1,0.3,0.001,m,1,0}}}';
       }
       if (pfgContent) {
         var pfgName = baseName + '.pfg';
