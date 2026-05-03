@@ -420,6 +420,9 @@ var _apiMode = 'cloud';          // cloud / local / local-core
 var _currentATN = '';
 var _currentFileName = '';
 var _savedNetlistFormat = 'sp';
+var _savedMethod = '';  // 存储 API 返回的仿真方法（CV/CA）
+var _savedRu = 0;      // 存储 API 返回的 Ru 值
+var _savedCdl = 0;     // 存储 API 返回的 Cdl 值
 
 // 更新按钮状态 - 三个按钮始终保持激活
 function updateSaveButtons() {
@@ -1048,6 +1051,9 @@ async function doAutoGenerate(inputFileName) {
           document.getElementById('status').style.color = 'green';
         }
         _savedNetlistFormat = data.netlistFormat || 'sp';
+        _savedMethod = (data && data.method) ? data.method : '';
+        _savedRu = (data && data.Ru !== undefined) ? data.Ru : 0;
+        _savedCdl = (data && data.Cdl !== undefined) ? data.Cdl : 0;
       }
     }
     updateSaveButtons();
@@ -1083,6 +1089,9 @@ function doClear() {
   _currentATN = '';
   _currentFileName = '';
   _savedNetlistFormat = 'sp';
+  _savedMethod = '';
+  _savedRu = 0;
+  _savedCdl = 0;
   updateSaveButtons();
 }
 document.getElementById('btnClear').onclick = doClear;
@@ -1165,6 +1174,41 @@ document.getElementById('btnDownload').onclick = function() {
   }
   
   downloadBlob(finalContent, fileName);
+
+  // 若格式为 sp，同时保存 LTspice 绘图设置文件 (.plt) 和 QSPICE 绘图设置文件 (.pfg)
+  var methodForPlot = _savedMethod || (typeof P !== 'undefined' ? P.method : '');
+  if ((_savedNetlistFormat || 'sp').toLowerCase() === 'sp' && methodForPlot) {
+    // 根据 Ru 和 Cdl 确定 Y 轴变量
+    var yAxisVar;
+    if (_savedRu !== 0) {
+      yAxisVar = 'I(R_it)';
+    } else if (_savedCdl !== 0) {
+      yAxisVar = 'V(v_vout_if)+I(C_ic)';
+    } else {
+      yAxisVar = 'V(v_vout_if)';
+    }
+    // 1. LTspice .plt 文件（延迟 100ms，避免浏览器拦截）
+    (function() {
+      var paramAxis = (methodForPlot === 'CA') ? 'time' : 'V(eapp)';
+      var pltContent = '[Transient Analysis]\n{\n   Npanes: 1\n   {\n      traces: 1 {268959746,0,"' + yAxisVar + '"}\n      Parametric: "' + paramAxis + '"\n      GridStyle: 1\n         }\n}\n';
+      var pltName = baseName + '.plt';
+      setTimeout(function() { downloadBlob(pltContent, pltName); }, 100);
+    })();
+
+    // 2. QSPICE .pfg 文件（延迟 200ms）
+    (function() {
+      var pfgContent;
+      if (methodForPlot === 'CV') {
+        pfgContent = '{{' + yAxisVar + ' 0}{{"V(eapp)",0,1,-1,0.1,1,1, ,1,0,V}{"V",-0.5,0.1,0.3,0.001,m,1,0}}}';
+      } else if (methodForPlot === 'CA') {
+        pfgContent = '{{' + yAxisVar + ' 0}{{"",0,1,0,0.1,1,1, ,1,0,s}{"V",-0.5,0.1,0.3,0.001,m,1,0}}}';
+      }
+      if (pfgContent) {
+        var pfgName = baseName + '.pfg';
+        setTimeout(function() { downloadBlob(pfgContent, pfgName); }, 200);
+      }
+    })();
+  }
 };
 
 // Download chk (via API)
@@ -1378,6 +1422,9 @@ function updateFromEditor() {
           document.getElementById('status').style.color = 'green';
         }
         _savedNetlistFormat = data.netlistFormat || 'sp';
+        _savedMethod = (data && data.method) ? data.method : '';
+        _savedRu = (data && data.Ru !== undefined) ? data.Ru : 0;
+        _savedCdl = (data && data.Cdl !== undefined) ? data.Cdl : 0;
       }
     }
     updateSaveButtons();
