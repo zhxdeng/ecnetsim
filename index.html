@@ -1027,7 +1027,7 @@ async function doAutoGenerate(inputFileName) {
       // 如果有 fatal error，不显示 netlist，只显示错误
       if (hasFatal) {
         var errMsgs = errors.map(function(e) { return '* ' + (e.header || '') + ' ' + (e.message || ''); }).join('\n');
-        document.getElementById('output').value = '*\u7F51\u8868\u751F\u6210\u5931\u8D25\u2014\u547D\u4EE4\u9519\u8BEF\n' + errMsgs;
+        document.getElementById('output').value = '* [ERROR] Netlist generation failed - command error\n' + errMsgs;
         document.getElementById('output').style.color = '#ff3333';
         document.getElementById('status').innerText = '\u26D4\uFE0F Netlist generation failed';
         document.getElementById('status').style.color = 'red';
@@ -1035,12 +1035,16 @@ async function doAutoGenerate(inputFileName) {
         var nonFatalErrors = errors.filter(function(e) { return e.type !== 'fatal'; });
         
         if (nonFatalErrors.length > 0) {
-          // 构建错误头部（红色注释）
+          // k0=0 和 arfa2 错误显示为绿色，其他显示为红色
           var errHeader = nonFatalErrors.map(function(e) {
-            var icon = e.type === 'compat' ? '* [ERROR]' : '* [WARN]';
-            return icon + ' ' + (e.header || '') + ' ' + (e.message || '');
+            var msg = e.message || '';
+            var isGreen = (e.type === 'compat' && (msg.indexOf('k0 = 0') >= 0 || msg.indexOf('arfa2') >= 0));
+            var icon = isGreen ? '* [WARN] ' : '* [ERROR] ';
+            return icon + (e.header || '') + ' ' + msg;
           }).join('\n');
-          document.getElementById('output').value = errHeader + '\n*\n' + (data.netlist || '');
+          // 警告时网表被推到后面，AUTONET 不在第一行，需要加 *
+          var netlistWithStar = (data.netlist || '').replace(/^AUTONET\./m, '* AUTONET.');
+          document.getElementById('output').value = errHeader + '\n*\n' + netlistWithStar;
           document.getElementById('output').style.color = '#ff3333';
           document.getElementById('status').innerText = '\u26A0\uFE0F Netlist generated (with warnings)';
           document.getElementById('status').style.color = 'orange';
@@ -1399,7 +1403,7 @@ function updateFromEditor() {
       // 如果有 fatal error，不显示 netlist，只显示错误
       if (hasFatal) {
         var errMsgs = errors.map(function(e) { return '* ' + (e.header || '') + ' ' + (e.message || ''); }).join('\n');
-        document.getElementById('output').value = '*\u7F51\u8868\u751F\u6210\u5931\u8D25\u2014\u547D\u4EE4\u9519\u8BEF\n' + errMsgs;
+        document.getElementById('output').value = '* [ERROR] Netlist generation failed - command error\n' + errMsgs;
         document.getElementById('output').style.color = '#ff3333';
         document.getElementById('status').innerText = '\u26D4\uFE0F Netlist generation failed';
         document.getElementById('status').style.color = 'red';
@@ -1407,11 +1411,16 @@ function updateFromEditor() {
         var nonFatalErrors = errors.filter(function(e) { return e.type !== 'fatal'; });
         
         if (nonFatalErrors.length > 0) {
+          // k0=0 和 arfa2 错误显示为绿色，其他显示为红色
           var errHeader = nonFatalErrors.map(function(e) {
-            var icon = e.type === 'compat' ? '* [ERROR]' : '* [WARN]';
-            return icon + ' ' + (e.header || '') + ' ' + (e.message || '');
+            var msg = e.message || '';
+            var isGreen = (e.type === 'compat' && (msg.indexOf('k0 = 0') >= 0 || msg.indexOf('arfa2') >= 0));
+            var icon = isGreen ? '* [WARN] ' : '* [ERROR] ';
+            return icon + (e.header || '') + ' ' + msg;
           }).join('\n');
-          document.getElementById('output').value = errHeader + '\n*\n' + (data.netlist || '');
+          // 警告时网表被推到后面，AUTONET 不在第一行，需要加 *
+          var netlistWithStar = (data.netlist || '').replace(/^AUTONET\./m, '* AUTONET.');
+          document.getElementById('output').value = errHeader + '\n*\n' + netlistWithStar;
           document.getElementById('output').style.color = '#ff3333';
           document.getElementById('status').innerText = '\u26A0\uFE0F Netlist generated (with warnings)';
           document.getElementById('status').style.color = 'orange';
