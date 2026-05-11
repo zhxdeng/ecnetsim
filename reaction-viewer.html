@@ -243,7 +243,7 @@ function parseATN(text) {
     });
   }
 
-  parseMap(block('Initial Concentrations'), D.conc, parseFloat);
+  parseMap(block('Initial Concentrations'), D.conc, function(v){ return v; });
   parseMap(block('Diffusion Coefficients'), D.diff, function(v){ return v; });
 
   return D;
@@ -455,21 +455,21 @@ function draw(D) {
     if (r.isOx) {
       eDetail = 'Equation:  ' + eqOxStr + ' - ' + eElectron + ' ' + arrSymE + ' ' + eqRedStr +
                 '\nType: ' + rxnType +
-                '\nE\u2070\u2032 = ' + fmt(r.E0, false) + ' V' +
+                '\nE\u2070\u2032 = ' + (r.E0 !== undefined ? r.E0 : '?') + ' V' +
                 '\nn = ' + r.ne +
-                '\n\u03B1<sub>a</sub> = ' + fmt(r.alpha, false) +
-                (r.alpha2 !== null ? '\n\u03B1<sub>c</sub> = ' + fmt(r.alpha2, false) : '') +
+                '\n\u03B1<sub>a</sub> = ' + (r.alpha !== undefined ? r.alpha : '?') +
+                (r.alpha2 !== null ? '\n\u03B1<sub>c</sub> = ' + (r.alpha2 !== undefined ? r.alpha2 : '?') : '') +
                 '\nn\u2090 = ' + r.n +
-                '\nk\u2070 = ' + fmt(r.k0) + ' cm\u00B7s\u207B\u00B9';
+                '\nk\u2070 = ' + (r.k0 !== undefined ? r.k0 : '?') + ' cm\u00B7s\u207B\u00B9';
     } else {
       eDetail = 'Equation:  ' + eqOxStr + ' + ' + eElectron + ' ' + arrSymE + ' ' + eqRedStr +
                 '\nType: ' + rxnType +
-                '\nE\u2070\u2032 = ' + fmt(r.E0, false) + ' V' +
+                '\nE\u2070\u2032 = ' + (r.E0 !== undefined ? r.E0 : '?') + ' V' +
                 '\nn = ' + r.ne +
-                '\n\u03B1<sub>c</sub> = ' + fmt(r.alpha, false) +
-                (r.alpha2 !== null ? '\n\u03B1<sub>a</sub> = ' + fmt(r.alpha2, false) : '') +
+                '\n\u03B1<sub>c</sub> = ' + (r.alpha !== undefined ? r.alpha : '?') +
+                (r.alpha2 !== null ? '\n\u03B1<sub>a</sub> = ' + (r.alpha2 !== undefined ? r.alpha2 : '?') : '') +
                 '\nn\u2090 = ' + r.n +
-                '\nk\u2070 = ' + fmt(r.k0) + ' cm\u00B7s\u207B\u00B9';
+                '\nk\u2070 = ' + (r.k0 !== undefined ? r.k0 : '?') + ' cm\u00B7s\u207B\u00B9';
     }
 
     var eTextFS = FS;
@@ -533,8 +533,8 @@ function draw(D) {
     }
     var cDetail = 'Equation:  ' + lhsStr + ' ' + cArrSym + ' ' + rhsStr +
                  '\nType: ' + typeLabel +
-                 '\nk' + toSub(r.id) + ' = ' + fmt(r.kf, true) + ' ' + kfUnit +
-                 '\nk\u208B' + toSub(r.id) + ' = ' + fmt(r.kb, true) + ' ' + kbUnit;
+                 '\nk' + toSub(r.id) + ' = ' + (r.kf !== undefined ? r.kf : '?') + ' ' + kfUnit +
+                 '\nk\u208B' + toSub(r.id) + ' = ' + (r.kb !== undefined ? r.kb : '?') + ' ' + kbUnit;
 
     // Build equation as a single text with tspans
     var tspanParts = [];
@@ -607,8 +607,8 @@ function draw(D) {
       var color = spColors[sid] || '#88bbff';
 
       var parts = ['<b style="color:' + color + '">S' + sid + '</b>',
-                   'c\u2080 = ' + fmt(conc, true) + ' mM',
-                   'D = ' + fmt(diff, true) + ' cm\u00B2\u00B7s\u207B\u00B9'];
+                   'c\u2080 = ' + (D.conc[sid] !== undefined ? D.conc[sid] : '?') + ' mM',
+                   'D = ' + (D.diff[sid] !== undefined ? D.diff[sid] : '?') + ' cm\u00B2\u00B7s\u207B\u00B9'];
 
       tip.innerHTML = parts.join('\n').replace(/\n/g, '<br>');
       tip.style.display = 'block';
