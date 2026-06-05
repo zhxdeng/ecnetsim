@@ -434,6 +434,16 @@ function updateSaveButtons() {
   if (btnPreview) btnPreview.disabled = false;
 }
 
+// 将 ATN 文件内容中 ETR 提示行的 arfa 替换为 alpha，用于界面显示
+function atnArfaToAlpha(text) {
+  return text.replace(
+    /\[Electron Transfer Reactions\|E0\(V\)\|arfa(\|arfa2)?\|na\|k0\(cm\/s or s\^-1 for SF\)\(with period\)\]/g,
+    function(m, g1) {
+      return '[Electron Transfer Reactions|E0\'(V)|alpha' + (g1 ? '|alpha2' : '') + '|na|k0(cm/s or s^-1 for SF)(with period)]';
+    }
+  );
+}
+
 // 页面加载完成后初始化保存按钮状态，并自动加载默认文件
 document.addEventListener('DOMContentLoaded', function() {
   updateSaveButtons();
@@ -465,7 +475,8 @@ function loadDefaultFile() {
       _currentATN = atnContent;
       _currentFileName = defaultFile;
       document.getElementById('fileName').innerText = 'Imported: ' + defaultFile;
-      document.getElementById('inputEditor').value = _currentATN;
+      document.getElementById('inputEditor').value = atnArfaToAlpha(_currentATN);
+
       // 不调用 doAutoGenerate，保持输出框空白
     })
     .catch(function(err) {
@@ -928,7 +939,7 @@ document.getElementById('fileInput').onchange = function() {
     _currentATN = atnContent;
     _currentFileName = file.name;
     document.getElementById('fileName').innerText = 'Imported: ' + file.name;
-    document.getElementById('inputEditor').value = _currentATN;
+    document.getElementById('inputEditor').value = atnArfaToAlpha(_currentATN);
     doAutoGenerate(file.name);
   };
   reader.readAsText(file);
