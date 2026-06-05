@@ -1182,14 +1182,15 @@ document.getElementById('btnDownload').onclick = function() {
   // 若格式为 sp，同时保存 LTspice 绘图设置文件 (.plt) 和 QSPICE 绘图设置文件 (.pfg)
   var methodForPlot = _savedMethod || (typeof P !== 'undefined' ? P.method : '');
   if ((_savedNetlistFormat || 'sp').toLowerCase() === 'sp' && methodForPlot) {
-    // 根据 Ru 和 Cdl 确定 Y 轴变量
+    // 根据 Ru 和 Cdl 确定 Y 轴变量（与 BAS save_plot 子程序一致）
     var yAxisVar;
-    if (_savedRu !== 0) {
-      yAxisVar = 'I(R_it)';
-    } else if (_savedCdl !== 0) {
-      yAxisVar = 'V(v_vout_if)+I(C_ic)';
-    } else {
+    if (_savedRu === 0 && _savedCdl === 0) {
       yAxisVar = 'V(v_vout_if)';
+    } else if (_savedRu === 0 && _savedCdl !== 0) {
+      yAxisVar = 'I(E_it)';
+    } else if (_savedRu !== 0) {
+      // sp 格式下使用 I(V_it)
+      yAxisVar = 'I(V_it)';
     }
     // 1. LTspice .plt 文件（延迟 100ms，避免浏览器拦截）
     (function() {
@@ -1205,7 +1206,7 @@ document.getElementById('btnDownload').onclick = function() {
       if (methodForPlot === 'CV') {
         pfgContent = '{{' + yAxisVar + ' 0, 1}{{"V(eapp)",0,1,-1,0.1,1,1, ,1,0,V}{"V",-0.5,0.1,0.3,0.001,m,1,0}}}';
       } else if (methodForPlot === 'CA') {
-        pfgContent = '{{' + yAxisVar + ' 0, 1}{{"",0,1,0,0.1,1,1, ,1,0,s}{"V",-0.5,0.1,0.3,0.001,m,1,0}}}';
+        pfgContent = '{{' + yAxisVar + ' 0, 1}{{"time",0,1,0,0.1,1,1, ,1,0,s}{"V",-0.5,0.1,0.3,0.001,m,1,0}}}';
       }
       if (pfgContent) {
         var pfgName = baseName + '.pfg';
