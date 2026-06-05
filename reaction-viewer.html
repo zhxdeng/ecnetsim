@@ -121,8 +121,8 @@ function parseATN(text) {
 
   D.n = parseInt(block('Number of Reaction-diffusion Species')) || 0;
 
-  // Detect if eRxn header has arfa2 (5-param) or not (4-param)
-  // Header line: "...arfa|arfa2|na|k0..." vs "...arfa|na|k0..."
+  // Detect if eRxn header has arfa2/alpha2 (5-param) or not (4-param)
+  // Header line: "...arfa|arfa2|na|k0..." vs "...arfa|na|k0..." (also alpha/alpha2 variants)
   var eHdrLine = '';
   (function() {
     var re = /Electron Transfer Reactions/i;
@@ -130,7 +130,7 @@ function parseATN(text) {
       if (re.test(lines[i])) { eHdrLine = lines[i]; break; }
     }
   })();
-  var hasArfa2 = /arfa2/i.test(eHdrLine);
+  var hasArfa2 = /arfa2/i.test(eHdrLine) || /alpha2/i.test(eHdrLine);
 
   var etb = block('Electron Transfer Reactions');
   if (etb) {
