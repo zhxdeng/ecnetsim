@@ -444,6 +444,14 @@ function atnArfaToAlpha(text) {
   );
 }
 
+// 将 ATN 文件内容中 Diffusion Type 提示行的 Rotational 替换为 Rotating，用于界面显示
+function atnRotationalToRotating(text) {
+  return text.replace(
+    /\[Diffusion Type\(L\/S\/C\/RDE\/FD\/SF: Linear\/Spherical\/Cylindrical\/Rotational Disk\/Finite Diffusion\/SurFace\)\(no period\)\]/g,
+    '[Diffusion Type(L/S/C/RDE/FD/SF: Linear/Spherical/Cylindrical/Rotating Disk/Finite Diffusion/SurFace)(no period)]'
+  );
+}
+
 // 页面加载完成后初始化保存按钮状态，并自动加载默认文件
 document.addEventListener('DOMContentLoaded', function() {
   updateSaveButtons();
@@ -475,8 +483,7 @@ function loadDefaultFile() {
       _currentATN = atnContent;
       _currentFileName = defaultFile;
       document.getElementById('fileName').innerText = 'Imported: ' + defaultFile;
-      document.getElementById('inputEditor').value = atnArfaToAlpha(_currentATN);
-
+      document.getElementById('inputEditor').value = atnRotationalToRotating(atnArfaToAlpha(_currentATN));
       // 不调用 doAutoGenerate，保持输出框空白
     })
     .catch(function(err) {
@@ -939,7 +946,7 @@ document.getElementById('fileInput').onchange = function() {
     _currentATN = atnContent;
     _currentFileName = file.name;
     document.getElementById('fileName').innerText = 'Imported: ' + file.name;
-    document.getElementById('inputEditor').value = atnArfaToAlpha(_currentATN);
+    document.getElementById('inputEditor').value = atnRotationalToRotating(atnArfaToAlpha(_currentATN));
     doAutoGenerate(file.name);
   };
   reader.readAsText(file);
