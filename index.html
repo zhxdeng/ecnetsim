@@ -1262,8 +1262,6 @@ document.getElementById('btnChk').onclick = async function() {
     alert('Network error: ' + err.message);
   }
 
-  recordUsage('generate_chk', { fileName: _currentFileName || '' });
-  updateLogStatus();
 };
 
 // Download log (password protected) — merge server-side KV + local
