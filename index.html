@@ -484,6 +484,7 @@ function loadDefaultFile() {
       _currentFileName = defaultFile;
       document.getElementById('fileName').innerText = 'Imported: ' + defaultFile;
       document.getElementById('inputEditor').value = atnRotationalToRotating(atnArfaToAlpha(_currentATN));
+      _defaultAtnFirstPreview = true; // 标记首次 Preview 需记录日志
       // 不调用 doAutoGenerate，保持输出框空白
     })
     .catch(function(err) {
@@ -580,6 +581,7 @@ var _currentUserIP = '';           // client IP (async fetch)
 var _currentUserName = '';         // current user name (entered before generation)
 var _currentCountry = '';          // current user country
 var _ipFetchStatus = 'pending';   // pending / success / failed
+var _defaultAtnFirstPreview = false; // 自动加载 ee.atn 首次 Preview 时记录一条日志
 
 /** Read usage log from localStorage */
 function loadUsageLog() {
@@ -1456,6 +1458,12 @@ function updateFromEditor() {
       }
     }
     updateSaveButtons();
+    // 自动加载 ee.atn 首次 Preview 时记录一条日志（仅一次）
+    if (_defaultAtnFirstPreview) {
+      recordUsage('generate_netlist', { fileName: 'ee.atn (auto)' });
+      _defaultAtnFirstPreview = false;
+      updateLogStatus();
+    }
   })
   .catch(function(err) {
     // 隐藏加载动画
