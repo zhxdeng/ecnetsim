@@ -372,7 +372,7 @@ p.subtitle { color:#666; margin:-4px 0 10px; text-align:center; font-size: 13px;
     <!-- Right Panel: Netlist Output -->
     <div class="split-panel">
       <div class="split-panel-header">
-        <span class="split-panel-label">&#128196; Netlist Output</span><button type="button" id="btnDownload" class="btn-primary" style="padding: 3px 10px; font-size: 11px; margin-left: 8px;">&#128190; Save</button>
+        <span class="split-panel-label">&#128196; Netlist Output</span><button type="button" id="btnDownload" class="btn-primary" style="padding: 3px 10px; font-size: 11px; margin-left: 8px;">&#128190; Save</button><button type="button" id="btnSimulate" class="btn-primary" style="padding: 4px 10px; font-size: 11px; margin-left: 4px; width: 72px;" title="On-line simulation with EEcircuit in &quot;netlist&quot; mode">Simulate</button><button type="button" id="btnSimulate2" class="btn-primary" style="padding: 4px 10px; font-size: 11px; margin-left: 4px; width: 72px;" title="On-line simulation with EEcircuit in &quot;netlist&quot; mode">Simulate2</button>
       </div>
       <div id="errorInOutput"></div>
       <textarea id="output" placeholder="Output will appear here..." spellcheck="false"></textarea>
@@ -1234,6 +1234,18 @@ document.getElementById('btnDownload').onclick = function() {
       }
     })();
   }
+};
+
+// Simulate button - open GEN2 eecircuit.com in new window
+document.getElementById('btnSimulate').onclick = function() {
+  if (!isVerified('simulate')) return;
+  window.open('https://gen2.eecircuit.com', '_blank');
+};
+
+// Simulate2 button - open GEN1 eecircuit.com in new window
+document.getElementById('btnSimulate2').onclick = function() {
+  if (!isVerified('simulate2')) return;
+  window.open('https://gen1.eecircuit.com/', '_blank');
 };
 
 // Download chk (via API)
