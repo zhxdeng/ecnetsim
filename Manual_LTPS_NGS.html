@@ -1,0 +1,2816 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manual_LTPS_NGS</title>
+  <style>
+  @font-face {
+  font-family: octicons-link;
+  src: url(data:font/woff;charset=utf-8;base64,d09GRgABAAAAAAZwABAAAAAACFQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEU0lHAAAGaAAAAAgAAAAIAAAAAUdTVUIAAAZcAAAACgAAAAoAAQAAT1MvMgAAAyQAAABJAAAAYFYEU3RjbWFwAAADcAAAAEUAAACAAJThvmN2dCAAAATkAAAABAAAAAQAAAAAZnBnbQAAA7gAAACyAAABCUM+8IhnYXNwAAAGTAAAABAAAAAQABoAI2dseWYAAAFsAAABPAAAAZwcEq9taGVhZAAAAsgAAAA0AAAANgh4a91oaGVhAAADCAAAABoAAAAkCA8DRGhtdHgAAAL8AAAADAAAAAwGAACfbG9jYQAAAsAAAAAIAAAACABiATBtYXhwAAACqAAAABgAAAAgAA8ASm5hbWUAAAToAAABQgAAAlXu73sOcG9zdAAABiwAAAAeAAAAME3QpOBwcmVwAAAEbAAAAHYAAAB/aFGpk3jaTY6xa8JAGMW/O62BDi0tJLYQincXEypYIiGJjSgHniQ6umTsUEyLm5BV6NDBP8Tpts6F0v+k/0an2i+itHDw3v2+9+DBKTzsJNnWJNTgHEy4BgG3EMI9DCEDOGEXzDADU5hBKMIgNPZqoD3SilVaXZCER3/I7AtxEJLtzzuZfI+VVkprxTlXShWKb3TBecG11rwoNlmmn1P2WYcJczl32etSpKnziC7lQyWe1smVPy/Lt7Kc+0vWY/gAgIIEqAN9we0pwKXreiMasxvabDQMM4riO+qxM2ogwDGOZTXxwxDiycQIcoYFBLj5K3EIaSctAq2kTYiw+ymhce7vwM9jSqO8JyVd5RH9gyTt2+J/yUmYlIR0s04n6+7Vm1ozezUeLEaUjhaDSuXHwVRgvLJn1tQ7xiuVv/ocTRF42mNgZGBgYGbwZOBiAAFGJBIMAAizAFoAAABiAGIAznjaY2BkYGAA4in8zwXi+W2+MjCzMIDApSwvXzC97Z4Ig8N/BxYGZgcgl52BCSQKAA3jCV8CAABfAAAAAAQAAEB42mNgZGBg4f3vACQZQABIMjKgAmYAKEgBXgAAeNpjYGY6wTiBgZWBg2kmUxoDA4MPhGZMYzBi1AHygVLYQUCaawqDA4PChxhmh/8ODDEsvAwHgMKMIDnGL0x7gJQCAwMAJd4MFwAAAHjaY2BgYGaA4DAGRgYQkAHyGMF8NgYrIM3JIAGVYYDT+AEjAwuDFpBmA9KMDEwMCh9i/v8H8sH0/4dQc1iAmAkALaUKLgAAAHjaTY9LDsIgEIbtgqHUPpDi3gPoBVyRTmTddOmqTXThEXqrob2gQ1FjwpDvfwCBdmdXC5AVKFu3e5MfNFJ29KTQT48Ob9/lqYwOGZxeUelN2U2R6+cArgtCJpauW7UQBqnFkUsjAY/kOU1cP+DAgvxwn1chZDwUbd6CFimGXwzwF6tPbFIcjEl+vvmM/byA48e6tWrKArm4ZJlCbdsrxksL1AwWn/yBSJKpYbq8AXaaTb8AAHja28jAwOC00ZrBeQNDQOWO//sdBBgYGRiYWYAEELEwMTE4uzo5Zzo5b2BxdnFOcALxNjA6b2ByTswC8jYwg0VlNuoCTWAMqNzMzsoK1rEhNqByEyerg5PMJlYuVueETKcd/89uBpnpvIEVomeHLoMsAAe1Id4AAAAAAAB42oWQT07CQBTGv0JBhagk7HQzKxca2sJCE1hDt4QF+9JOS0nbaaYDCQfwCJ7Au3AHj+LO13FMmm6cl7785vven0kBjHCBhfpYuNa5Ph1c0e2Xu3jEvWG7UdPDLZ4N92nOm+EBXuAbHmIMSRMs+4aUEd4Nd3CHD8NdvOLTsA2GL8M9PODbcL+hD7C1xoaHeLJSEao0FEW14ckxC+TU8TxvsY6X0eLPmRhry2WVioLpkrbp84LLQPGI7c6sOiUzpWIWS5GzlSgUzzLBSikOPFTOXqly7rqx0Z1Q5BAIoZBSFihQYQOOBEdkCOgXTOHA07HAGjGWiIjaPZNW13/+lm6S9FT7rLHFJ6fQbkATOG1j2OFMucKJJsxIVfQORl+9Jyda6Sl1dUYhSCm1dyClfoeDve4qMYdLEbfqHf3O/AdDumsjAAB42mNgYoAAZQYjBmyAGYQZmdhL8zLdDEydARfoAqIAAAABAAMABwAKABMAB///AA8AAQAAAAAAAAAAAAAAAAABAAAAAA==) format('woff');
+}
+
+.markdown-body .octicon {
+  display: inline-block;
+  fill: currentColor;
+  vertical-align: text-bottom;
+}
+
+.markdown-body .anchor {
+  float: left;
+  line-height: 1;
+  margin-left: -20px;
+  padding-right: 4px;
+}
+
+.markdown-body .anchor:focus {
+  outline: none;
+}
+
+.markdown-body h1 .octicon-link,
+.markdown-body h2 .octicon-link,
+.markdown-body h3 .octicon-link,
+.markdown-body h4 .octicon-link,
+.markdown-body h5 .octicon-link,
+.markdown-body h6 .octicon-link {
+  color: #1b1f23;
+  vertical-align: middle;
+  visibility: hidden;
+}
+
+.markdown-body h1:hover .anchor,
+.markdown-body h2:hover .anchor,
+.markdown-body h3:hover .anchor,
+.markdown-body h4:hover .anchor,
+.markdown-body h5:hover .anchor,
+.markdown-body h6:hover .anchor {
+  text-decoration: none;
+}
+
+.markdown-body h1:hover .anchor .octicon-link,
+.markdown-body h2:hover .anchor .octicon-link,
+.markdown-body h3:hover .anchor .octicon-link,
+.markdown-body h4:hover .anchor .octicon-link,
+.markdown-body h5:hover .anchor .octicon-link,
+.markdown-body h6:hover .anchor .octicon-link {
+  visibility: visible;
+}
+
+.markdown-body {
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  color: #24292e;
+  line-height: 1.5;
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+  font-size: 16px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.markdown-body .pl-c {
+  color: #6a737d;
+}
+
+.markdown-body .pl-c1,
+.markdown-body .pl-s .pl-v {
+  color: #005cc5;
+}
+
+.markdown-body .pl-e,
+.markdown-body .pl-en {
+  color: #6f42c1;
+}
+
+.markdown-body .pl-s .pl-s1,
+.markdown-body .pl-smi {
+  color: #24292e;
+}
+
+.markdown-body .pl-ent {
+  color: #22863a;
+}
+
+.markdown-body .pl-k {
+  color: #d73a49;
+}
+
+.markdown-body .pl-pds,
+.markdown-body .pl-s,
+.markdown-body .pl-s .pl-pse .pl-s1,
+.markdown-body .pl-sr,
+.markdown-body .pl-sr .pl-cce,
+.markdown-body .pl-sr .pl-sra,
+.markdown-body .pl-sr .pl-sre {
+  color: #032f62;
+}
+
+.markdown-body .pl-smw,
+.markdown-body .pl-v {
+  color: #e36209;
+}
+
+.markdown-body .pl-bu {
+  color: #b31d28;
+}
+
+.markdown-body .pl-ii {
+  background-color: #b31d28;
+  color: #fafbfc;
+}
+
+.markdown-body .pl-c2 {
+  background-color: #d73a49;
+  color: #fafbfc;
+}
+
+.markdown-body .pl-c2:before {
+  content: "^M";
+}
+
+.markdown-body .pl-sr .pl-cce {
+  color: #22863a;
+  font-weight: 700;
+}
+
+.markdown-body .pl-ml {
+  color: #735c0f;
+}
+
+.markdown-body .pl-mh,
+.markdown-body .pl-mh .pl-en,
+.markdown-body .pl-ms {
+  color: #005cc5;
+  font-weight: 700;
+}
+
+.markdown-body .pl-mi {
+  color: #24292e;
+  font-style: italic;
+}
+
+.markdown-body .pl-mb {
+  color: #24292e;
+  font-weight: 700;
+}
+
+.markdown-body .pl-md {
+  background-color: #ffeef0;
+  color: #b31d28;
+}
+
+.markdown-body .pl-mi1 {
+  background-color: #f0fff4;
+  color: #22863a;
+}
+
+.markdown-body .pl-mc {
+  background-color: #ffebda;
+  color: #e36209;
+}
+
+.markdown-body .pl-mi2 {
+  background-color: #005cc5;
+  color: #f6f8fa;
+}
+
+.markdown-body .pl-mdr {
+  color: #6f42c1;
+  font-weight: 700;
+}
+
+.markdown-body .pl-ba {
+  color: #586069;
+}
+
+.markdown-body .pl-sg {
+  color: #959da5;
+}
+
+.markdown-body .pl-corl {
+  color: #032f62;
+  text-decoration: underline;
+}
+
+.markdown-body details {
+  display: block;
+}
+
+.markdown-body summary {
+  display: list-item;
+}
+
+.markdown-body a {
+  background-color: transparent;
+}
+
+.markdown-body a:active,
+.markdown-body a:hover {
+  outline-width: 0;
+}
+
+.markdown-body strong {
+  font-weight: inherit;
+  font-weight: bolder;
+}
+
+.markdown-body h1 {
+  font-size: 2em;
+  margin: .67em 0;
+}
+
+.markdown-body img {
+  border-style: none;
+}
+
+.markdown-body code,
+.markdown-body kbd,
+.markdown-body pre {
+  font-family: monospace,monospace;
+  font-size: 1em;
+}
+
+.markdown-body hr {
+  box-sizing: content-box;
+  height: 0;
+  overflow: visible;
+}
+
+.markdown-body input {
+  font: inherit;
+  margin: 0;
+}
+
+.markdown-body input {
+  overflow: visible;
+}
+
+.markdown-body [type=checkbox] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.markdown-body * {
+  box-sizing: border-box;
+}
+
+.markdown-body input {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.markdown-body a {
+  color: #0366d6;
+  text-decoration: none;
+}
+
+.markdown-body a:hover {
+  text-decoration: underline;
+}
+
+.markdown-body strong {
+  font-weight: 600;
+}
+
+.markdown-body hr {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #dfe2e5;
+  height: 0;
+  margin: 15px 0;
+  overflow: hidden;
+}
+
+.markdown-body hr:before {
+  content: "";
+  display: table;
+}
+
+.markdown-body hr:after {
+  clear: both;
+  content: "";
+  display: table;
+}
+
+.markdown-body table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.markdown-body td,
+.markdown-body th {
+  padding: 0;
+}
+
+.markdown-body details summary {
+  cursor: pointer;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.markdown-body h1 {
+  font-size: 32px;
+}
+
+.markdown-body h1,
+.markdown-body h2 {
+  font-weight: 600;
+}
+
+.markdown-body h2 {
+  font-size: 24px;
+}
+
+.markdown-body h3 {
+  font-size: 20px;
+}
+
+.markdown-body h3,
+.markdown-body h4 {
+  font-weight: 600;
+}
+
+.markdown-body h4 {
+  font-size: 16px;
+}
+
+.markdown-body h5 {
+  font-size: 14px;
+}
+
+.markdown-body h5,
+.markdown-body h6 {
+  font-weight: 600;
+}
+
+.markdown-body h6 {
+  font-size: 12px;
+}
+
+.markdown-body p {
+  margin-bottom: 10px;
+  margin-top: 0;
+}
+
+.markdown-body blockquote {
+  margin: 0;
+}
+
+.markdown-body ol,
+.markdown-body ul {
+  margin-bottom: 0;
+  margin-top: 0;
+  padding-left: 0;
+}
+
+.markdown-body ol ol,
+.markdown-body ul ol {
+  list-style-type: lower-roman;
+}
+
+.markdown-body ol ol ol,
+.markdown-body ol ul ol,
+.markdown-body ul ol ol,
+.markdown-body ul ul ol {
+  list-style-type: lower-alpha;
+}
+
+.markdown-body dd {
+  margin-left: 0;
+}
+
+.markdown-body code,
+.markdown-body pre {
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+  font-size: 12px;
+}
+
+.markdown-body pre {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.markdown-body input::-webkit-inner-spin-button,
+.markdown-body input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+.markdown-body .border {
+  border: 1px solid #e1e4e8!important;
+}
+
+.markdown-body .border-0 {
+  border: 0!important;
+}
+
+.markdown-body .border-bottom {
+  border-bottom: 1px solid #e1e4e8!important;
+}
+
+.markdown-body .rounded-1 {
+  border-radius: 3px!important;
+}
+
+.markdown-body .bg-white {
+  background-color: #fff!important;
+}
+
+.markdown-body .bg-gray-light {
+  background-color: #fafbfc!important;
+}
+
+.markdown-body .text-gray-light {
+  color: #6a737d!important;
+}
+
+.markdown-body .mb-0 {
+  margin-bottom: 0!important;
+}
+
+.markdown-body .my-2 {
+  margin-bottom: 8px!important;
+  margin-top: 8px!important;
+}
+
+.markdown-body .pl-0 {
+  padding-left: 0!important;
+}
+
+.markdown-body .py-0 {
+  padding-bottom: 0!important;
+  padding-top: 0!important;
+}
+
+.markdown-body .pl-1 {
+  padding-left: 4px!important;
+}
+
+.markdown-body .pl-2 {
+  padding-left: 8px!important;
+}
+
+.markdown-body .py-2 {
+  padding-bottom: 8px!important;
+  padding-top: 8px!important;
+}
+
+.markdown-body .pl-3,
+.markdown-body .px-3 {
+  padding-left: 16px!important;
+}
+
+.markdown-body .px-3 {
+  padding-right: 16px!important;
+}
+
+.markdown-body .pl-4 {
+  padding-left: 24px!important;
+}
+
+.markdown-body .pl-5 {
+  padding-left: 32px!important;
+}
+
+.markdown-body .pl-6 {
+  padding-left: 40px!important;
+}
+
+.markdown-body .f6 {
+  font-size: 12px!important;
+}
+
+.markdown-body .lh-condensed {
+  line-height: 1.25!important;
+}
+
+.markdown-body .text-bold {
+  font-weight: 600!important;
+}
+
+.markdown-body:before {
+  content: "";
+  display: table;
+}
+
+.markdown-body:after {
+  clear: both;
+  content: "";
+  display: table;
+}
+
+.markdown-body>:first-child {
+  margin-top: 0!important;
+}
+
+.markdown-body>:last-child {
+  margin-bottom: 0!important;
+}
+
+.markdown-body a:not([href]) {
+  color: inherit;
+  text-decoration: none;
+}
+
+.markdown-body blockquote,
+.markdown-body dl,
+.markdown-body ol,
+.markdown-body p,
+.markdown-body pre,
+.markdown-body table,
+.markdown-body ul {
+  margin-bottom: 16px;
+  margin-top: 0;
+}
+
+.markdown-body hr {
+  background-color: #e1e4e8;
+  border: 0;
+  height: .25em;
+  margin: 24px 0;
+  padding: 0;
+}
+
+.markdown-body blockquote {
+  border-left: .25em solid #dfe2e5;
+  color: #6a737d;
+  padding: 0 1em;
+}
+
+.markdown-body blockquote>:first-child {
+  margin-top: 0;
+}
+
+.markdown-body blockquote>:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body kbd {
+  background-color: #fafbfc;
+  border: 1px solid #c6cbd1;
+  border-bottom-color: #959da5;
+  border-radius: 3px;
+  box-shadow: inset 0 -1px 0 #959da5;
+  color: #444d56;
+  display: inline-block;
+  font-size: 11px;
+  line-height: 10px;
+  padding: 3px 5px;
+  vertical-align: middle;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  font-weight: 600;
+  line-height: 1.25;
+  margin-bottom: 16px;
+  margin-top: 24px;
+}
+
+.markdown-body h1 {
+  font-size: 2em;
+}
+
+.markdown-body h1,
+.markdown-body h2 {
+  border-bottom: 1px solid #eaecef;
+  padding-bottom: .3em;
+}
+
+.markdown-body h2 {
+  font-size: 1.5em;
+}
+
+.markdown-body h3 {
+  font-size: 1.25em;
+}
+
+.markdown-body h4 {
+  font-size: 1em;
+}
+
+.markdown-body h5 {
+  font-size: .875em;
+}
+
+.markdown-body h6 {
+  color: #6a737d;
+  font-size: .85em;
+}
+
+.markdown-body ol,
+.markdown-body ul {
+  padding-left: 2em;
+}
+
+.markdown-body ol ol,
+.markdown-body ol ul,
+.markdown-body ul ol,
+.markdown-body ul ul {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.markdown-body li {
+  word-wrap: break-all;
+}
+
+.markdown-body li>p {
+  margin-top: 16px;
+}
+
+.markdown-body li+li {
+  margin-top: .25em;
+}
+
+.markdown-body dl {
+  padding: 0;
+}
+
+.markdown-body dl dt {
+  font-size: 1em;
+  font-style: italic;
+  font-weight: 600;
+  margin-top: 16px;
+  padding: 0;
+}
+
+.markdown-body dl dd {
+  margin-bottom: 16px;
+  padding: 0 16px;
+}
+
+.markdown-body table {
+  display: block;
+  overflow: auto;
+  width: 100%;
+}
+
+.markdown-body table th {
+  font-weight: 600;
+}
+
+.markdown-body table td,
+.markdown-body table th {
+  border: 1px solid #dfe2e5;
+  padding: 6px 13px;
+}
+
+.markdown-body table tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+.markdown-body table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+.markdown-body img {
+  background-color: #fff;
+  box-sizing: content-box;
+  max-width: 100%;
+}
+
+.markdown-body img[align=right] {
+  padding-left: 20px;
+}
+
+.markdown-body img[align=left] {
+  padding-right: 20px;
+}
+
+.markdown-body code {
+  background-color: rgba(27,31,35,.05);
+  border-radius: 3px;
+  font-size: 85%;
+  margin: 0;
+  padding: .2em .4em;
+}
+
+.markdown-body pre {
+  word-wrap: normal;
+}
+
+.markdown-body pre>code {
+  background: transparent;
+  border: 0;
+  font-size: 100%;
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  word-break: normal;
+}
+
+.markdown-body .highlight {
+  margin-bottom: 16px;
+}
+
+.markdown-body .highlight pre {
+  margin-bottom: 0;
+  word-break: normal;
+}
+
+.markdown-body .highlight pre,
+.markdown-body pre {
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  font-size: 85%;
+  line-height: 1.45;
+  overflow: auto;
+  padding: 16px;
+}
+
+.markdown-body pre code {
+  background-color: transparent;
+  border: 0;
+  display: inline;
+  line-height: inherit;
+  margin: 0;
+  max-width: auto;
+  overflow: visible;
+  padding: 0;
+  word-wrap: normal;
+}
+
+.markdown-body .commit-tease-sha {
+  color: #444d56;
+  display: inline-block;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+  font-size: 90%;
+}
+
+.markdown-body .blob-wrapper {
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.markdown-body .blob-wrapper-embedded {
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.markdown-body .blob-num {
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  color: rgba(27,31,35,.3);
+  cursor: pointer;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+  font-size: 12px;
+  line-height: 20px;
+  min-width: 50px;
+  padding-left: 10px;
+  padding-right: 10px;
+  text-align: right;
+  user-select: none;
+  vertical-align: top;
+  white-space: nowrap;
+  width: 1%;
+}
+
+.markdown-body .blob-num:hover {
+  color: rgba(27,31,35,.6);
+}
+
+.markdown-body .blob-num:before {
+  content: attr(data-line-number);
+}
+
+.markdown-body .blob-code {
+  line-height: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  position: relative;
+  vertical-align: top;
+}
+
+.markdown-body .blob-code-inner {
+  color: #24292e;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+  font-size: 12px;
+  overflow: visible;
+  white-space: pre;
+  word-wrap: normal;
+}
+
+.markdown-body .pl-token.active,
+.markdown-body .pl-token:hover {
+  background: #ffea7f;
+  cursor: pointer;
+}
+
+.markdown-body kbd {
+  background-color: #fafbfc;
+  border: 1px solid #d1d5da;
+  border-bottom-color: #c6cbd1;
+  border-radius: 3px;
+  box-shadow: inset 0 -1px 0 #c6cbd1;
+  color: #444d56;
+  display: inline-block;
+  font: 11px SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+  line-height: 10px;
+  padding: 3px 5px;
+  vertical-align: middle;
+}
+
+.markdown-body :checked+.radio-label {
+  border-color: #0366d6;
+  position: relative;
+  z-index: 1;
+}
+
+.markdown-body .tab-size[data-tab-size="1"] {
+  -moz-tab-size: 1;
+  tab-size: 1;
+}
+
+.markdown-body .tab-size[data-tab-size="2"] {
+  -moz-tab-size: 2;
+  tab-size: 2;
+}
+
+.markdown-body .tab-size[data-tab-size="3"] {
+  -moz-tab-size: 3;
+  tab-size: 3;
+}
+
+.markdown-body .tab-size[data-tab-size="4"] {
+  -moz-tab-size: 4;
+  tab-size: 4;
+}
+
+.markdown-body .tab-size[data-tab-size="5"] {
+  -moz-tab-size: 5;
+  tab-size: 5;
+}
+
+.markdown-body .tab-size[data-tab-size="6"] {
+  -moz-tab-size: 6;
+  tab-size: 6;
+}
+
+.markdown-body .tab-size[data-tab-size="7"] {
+  -moz-tab-size: 7;
+  tab-size: 7;
+}
+
+.markdown-body .tab-size[data-tab-size="8"] {
+  -moz-tab-size: 8;
+  tab-size: 8;
+}
+
+.markdown-body .tab-size[data-tab-size="9"] {
+  -moz-tab-size: 9;
+  tab-size: 9;
+}
+
+.markdown-body .tab-size[data-tab-size="10"] {
+  -moz-tab-size: 10;
+  tab-size: 10;
+}
+
+.markdown-body .tab-size[data-tab-size="11"] {
+  -moz-tab-size: 11;
+  tab-size: 11;
+}
+
+.markdown-body .tab-size[data-tab-size="12"] {
+  -moz-tab-size: 12;
+  tab-size: 12;
+}
+
+.markdown-body .task-list-item {
+  list-style-type: none;
+}
+
+.markdown-body .task-list-item+.task-list-item {
+  margin-top: 3px;
+}
+
+.markdown-body .task-list-item input {
+  margin: 0 .2em .25em -1.6em;
+  vertical-align: middle;
+}
+
+.markdown-body hr {
+  border-bottom-color: #eee;
+}
+
+.markdown-body .pl-0 {
+  padding-left: 0!important;
+}
+
+.markdown-body .pl-1 {
+  padding-left: 4px!important;
+}
+
+.markdown-body .pl-2 {
+  padding-left: 8px!important;
+}
+
+.markdown-body .pl-3 {
+  padding-left: 16px!important;
+}
+
+.markdown-body .pl-4 {
+  padding-left: 24px!important;
+}
+
+.markdown-body .pl-5 {
+  padding-left: 32px!important;
+}
+
+.markdown-body .pl-6 {
+  padding-left: 40px!important;
+}
+
+.markdown-body .pl-7 {
+  padding-left: 48px!important;
+}
+
+.markdown-body .pl-8 {
+  padding-left: 64px!important;
+}
+
+.markdown-body .pl-9 {
+  padding-left: 80px!important;
+}
+
+.markdown-body .pl-10 {
+  padding-left: 96px!important;
+}
+
+.markdown-body .pl-11 {
+  padding-left: 112px!important;
+}
+
+.markdown-body .pl-12 {
+  padding-left: 128px!important;
+}
+
+  </style>
+  <style>
+  /**
+ * prism.js default theme for JavaScript, CSS and HTML
+ * Based on dabblet (http://dabblet.com)
+ * @author Lea Verou
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	color: black;
+	background: none;
+	text-shadow: 0 1px white;
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+	text-shadow: none;
+	background: #b3d4fc;
+}
+
+pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+code[class*="language-"]::selection, code[class*="language-"] ::selection {
+	text-shadow: none;
+	background: #b3d4fc;
+}
+
+@media print {
+	code[class*="language-"],
+	pre[class*="language-"] {
+		text-shadow: none;
+	}
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #f5f2f0;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: slategray;
+}
+
+.token.punctuation {
+	color: #999;
+}
+
+.token.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #905;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #690;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+	color: #9a6e3a;
+	/* This background color was intended by the author of this theme. */
+	background: hsla(0, 0%, 100%, .5);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+	color: #07a;
+}
+
+.token.function,
+.token.class-name {
+	color: #DD4A68;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+	color: #e90;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+
+  </style>
+  <style>
+  
+  </style>
+  <style>
+    .markdown-body {
+      font-family: -apple-system,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
+      box-sizing: border-box;
+      min-width: 200px;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 45px;
+    }
+
+    @media not print {
+      .markdown-body {
+        padding: 45px;
+      }
+
+      @media (max-width: 767px) {
+        .markdown-body {
+          padding: 15px;
+        }
+      }
+    }
+
+    .hf-container {
+      color: #24292e;
+      line-height: 1.3;
+    }
+
+    .markdown-body .highlight pre,
+    .markdown-body pre {
+      white-space: pre-wrap;
+    }
+    .markdown-body table {
+      display: table;
+    }
+    .markdown-body img[data-align="center"] {
+      display: block;
+      margin: 0 auto;
+    }
+    .markdown-body img[data-align="right"] {
+      display: block;
+      margin: 0 0 0 auto;
+    }
+    .markdown-body li.task-list-item {
+      list-style-type: none;
+    }
+    .markdown-body li > [type=checkbox] {
+      margin: 0 0 0 -1.3em;
+    }
+    .markdown-body input[type="checkbox"] ~ p {
+      margin-top: 0;
+      display: inline-block;
+    }
+    .markdown-body ol ol,
+    .markdown-body ul ol {
+      list-style-type: decimal;
+    }
+    .markdown-body ol ol ol,
+    .markdown-body ol ul ol,
+    .markdown-body ul ol ol,
+    .markdown-body ul ul ol {
+      list-style-type: decimal;
+    }
+  </style>
+  <style>.markdown-body a.footnote-ref {
+  text-decoration: none;
+}
+
+.footnotes {
+  font-size: .85em;
+  opacity: .8;
+}
+
+.footnotes li[role="doc-endnote"] {
+  position: relative;
+}
+
+.footnotes .footnote-back {
+  position: absolute;
+  font-family: initial;
+  top: .2em;
+  right: 1em;
+  text-decoration: none;
+}
+
+.inline-math.invalid,
+.multiple-math.invalid {
+  color: rgb(255, 105, 105);
+}
+
+.toc-container {
+  width: 100%;
+}
+
+.toc-container .toc-title {
+  font-weight: 700;
+  font-size: 1.2em;
+  margin-bottom: 0;
+}
+
+.toc-container li,
+.toc-container ul,
+.toc-container ul li {
+  list-style: none !important;
+}
+
+.toc-container > ul {
+  padding-left: 0;
+}
+
+.toc-container ul li span {
+  display : flex;
+}
+
+.toc-container ul li span a {
+  color: inherit;
+  text-decoration: none;
+}
+.toc-container ul li span a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+
+.toc-container ul li span span.dots {
+  flex: 1;
+  height: 0.65em;
+  margin: 0 10px;
+  border-bottom: 2px dotted black;
+}
+</style>
+  
+  
+</head>
+<body>
+  <article class="markdown-body">
+<h1 class="atx" id="ecnetsim_ltps_ngs-v107-andamp-ectrans-v50--user-manual-ai-generated-may-contain-significant-errors">ecNetSim_LTPS_NGS V10.7 &amp; ecTrans V5.0 — User Manual<br>
+  (AI-generated, may contain significant errors)</h1>
+<p><strong>Author:</strong> Dr. Zhaoxiang Deng (USTC)<br><strong>License:</strong> This software is licensed to the author only. Unauthorized distribution or commercial use is strictly prohibited.<br><strong>Supported SPICE backends:</strong> <a target="_blank" href="http://www.orcad.com/"><strong>PSpice</strong></a>/<strong><a href="https://www.ti.com/tool/PSPICE-FOR-TI" target="_blank">PSpice-For-TI</a></strong>/<a href="https://www.analog.com/en/design-center/design-tools-and-calculators/ltspice-simulator.html" target="_blank"><strong>LTspice</strong></a>/<a href="https://www.qorvo.com/design-hub/design-tools/interactive/qspice" target="_blank"><strong>QSPICE</strong></a>/<strong><a href="https://github.com/NeelPatra/Micro-Cap-12-Archive" target="_blank">Micro-Cap</a></strong>/<a href="https://ngspice.sourceforge.io/devel.html" target="_blank"><strong>NGSPICE</strong></a> (open source)<br><strong>Supported plotting:</strong> <a href="http://www.gnuplot.info/" target="_blank"><strong>Gnuplot</strong></a> (open source)</p>
+<hr>
+<h2 class="atx" id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#1-overview">Overview</a></li>
+<li><a href="#2-system-requirements--installation">System Requirements &amp; Installation</a></li>
+<li><a href="#3-usage--command-line">Usage — Command Line</a><ul>
+<li>3.1 <a href="#31-ecnetsim-107">ecNetSim 10.7</a></li>
+<li>3.2 <a href="#32-ectrans-50">ecTrans 5.0</a></li>
+</ul>
+</li>
+<li><a href="#4-input-file-format-atn">Input File Format (.atn)</a><ul>
+<li>4.1 <a href="#41-general-rules">General Rules</a></li>
+<li>4.2 <a href="#42-block-by-block-reference">Block-by-Block Reference</a></li>
+</ul>
+</li>
+<li><a href="#5-output-files">Output Files</a></li>
+<li><a href="#6-simulation-modes">Simulation Modes</a></li>
+<li><a href="#7-diffusion-geometries">Diffusion Geometries</a></li>
+<li><a href="#8-electrochemical-techniques-supported">Electrochemical Techniques Supported</a></li>
+<li><a href="#9-adsorption-support">Adsorption Support</a></li>
+<li><a href="#10-ectrans-50--ngspice-integration--post-processing">ecTrans 5.0 — NGSPICE Integration &amp; Post-Processing</a></li>
+<li><a href="#11-gnuplot-output--concentration-profiles">Gnuplot Output &amp; Concentration Profiles</a></li>
+<li><a href="#12-annotated-input-file-examples">Annotated Input File Examples</a></li>
+<li><a href="#13-error-messages-reference">Error Messages Reference</a></li>
+<li><a href="#14-advanced-tips">Advanced Tips</a></li>
+<li><a href="#15-version-history-selected">Version History (selected)</a></li>
+</ol>
+<hr>
+<h2 class="atx" id="1-overview">1. Overview</h2>
+<p><strong>ecNetSim</strong> converts electrochemical reaction schemes into SPICE netlists and executes transient circuit simulations to obtain cyclic voltammograms (CV), chronoamperograms (CA), and related results. Its core idea is the <strong>network model</strong> (ecNet): each mass-transport box becomes a resistor–capacitor network element, and charge-transfer kinetics become voltage-controlled current sources (G elements). The program reads a plain-text input file (<code>.atn</code>), generates a SPICE netlist (<code>.sp</code>, <code>.cir</code>, or <code>.net</code>), optionally runs NGSPICE or LTspice, reads the resulting <code>.raw</code> file, and plots via Gnuplot.</p>
+<p><strong>ecTrans</strong> is a companion program that accepts a previously generated (or user-modified) <code>.sp</code> or <code>.spt</code> netlist, drives NGSPICE in batch mode, parses the binary/ASCII <code>.raw</code> output, writes tabulated <code>.out</code> data files, generates a Gnuplot <code>.gp</code> script, and launches Gnuplot for interactive plotting — all in a single command-line invocation.</p>
+<h3 class="atx" id="capabilities-summary">Capabilities summary</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Electrode geometries</td>
+<td>Linear, Spherical, Cylindrical, Rotational Disk (RDE), Finite Diffusion (thin layer), Surface (SF/thin-film)</td>
+</tr>
+<tr>
+<td>Electrochemical methods</td>
+<td>CV, CA, SWV (Osteryoung &amp; Barker), SCV, DPV, ACV, EIS</td>
+</tr>
+<tr>
+<td>Reaction types</td>
+<td>Electron Transfer Reactions (ETR, Butler-Volmer), Homogeneous Chemical Reactions (HCR, forward + backward, 1st/2nd-order)</td>
+</tr>
+<tr>
+<td>Adsorption</td>
+<td>Langmuir-type: equilibrium or kinetic; competitive (default) or non-competitive (independent-site); active (ETR) and inactive (HCR-only) adsorbates; pre-adsorption equilibrium</td>
+</tr>
+<tr>
+<td>iR drop / double layer</td>
+<td>Uncompensated resistance Ru and double-layer capacitance Cdl</td>
+</tr>
+<tr>
+<td>Natural convection</td>
+<td>Optional correction layer for long-time experiments</td>
+</tr>
+<tr>
+<td>SPICE backends</td>
+<td>LTspice (<code>.sp</code>), PSPICE (<code>.net</code>/<code>.cir</code>), NGSPICE (<code>.sp</code>)</td>
+</tr>
+<tr>
+<td>Plotting</td>
+<td>Gnuplot (dimensionless i vs. E or t; real i vs. E or t; concentration profiles; heatmap; 3D surface)</td>
+</tr>
+<tr>
+<td>Concentration profiles</td>
+<td>Optional 2D heatmap and 3D (time × space × concentration) output, including adsorbed surface excess</td>
+</tr>
+<tr>
+<td>ecTrans integration</td>
+<td>One-command NGSPICE run + raw parsing + Gnuplot plotting</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 class="atx" id="2-system-requirements-andamp-installation">2. System Requirements &amp; Installation</h2>
+<ul>
+<li><strong>OS:</strong> Windows XP, 7, 8, 10, 11 (64-bit recommended)</li>
+<li><strong>Runtime:</strong> QB64 (already compiled into <code>.exe</code>)</li>
+<li><strong>SPICE simulators (optional):</strong><ul>
+<li>NGSPICE: place <code>ngspice.exe</code> in <code>.\ngspice\</code> subdirectory relative to the <code>.exe</code></li>
+<li>LTspice: place <code>ltspice.lnk</code> shortcut in <code>.\ltspice\</code> subdirectory</li>
+<li>PSPICE: place <code>pspice.lnk</code> shortcut in <code>.\pspice\</code> subdirectory</li>
+</ul>
+</li>
+<li><strong>Gnuplot (optional):</strong> place <code>gnuplot.lnk</code> in <code>.\gnuplot\</code> subdirectory, or ensure <code>gnuplot</code> is on the system PATH</li>
+</ul>
+<h3 class="atx" id="directory-structure-example">Directory structure example</h3>
+<pre><code class="fenced-code-block">C:\NETSIM\
+  ecNetSimV10.x.exe     &lt;- main executable (ecNetSim)
+  ecTransV5.0.exe        &lt;- companion NGSPICE runner
+  ngspice\
+    ngspice.exe          &lt;- NGSPICE 64-bit binary
+  ltspice\
+    ltspice.lnk          &lt;- shortcut to LTspice XVII
+  pspice\
+    pspice.lnk           &lt;- shortcut to PSpice
+  gnuplot\
+    gnuplot.lnk          &lt;- shortcut to Gnuplot
+  input.atn              &lt;- your input file</code></pre>
+<h3 class="atx" id="using-a-bat-wrapper">Using a .bat wrapper</h3>
+<p>To call the program from any directory (so the input file path is resolved correctly), use the provided batch wrapper:</p>
+<pre><code class="fenced-code-block language-bat">@"C:\NETSIM\ecNetSimV10.x.exe" "%CD%\%~1"</code></pre>
+<p>Call as: <code>ecnetsim myfile.atn</code></p>
+<hr>
+<h2 class="atx" id="3-usage--command-line">3. Usage — Command Line</h2>
+<h3 class="atx" id="31-ecnetsim-107">3.1 ecNetSim 10.7</h3>
+<pre><code class="fenced-code-block">ecNetSimV10.x.exe [FILENAME]
+ecNetSimV10.x.exe /?</code></pre>
+<ul>
+<li><code>FILENAME</code> — path to the <code>.atn</code> input file (absolute or relative).<br>If omitted, defaults to <code>input.atn</code> in the current working directory.</li>
+<li><code>/?</code> — print usage hint and exit.</li>
+<li>The program also accepts <code>.net</code>, <code>.cir</code>, or <code>.sp</code> files directly; it will attempt to extract the embedded <code>.atn</code> content (if the netlist was generated with the <code>sp+</code>/<code>net+</code>/<code>cir+</code> option).</li>
+</ul>
+<h3 class="atx" id="32-ectrans-50">3.2 ecTrans 5.0</h3>
+<pre><code class="fenced-code-block">ecTransV5.0.exe  &lt;FILENAME&gt;.sp
+ecTransV5.0.exe  &lt;FILENAME&gt;.spt</code></pre>
+<ul>
+<li><code>FILENAME</code> — path to a <code>.sp</code> or <code>.spt</code> netlist file. This file must have been generated by ecNetSim. ecTrans reads the netlist directly; it does NOT parse <code>.atn</code> files. The <code>+</code> suffix on netlist options (<code>sp+</code>, <code>cir+</code>, <code>net+</code>) is NOT required for ecTrans.</li>
+<li>No argument → program exits with an error message.</li>
+<li>ecTrans does NOT accept <code>.atn</code> files directly — it only processes pre-generated netlists.</li>
+</ul>
+<hr>
+<h2 class="atx" id="4-input-file-format-atn">4. Input File Format (.atn)</h2>
+<h3 class="atx" id="41-general-rules">4.1 General Rules</h3>
+<ol>
+<li>The file consists of alternating <strong>prompt lines</strong> (in square brackets, e.g. <code>[Number of Reaction-diffusion Species(no period)]</code>) and <strong>data lines</strong>.</li>
+<li><strong>Do not modify prompt lines.</strong> The program validates them exactly; any change causes a fatal error.</li>
+<li><strong>Data lines</strong> follow immediately after each prompt line. Blank lines and <code>*</code> memo lines between prompt and data are silently skipped.</li>
+<li>Lines starting with <code>*</code> are treated as <strong>memo/comment lines</strong> and are silently skipped everywhere.</li>
+<li><strong>Whitespace:</strong> leading and trailing spaces are stripped automatically. <strong>TAB characters are forbidden</strong> and will trigger an error.</li>
+<li><strong>Terminators:</strong><ul>
+<li>Sections that end with <code>(with period)</code> in the prompt use <code>.</code> (period) as a section terminator and <code>;</code> as a record separator.</li>
+<li>Sections that end with <code>(no period)</code> use a single value on one line; no terminator needed.</li>
+</ul>
+</li>
+<li><strong>Scientific notation:</strong> values like <code>1e-5</code>, <code>1E-5</code>, <code>1.5e-10</code> are supported everywhere. The built-in <code>SafeVal()</code> function correctly handles negative exponents that QB64's native <code>Val()</code> misparses.</li>
+<li>The file ends with the line <code>[END]</code>.</li>
+<li><strong>Appended input:</strong> If using <code>sp+</code>/<code>cir+</code>/<code>net+</code> as [Netlist] option, input (<code>.atn</code>) content is appended to the end of the netlist, allowing re-run from the netlist file directly with ecNetSim. Note: ecTrans only works with netlist files and does NOT require the <code>+</code> suffix; the <code>+</code> suffix is an ecNetSim-internal feature for embedding <code>.atn</code> content.</li>
+<li><strong>Prompt-line validation (<code>sqerr</code>):</strong> The program counts how many prompt lines are matched. At the end, it verifies the count against expected values (15, 16, 17, or 18 depending on which optional sections are present). A mismatch produces the error *"You must have changed the prompt lines in the input file!"*.</li>
+</ol>
+<h3 class="atx" id="42-block-by-block-reference">4.2 Block-by-Block Reference</h3>
+<hr>
+<h4 class="atx" id="methodcvca-cyclic-voltammetrychronoamperometryno-period"><code>[Method(CV/CA: Cyclic Voltammetry/ChronoAmperometry)(no period)]</code></h4>
+<p><strong>Data line:</strong> <code>CV</code> or <code>CA</code></p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>CV</code></td>
+<td>Cyclic voltammetry (default)</td>
+</tr>
+<tr>
+<td><code>CA</code></td>
+<td>Chronoamperometry</td>
+</tr>
+</tbody></table>
+<p>If omitted or invalid, defaults to <code>CV</code>.</p>
+<hr>
+<h4 class="atx" id="number-of-reaction-diffusion-speciesno-period"><code>[Number of Reaction-diffusion Species(no period)]</code></h4>
+<p><strong>Data line:</strong> a positive integer <code>N</code> (≥ 1).</p>
+<p>Defines the total number of species that participate in diffusion and/or adsorption. Must be set before the ETR/HCR blocks. Species are referenced by index 1 … N throughout the file.</p>
+<hr>
+<h4 class="atx" id="electron-transfer-reactions-etr">Electron Transfer Reactions (ETR)</h4>
+<p>There are <strong>four variant prompt lines</strong> for ETR — the program accepts any of them:</p>
+<ol>
+<li><code>[Electron Transfer Reactions|E0'(V)|alpha|alpha2|na|k0(cm/s or s^-1 for SF)(with period)]</code></li>
+<li><code>[ET Reactions|E0'(V)|alpha|alpha2|na|k0(cm/s or s^-1 for SF)(prefix @/@@: dependent/independent ETRs of adsorbates)(with period)]</code></li>
+<li><code>[Electron Transfer Reactions|E0'(V)|alpha|na|k0(cm/s or s^-1 for SF)(with period)]</code></li>
+<li><code>[ET Reactions|E0'(V)|alpha|na|k0(cm/s or s^-1 for SF)(prefix @/@@: dependent/independent ETRs of adsorbates)(with period)]</code></li>
+</ol>
+<p><strong>The number of ETR reactions <code>m</code> is NOT specified by the user.</strong> The parser reads reaction lines one by one after the prompt. If the first data line starts with <code>[</code>, then <code>m = 0</code> (no ETR). Otherwise, reactions are read until a line ending in <code>.</code> (last reaction) is encountered.</p>
+<blockquote>
+<p><strong>NOTE — Minimal input required for pure chemical kinetics mode (m = 0, no ETR, HCR present):</strong></p>
+<ul>
+<li><code>[Method]</code>: must be set to <code>CA</code></li>
+<li><code>[Number of Reaction-diffusion Species]</code>: total number of species participating in HCR</li>
+<li><code>[Homogeneous Chemical Reactions|…]</code>: HCR definitions (one reaction per line)</li>
+<li><code>[Experimental Parameters|…]</code>: only the time parameter is meaningful; all other parameters may be set to 0</li>
+<li><code>[Simulation Parameters   ]</code>: only the time-interval parameter is meaningful; all other parameters may be set to 0</li>
+<li><code>[Initial Concentrations|…]</code>: initial concentrations for all species</li>
+<li>Output (optional): use <code>CP&lt;n&gt;-</code> and <code>CP&lt;n&gt;_</code> to export concentration profiles for specific species</li>
+</ul>
+</blockquote>
+<p>Each ETR occupies one line ending in <code>;</code> (more reactions to follow) or <code>.</code> (last reaction):</p>
+<pre><code class="fenced-code-block">OxSpeciesNum[a]+|-[n]e&lt;-&gt;RedSpeciesNum[a]|E0'|alpha[|alpha2]|na|k0;</code></pre>
+<p><strong>Fields (pipe-separated):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>OxSpeciesNum</code></td>
+<td>Species number (integer) of the oxidized form. Append <code>a</code> (e.g. <code>1a</code>) if this species is adsorbed.</td>
+</tr>
+<tr>
+<td><code>+</code> or <code>-</code></td>
+<td>Sign of electron transfer direction: <code>+</code> = reduction (electrons gained by species), <code>-</code> = oxidation (electrons lost by species).</td>
+</tr>
+<tr>
+<td><code>[n]e</code></td>
+<td>Number of electrons transferred. <code>e</code> alone means 1 electron. Example: <code>2e</code> means 2 electrons.</td>
+</tr>
+<tr>
+<td><code>&lt;-&gt;</code> or <code>-&gt;</code></td>
+<td><code>&lt;-&gt;</code> = reversible; <code>-&gt;</code> or <code>--&gt;</code> = irreversible (forward only).</td>
+</tr>
+<tr>
+<td><code>RedSpeciesNum</code></td>
+<td>Species number of the reduced form. Use <code>0</code> if this species does not diffuse (e.g. stripped metal). Append <code>a</code> for adsorbed.</td>
+</tr>
+<tr>
+<td><code>E0'</code></td>
+<td>Formal potential (V).</td>
+</tr>
+<tr>
+<td><code>alpha</code></td>
+<td>Cathodic transfer coefficient α_c (0 &lt; α &lt; 1, typically 0.5).</td>
+</tr>
+<tr>
+<td><code>alpha2</code></td>
+<td><em>(new format only, prompts 1 &amp; 2)</em> Anodic transfer coefficient α_a. If omitted or if <code>Abs(n_electron) &lt; 2</code>, α_a = 1 − α_c. Only used as a separate parameter when <code>Abs(n_electron) ≥ 2</code>.</td>
+</tr>
+<tr>
+<td><code>na</code></td>
+<td>Number of electrons involved in the rate-determining step. Input as a <strong>positive</strong> integer (e.g. 1, 2); the program automatically applies the direction sign based on the <code>+</code>/<code>-</code> symbol. Usually equals 1.</td>
+</tr>
+<tr>
+<td><code>k0</code></td>
+<td>Standard heterogeneous rate constant (cm/s for diffusion types; s⁻¹ for SF).</td>
+</tr>
+</tbody></table>
+<p><strong>Adsorbed species ETR prefix (prompts 2 &amp; 4 only):</strong></p>
+<p>When ALL species in the ETR are adsorbed (all marked with trailing <code>a</code>, e.g. <code>1a+e&lt;-&gt;2a</code>), prefix the line with <code>@</code> or <code>@@</code> to indicate an adsorbate ETR. The <code>@</code>/<code>@@</code> prefix represents electrochemical or chemical conversion between adsorbed states on the electrode surface. Both modes use surface concentration nodes and the same k⁰ normalization (<code>k0_nondim = k⁰ × τ</code>); the difference is only in the formal potential treatment:</p>
+<ul>
+<li><p><strong><code>@</code> (dependent adsorbate ETR):</strong> The formal potential specified in the input is the <strong>standard</strong> (bulk-solution) E⁰. The program automatically corrects it for the adsorption free-energy difference:
+<code>E⁰_corrected = E⁰_input − (RT/nF)·ln(β_Ox/β_Red)</code>
+This mode is used when the adsorbed ETR is <em>thermodynamically coupled</em> to the solution E⁰, e.g. the species adsorb with different affinities and the E⁰ must shift accordingly. The correction requires valid <code>β</code> values in the <code>[Adsorption Coefficients]</code> block for both the oxidized and reduced adsorbates.</p>
+</li>
+<li><p><strong><code>@@</code> (independent adsorbate ETR):</strong> The formal potential specified in the input is the <strong>actual surface</strong> E⁰. No thermodynamic correction is applied. Use this mode when the E⁰ is measured or defined directly for the adsorbed phase and does not depend on bulk-solution β values.</p>
+</li>
+</ul>
+<p><strong>Example — <code>@</code> (dependent) adsorbate ETR:</strong></p>
+<pre><code class="fenced-code-block">@1a+e&lt;-&gt;2a|0|0.5|1|1e8.</code></pre>
+<p>E⁰_input = 0 V. If β₁ = 100 and β₂ = 400, then <code>E⁰_corrected = 0 − (RT/F)·ln(100/400) = +0.036 V</code> (at 298 K).</p>
+<p><strong>Example — <code>@@</code> (independent) adsorbate ETR:</strong></p>
+<pre><code class="fenced-code-block">@@1a+1e&lt;-&gt;2a|0.36|0.5|1|1e8.</code></pre>
+<p>E⁰ = 0.36 V is used directly as the surface formal potential. No β-dependent correction.</p>
+<p><strong>Example — single-step 1e reduction (new format with alpha2):</strong></p>
+<pre><code class="fenced-code-block">1+1e&lt;-&gt;2|0.0|0.5|0.5|1|0.01.</code></pre>
+<p>Species 1 (Ox) + 1 electron → Species 2 (Red), E⁰' = 0.0 V, α_c = 0.5, α_a = 0.5, na = 1, k⁰ = 0.01 cm/s.</p>
+<p><strong>Example — single-step 1e oxidation (legacy format without alpha2):</strong></p>
+<pre><code class="fenced-code-block">1-e&lt;-&gt;2|0.49|0.5|1|1e6.</code></pre>
+<p>Species 1 (Red) − 1 electron → Species 2 (Ox), E⁰' = 0.49 V, α_c = 0.5, na = 1, k⁰ = 1×10⁶ cm/s.</p>
+<p><strong>Example — adsorbate ETR with kinetic adsorption:</strong></p>
+<pre><code class="fenced-code-block">@1a+e&lt;-&gt;2a|0|0.5|1|1e8.</code></pre>
+<p>Dependent adsorbate ETR: adsorbed species 1 → adsorbed species 2, E⁰ = 0 V, k⁰ = 1×10⁸ s⁻¹.</p>
+<p><strong>Example — two sequential ETRs (EEE mechanism, legacy format):</strong></p>
+<pre><code class="fenced-code-block">1-e&lt;-&gt;2|0.49|0.5|1|1e6;
+2-e&lt;-&gt;3|1.15|0.5|1|1e6.</code></pre>
+<p>If no ETR reactions are desired, the prompt line must still be present, but the next line can be another prompt line starting with <code>[</code>; the program will then set m = 0.</p>
+<hr>
+<h4 class="atx" id="homogeneous-chemical-reactions-hcr">Homogeneous Chemical Reactions (HCR)</h4>
+<p>Two variant prompt lines:</p>
+<ol>
+<li><code>[Homogeneous Chemical Reactions|kfc|kbc(with period)]</code></li>
+<li><code>[Homogeneous Chemical Reactions|kfc|kbc(prefix @: reactions of adsorbates)(with period)]</code></li>
+</ol>
+<p><strong>The number of HCR reactions <code>mc</code> is NOT specified by the user.</strong> If the first data line starts with <code>[</code> and <code>m &lt;&gt; 0</code>, then <code>mc = 0</code>. If <code>m = 0</code> and the data line starts with <code>[</code>, the program reports an error.</p>
+<p>Each HCR reaction occupies one line ending in <code>;</code> or <code>.</code>:</p>
+<pre><code class="fenced-code-block">ReactantSpeciesList&lt;-&gt;|--&gt;ProductSpeciesList|kfc|kbc;</code></pre>
+<p><strong>Fields:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ReactantSpeciesList</code></td>
+<td>Species numbers separated by <code>+</code> (or space). Append <code>a</code> for adsorbed (e.g. <code>2a</code>).</td>
+</tr>
+<tr>
+<td><code>&lt;-&gt;</code> or <code>--&gt;</code></td>
+<td><code>&lt;-&gt;</code> = reversible; <code>--&gt;</code> = irreversible.</td>
+</tr>
+<tr>
+<td><code>ProductSpeciesList</code></td>
+<td>Same format as reactants. Use <code>0</code> for a species that leaves the system (e.g. gas).</td>
+</tr>
+<tr>
+<td><code>kfc</code></td>
+<td>Forward rate constant. Units depend on reaction order: 1st order → s⁻¹; 2nd order → mM⁻¹s⁻¹.</td>
+</tr>
+<tr>
+<td><code>kbc</code></td>
+<td>Backward rate constant (same unit convention). Use <code>0</code> for irreversible.</td>
+</tr>
+</tbody></table>
+<p><strong>Adsorbed HCR prefix (prompt 2 only):</strong> <code>@</code> before a reaction line denotes an adsorbate reaction.</p>
+<p><strong>Example — 2nd-order dimerization (irreversible):</strong></p>
+<pre><code class="fenced-code-block">1+1--&gt;0|1e4|0.</code></pre>
+<p>Two molecules of species 1 → product leaves system, kf = 1×10⁴ mM⁻¹s⁻¹, irreversible.</p>
+<p><strong>Example — EC mechanism (E followed by C):</strong>
+ETR block: <code>1-e&lt;-&gt;2|0.0|0.5|1|0.1.</code>
+HCR block: <code>2&lt;-&gt;3|100|1.</code></p>
+<p><strong>Example — multi-species reversible HCR with adsorbates:</strong></p>
+<pre><code class="fenced-code-block">2&lt;-&gt;3|1e10|0;
+@2a&lt;-&gt;3a|1e12|0;
+2+5a&lt;-&gt;1+6|4.3e2|1e5.</code></pre>
+<hr>
+<h4 class="atx" id="diffusion-typelscrdefdsf-linearsphericalcylindricalrotational-diskfinite-diffusionsurfaceno-period"><code>[Diffusion Type(L/S/C/RDE/FD/SF: Linear/Spherical/Cylindrical/Rotational Disk/Finite Diffusion/SurFace)(no period)]</code></h4>
+<blockquote>
+<p><strong>Conditional:</strong> This section is only processed when <code>m &lt;&gt; 0</code>.</p>
+</blockquote>
+<p><strong>Data line:</strong> one of:</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Geometry</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>L</code></td>
+<td>Semi-infinite planar (linear) diffusion</td>
+</tr>
+<tr>
+<td><code>S</code></td>
+<td>Semi-infinite spherical diffusion (microelectrode)</td>
+</tr>
+<tr>
+<td><code>C</code></td>
+<td>Semi-infinite cylindrical diffusion</td>
+</tr>
+<tr>
+<td><code>RDE</code></td>
+<td>Rotating disk electrode (Levich–Koutecký)</td>
+</tr>
+<tr>
+<td><code>FD</code></td>
+<td>Finite (thin-layer) linear diffusion</td>
+</tr>
+<tr>
+<td><code>SF</code></td>
+<td>Surface-confined (no diffusion; all species adsorbed)</td>
+</tr>
+</tbody></table>
+<p>Default if omitted (next line starts with <code>[</code>): <code>L</code>.</p>
+<hr>
+<h4 class="atx" id="areacm2radiusumradiuslengthcmangular-velocityradskinematic-viscositycm2sareaareathicknesscmareano-period"><code>[Area(cm^2)/Radius(um)/Radius,Length(cm)/Angular Velocity(rad/s),Kinematic Viscosity(cm^2/s),Area/Area,Thickness(cm)/Area(no period)]</code></h4>
+<blockquote>
+<p><strong>Conditional:</strong> This section is only processed when <code>m &lt;&gt; 0</code>.</p>
+</blockquote>
+<p><strong>Data line format depends on diffusion type:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Diffusion type</th>
+<th>Data format</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>L</code></td>
+<td><code>area(cm²)</code></td>
+<td><code>0.0314</code></td>
+</tr>
+<tr>
+<td><code>S</code></td>
+<td><code>radius(μm)</code></td>
+<td><code>5</code></td>
+</tr>
+<tr>
+<td><code>C</code></td>
+<td><code>radius(cm),length(cm)</code></td>
+<td><code>0.01,0.5</code></td>
+</tr>
+<tr>
+<td><code>RDE</code></td>
+<td><code>ω(rad/s),ν(cm²/s),area(cm²)</code></td>
+<td><code>100,0.01,0.0314</code></td>
+</tr>
+<tr>
+<td><code>FD</code></td>
+<td><code>area(cm²),thickness(cm)</code></td>
+<td><code>0.01,0.001</code></td>
+</tr>
+<tr>
+<td><code>SF</code></td>
+<td><code>area(cm²)</code></td>
+<td><code>0.01</code></td>
+</tr>
+</tbody></table>
+<p>All values must be positive.</p>
+<hr>
+<h4 class="atx" id="experimental-cycleseivesvetvvvs-or-times-for-catempercdno-period"><code>[Experimental: cycles,Ei(V),Es(V),Et(V),v(V/s) or Time(s) for CA,Temper(C.D.)(no period)]</code></h4>
+<p><strong>or</strong> the variant with rest time:</p>
+<h4 class="atx" id="experimental-cycleseivesvetvvvs-or-times-for-carest-timestempercdno-period"><code>[Experimental: cycles,Ei(V),Es(V),Et(V),v(V/s) or Time(s) for CA,Rest time(s),Temper(C.D.)(no period)]</code></h4>
+<p><strong>Data line:</strong> <code>cycles,Ei,Es,Et,v[,t_rest],temperature</code></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>cycles</code></td>
+<td>Number of CV cycles (integer ≥ 1). For CA, use <code>1</code>.</td>
+</tr>
+<tr>
+<td><code>Ei</code></td>
+<td>Initial potential (V).</td>
+</tr>
+<tr>
+<td><code>Es</code></td>
+<td>Switching (vertex) potential (V).</td>
+</tr>
+<tr>
+<td><code>Et</code></td>
+<td>Final potential (V). For CA with cycles &gt; 1: Et is the alternate step potential (alternates with Es). For CA with cycles = 1: not used but must be provided (set equal to Ei).</td>
+</tr>
+<tr>
+<td><code>v</code></td>
+<td>Scan rate (V/s) for CV, or total time (s) for CA. Must be &gt; 0.</td>
+</tr>
+<tr>
+<td><code>t_rest</code> <em>(variant only)</em></td>
+<td>Pre-experiment equilibration rest time (s). Can be empty for no rest.</td>
+</tr>
+<tr>
+<td><code>temperature</code></td>
+<td>Temperature (°C). Warning issued if ≤ 0.</td>
+</tr>
+</tbody></table>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>For CV: the program sweeps Ei → Es (forward scan) → Et (reverse scan), and this full cycle is repeated <code>cycles</code> times. If Et = Es, the reverse scan has zero amplitude (useful for LSV).</li>
+<li>For CA: the potential is stepped from Ei to Es (approximately 1/10⁶ of the total simulation time in dimensionless units, <strong>excluding</strong> the rest time), and held at Es. For multi-cycle CA, the potential alternates between Es and Et each half-cycle.</li>
+<li>Es = Ei is allowed (special case).</li>
+</ul>
+<p><strong>Example — CV, 2 cycles, ±0.5 V window, 0.1 V/s, 25 °C:</strong></p>
+<pre><code class="fenced-code-block">2,-0.5,0.5,-0.5,0.1,25</code></pre>
+<p><strong>Example — CA with rest time (empty for no rest):</strong></p>
+<pre><code class="fenced-code-block">1,1.2,-0.5,1.2,1e4,,25.0</code></pre>
+<hr>
+<h4 class="atx" id="simulation-boxnumbetademv-or-dts-for-cano-period"><code>[Simulation: boxnum,beta,dE(mV) or dt(s) for CA(no period)]</code></h4>
+<p><strong>or</strong> the variant with binary reading limit:</p>
+<h4 class="atx" id="simulation-boxnumbetabinary-reading-limitdemv-or-dts-for-cano-period"><code>[Simulation: boxnum,beta,binary reading limit,dE(mV) or dt(s) for CA(no period)]</code></h4>
+<p><strong>Data line:</strong> <code>boxnum,beta[,bin_limit],dE</code></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>boxnum</code></td>
+<td>Number of spatial boxes (finite difference grid points along x). Typical: 30–200. Must be &gt; 0.</td>
+</tr>
+<tr>
+<td><code>beta</code></td>
+<td>Grid expansion parameter. <code>0</code> = uniform grid; <code>&gt; 0</code> = exponentially expanding grid (recommended: 0.3–0.5).</td>
+</tr>
+<tr>
+<td><code>bin_limit</code> <em>(variant only)</em></td>
+<td>File size threshold (bytes) for the <code>data_3d</code> subroutine to choose reading mode. If the <code>.out</code> file is <strong>smaller</strong> than <code>bin_limit</code>, the entire file is loaded into memory at once via binary read (<code>Input$</code>). If the file is <strong>equal to or larger</strong> than <code>bin_limit</code>, the program falls back to line-by-line text reading (<code>Line Input</code>) to avoid memory overflow. Default: 4×10⁶ (≈ 3.8 MB). Leave empty for default.</td>
+</tr>
+<tr>
+<td><code>dE</code></td>
+<td>Potential step in mV for CV, or time step in seconds for CA. Must be &gt; 0.</td>
+</tr>
+</tbody></table>
+<p><strong>Example:</strong></p>
+<pre><code class="fenced-code-block">30,0.5,,1</code></pre>
+<p>30 boxes, β = 0.5, bin_limit = default (≈ 3.8 MB), 1 mV step.</p>
+<hr>
+<h4 class="atx" id="ir-drop-ruohmcdlfno-period"><code>[IR drop: Ru(ohm),Cdl(F)(no period)]</code></h4>
+<blockquote>
+<p><strong>Conditional:</strong> This section is only processed when <code>m &lt;&gt; 0</code>. If the data line starts with <code>[</code>, both default to 0.</p>
+</blockquote>
+<p><strong>Data line:</strong> <code>Ru,Cdl</code></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Ru</code></td>
+<td>Uncompensated resistance (Ω). Use <code>0</code> to ignore.</td>
+</tr>
+<tr>
+<td><code>Cdl</code></td>
+<td>Double-layer capacitance (F). Use <code>0</code> to ignore.</td>
+</tr>
+</tbody></table>
+<p>Both must be ≥ 0.</p>
+<p><strong>Example:</strong></p>
+<pre><code class="fenced-code-block">50,1e-6</code></pre>
+<hr>
+<h4 class="atx" id="initial-concentrationsmm-or-molcm2-for-sfwith-period"><code>[Initial Concentrations(mM or mol/cm^2 for SF)(with period)]</code></h4>
+<p>Assigns initial concentrations to all <code>N</code> species. Format:</p>
+<pre><code class="fenced-code-block">SpeciesNum[,SpeciesNum2,...][or RangeStart-RangeEnd]|value;
+...</code></pre>
+<ul>
+<li>Values are in <strong>mM</strong> (mmol/L) for diffusing species, or <strong>mol/cm²</strong> for SF surface species.</li>
+<li>Species numbers can be listed individually (<code>1,3,5</code>) or as a range (<code>1-5</code>), separated by commas.</li>
+<li>The species list and value are separated by <code>|</code>.</li>
+<li>Each assignment line ends with <code>;</code> (more to follow) or <code>.</code> (last).</li>
+<li>At least one species must have a non-zero concentration; otherwise the program aborts.</li>
+<li>Concentrations must be ≥ 0.</li>
+</ul>
+<p><strong>Example — 3 species, species 1 at 1 mM, species 2 and 3 at 0 mM:</strong></p>
+<pre><code class="fenced-code-block">1|1;
+2,3|0.</code></pre>
+<p><strong>Example — species 1 only, with scientific notation:</strong></p>
+<pre><code class="fenced-code-block">1|0.1e0;
+2-6|0e0.</code></pre>
+<hr>
+<h4 class="atx" id="diffusion-coefficientscm2swith-period"><code>[Diffusion Coefficients(cm^2/s)(with period)]</code></h4>
+<blockquote>
+<p><strong>Conditional:</strong> This section is only processed when <code>m &lt;&gt; 0</code> and diffusion type is not SF. Skipped automatically when m = 0 or SF.</p>
+</blockquote>
+<p>Same format as concentrations. All values must be &gt; 0.</p>
+<p><strong>Example:</strong></p>
+<pre><code class="fenced-code-block">1-3|1e-5.</code></pre>
+<p>All three species have D = 1×10⁻⁵ cm²/s.</p>
+<hr>
+<h4 class="atx" id="saturated-surface-excessesmolcm2-for-adsorbateswith-period"><code>[Saturated Surface Excesses(mol/cm^2 for adsorbates)(with period)]</code></h4>
+<blockquote>
+<p><strong>Conditional:</strong> This section is only processed when <code>m &lt;&gt; 0</code>. Can be omitted entirely; if present but the first data line starts with <code>[</code>, it is silently skipped.</p>
+</blockquote>
+<p>Required only when adsorption is enabled (i.e., at least one species index ends with <code>a</code> in the ETR/HCR block). Assigns the Langmuir saturation surface excess Γ_max for each adsorbate.</p>
+<p>Same format as concentrations. Values must be &gt; 0 for adsorbates.</p>
+<p><strong>Example:</strong></p>
+<pre><code class="fenced-code-block">1-2|1e-10;
+3|1e-10.</code></pre>
+<hr>
+<h4 class="atx" id="adsorption-coefficientsmm-1-for-adsorbates-or-rate-constantskadskdeswith-period"><code>[Adsorption Coefficients(mM^-1 for adsorbates) or Rate Constants(kads,kdes)(with period)]</code></h4>
+<p><strong>or</strong> (equilibrium-only variant):</p>
+<h4 class="atx" id="adsorption-coefficientsmm-1-for-adsorbateswith-period"><code>[Adsorption Coefficients(mM^-1 for adsorbates)(with period)]</code></h4>
+<blockquote>
+<p><strong>Conditional:</strong> This section is only processed when <code>m &lt;&gt; 0</code>. Can be omitted entirely; if present but the first data line starts with <code>[</code>, it is silently skipped.</p>
+</blockquote>
+<p>Same format. Two modes per species:</p>
+<p><strong>Mode 1 — Equilibrium (Langmuir):</strong> Single β value per species:</p>
+<pre><code class="fenced-code-block">1|1e2;
+2|0.4.</code></pre>
+<p>Sets <code>ads_kin = 0</code> (equilibrium). The surface excess follows the instantaneous Langmuir isotherm: <code>Γ_j = β_j · c_j(0) · Γ_sat,j / (1 + Σ_k β_k · c_k(0))</code>.</p>
+<p><strong>Mode 2 — Kinetic (kads, kdes):</strong> Comma-separated pair:</p>
+<pre><code class="fenced-code-block">1|3e2,1.2e4;</code></pre>
+<p>Sets <code>kf_ads</code> and <code>kb_ads</code> individually (also accepted as <code>kads</code> and <code>kdes</code> — both labels are synonymous); <code>β</code> is computed as <code>kf/kb</code> internally. When <strong>all</strong> adsorbate species use this mode, the simulation uses kinetic Langmuir ODEs: <code>dΓ_j/dt = k_f,j · c_j(0) · (Γ_sat,j − Σ_k Γ_k) − k_b,j · Γ_j</code>.</p>
+<p><strong>Mixed input (Mode 1 + Mode 2 on the same block):</strong> Allowed. When some species are given single β values and others are given <code>kads,kdes</code> pairs, the program treats the <code>kads,kdes</code> entries by computing <code>β = kf/kb</code> and falls back to <strong>equilibrium adsorption for all species</strong>. A warning is printed:</p>
+<blockquote>
+<p><code>&lt;Warning!&gt; Adsorption in equilibrium is assumed in simulation due to lack of required kads and kdes</code></p>
+</blockquote>
+<p>Example of mixed input (equilibrium result despite species 1 having kinetic constants):</p>
+<pre><code class="fenced-code-block">1|3e2,1.2e4;   ← kf/kb → β = 0.025 internally, but equilibrium mode still used
+2|0.4.         ← direct β, equilibrium mode</code></pre>
+<p><strong>Non-competitive adsorption mode:</strong> By default all adsorbate species compete for the same surface sites (<strong>competitive Langmuir</strong>, <code>comp_ads = 1</code>). To switch to <strong>non-competitive (independent-site) Langmuir</strong> (<code>comp_ads = 0</code>), prefix <strong>any</strong> species number in the data block with a minus sign (<code>-</code>):</p>
+<pre><code class="fenced-code-block">-1|1e2;
+2|0.4.</code></pre>
+<p>When any line in this block carries the <code>-</code> prefix, <code>comp_ads</code> is set to <code>0</code> for the entire block. The isotherm and vacancy equations change as follows:</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Equilibrium isotherm</th>
+<th>Vacancy (kinetic mode)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Competitive (<code>comp_ads = 1</code>, default)</td>
+<td><code>Γ_j = β_j · c_j · Γ_sat,j / (1 + Σ_k β_k · c_k)</code></td>
+<td><code>Γ_vac,j = Γ_sat,j − Σ_k Γ_k</code></td>
+</tr>
+<tr>
+<td>Non-competitive (<code>comp_ads = 0</code>)</td>
+<td><code>Γ_j = β_j · c_j · Γ_sat,j / (1 + β_j · c_j)</code></td>
+<td><code>Γ_vac,j = Γ_sat,j − Γ_j</code></td>
+</tr>
+</tbody></table>
+<p>Each species adsorbs independently onto its own set of sites, without competing with other adsorbates. This also affects pre-adsorption equilibrium initialization when <code>+</code> is used.</p>
+<p><strong>Pre-adsorption equilibrium marker:</strong> Append <code>+</code> before the terminator (<code>;</code> or <code>.</code>) in the value field to enable pre-adsorption equilibrium (all adsorbates initialized at Langmuir equilibrium):</p>
+<pre><code class="fenced-code-block">1|3e2,1.2e4+;</code></pre>
+<hr>
+<h4 class="atx" id="current-output--simulation-output">Current Output / Simulation Output</h4>
+<p>These are <strong>two separate prompt lines</strong> (only ONE may appear in a given <code>.atn</code> file; they are mutually exclusive and share the same handler):</p>
+<ol>
+<li><code>[Current Output(CF/DF:Current Function/DeFault)(no period)]</code></li>
+<li><code>[Simulation Output(CF/DF/CPn:Current Function/DeFault/Concentration Profle)(no period)]</code></li>
+</ol>
+<blockquote>
+<p><strong>Conditional:</strong> Both are only processed when <code>m &lt;&gt; 0</code>. If the data line starts with <code>[</code>, defaults to <code>DF</code>.</p>
+</blockquote>
+<p><strong>Data line</strong> (for either prompt):</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>CF</code></td>
+<td>Current function ψ = i / xtoi (CV only; not applicable to CA or SF). The dimensional current (A) is divided by the normalization factor <strong>xtoi</strong> to produce the dimensionless current function ψ. For linear diffusion: xtoi = F·A·Cmax·√(F·v·Dmax/(R·T)). For RDE: xtoi = 0.620·F·A·(Dmax·cm)^(2/3)·ω^0.5·(ν·cm)^(-1/6)·Cmax. (n is fixed at 1; Cmax/Dmax replace C/D of the standard form.)</td>
+</tr>
+<tr>
+<td><code>DF</code></td>
+<td>Dimensional current (amperes; default)</td>
+</tr>
+<tr>
+<td><code>CP&lt;n&gt;</code></td>
+<td>Concentration profile of species <code>&lt;n&gt;</code> (e.g. <code>CP1</code>, <code>CP2</code>) + default dimensional current output</td>
+</tr>
+<tr>
+<td><code>CP&lt;n&gt;a</code></td>
+<td>Surface excess profile of adsorbed species <code>&lt;n&gt;</code> (e.g. <code>CP1a</code>)</td>
+</tr>
+<tr>
+<td><code>CP&lt;n&gt;+</code></td>
+<td>Same as <code>CP&lt;n&gt;</code>, and also generate an <code>_xyz.out</code> 3-column (t, x, c) file</td>
+</tr>
+<tr>
+<td><code>CP&lt;n&gt;-</code></td>
+<td>Plot surface concentration of species <code>&lt;n&gt;</code> as a function of time (c at x=0 vs t); not applicable to SF</td>
+</tr>
+<tr>
+<td><code>CP&lt;n&gt;_</code></td>
+<td>Plot initial concentration profile of species <code>&lt;n&gt;</code> at t=0 (c vs x at t=0); also writes <code>_xyz.out</code>; not applicable to SF</td>
+</tr>
+</tbody></table>
+<p>If the data line is invalid or unrecognized, defaults to <code>DF</code>.</p>
+<hr>
+<h4 class="atx" id="dimensionless-simulation-layer-lmaxno-period"><code>[Dimensionless Simulation Layer: Lmax(no period)]</code></h4>
+<p><strong>or</strong> the variant with natural convection:</p>
+<h4 class="atx" id="dimensionless-natural-convection-layer-and-simulation-layer-delta_conveclmaxno-period"><code>[Dimensionless Natural Convection Layer and Simulation Layer: delta_Convec,Lmax(no period)]</code></h4>
+<blockquote>
+<p><strong>Conditional:</strong> Both are only processed when <code>m &lt;&gt; 0</code>. The two variants are mutually exclusive — only one appears in a given <code>.atn</code> file.</p>
+</blockquote>
+<p><strong>Variant 1 — Lmax only:</strong>
+| Input | Meaning |
+|-------|---------|
+| <code>6</code> (or any number) | Explicit dimensionless diffusion layer thickness. Default for linear/spherical/cylindrical = 6. |
+| <code>3delta_max</code> | RDE: 3× the Levich diffusion layer. Any multiplier is allowed. |
+| (blank or next line starts with <code>[</code>) | Program auto-selects: 6 for L/S/C; <code>3*delta_max</code> for RDE; <code>length/√(D_max·τ)</code> for FD. |</p>
+<p><strong>Variant 2 — Both natural convection and Lmax:</strong>
+Two comma-separated values: <code>delta_Convec,Lmax</code></p>
+<ul>
+<li><code>delta_Convec</code> = dimensionless natural convection layer thickness. Use empty or <code>NC</code> to disable. Examples: <code>0.1</code> (enabled), `` (empty, disabled)</li>
+<li><code>Lmax</code> = same rules as Variant 1.</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="fenced-code-block">0.06546,6</code></pre>
+<hr>
+<h4 class="atx" id="netlist-netcirsp"><code>[Netlist: net/cir/sp]</code></h4>
+<p><strong>Data line:</strong> <code>net</code>, <code>cir</code>, <code>sp</code>, <code>net+</code>, <code>cir+</code>, or <code>sp+</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Netlist format</th>
+<th>Appends .atn input?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>net</code></td>
+<td>PSpice <code>.net</code></td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>cir</code></td>
+<td>PSpice/HSPICE <code>.cir</code></td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>sp</code></td>
+<td>ngspice/LTspice <code>.sp</code></td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>net+</code> / <code>cir+</code> / <code>sp+</code></td>
+<td>Same formats</td>
+<td><strong>Yes</strong> (<code>.atn</code> content appended at end of netlist)</td>
+</tr>
+</tbody></table>
+<p>Default: <code>sp</code>.</p>
+<p>When <code>+</code> is used, output files share the same base name and directory as the input file. Without <code>+</code>, files are written as <code>autonet.*</code> in the current working directory.</p>
+<hr>
+<h4 class="atx" id="do-you-want-to-run-the-simulation-immediatelyynno-period"><code>[Do you want to run the simulation immediately(Y/N)?(no period)]</code></h4>
+<p><strong>Data line:</strong> <code>Y</code>, <code>N</code>, <code>Y+</code>, or <code>N+</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Y</code></td>
+<td>Run LTspice/PSPICE immediately after netlist generation (requires <code>.\ltspice\ltspice.lnk</code> or <code>.\pspice\pspice.lnk</code>)</td>
+</tr>
+<tr>
+<td><code>N</code></td>
+<td>Generate netlist only</td>
+</tr>
+<tr>
+<td><code>Y+</code></td>
+<td>Run <strong>NGSPICE</strong> immediately (requires <code>.\ngspice\ngspice.exe</code>; netlist must be <code>.sp</code>)</td>
+</tr>
+<tr>
+<td><code>N+</code></td>
+<td>Generate <code>.sp</code> netlist for manual NGSPICE run or for use with ecTrans</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>Recommendation:</strong> Use <code>N+</code> when you plan to post-process with ecTrans 4.0, or when you want to manually edit the netlist before simulating.</p>
+</blockquote>
+<hr>
+<h4 class="atx" id="end"><code>[END]</code></h4>
+<p>Mandatory last line of the input file.</p>
+<hr>
+<h2 class="atx" id="5-output-files">5. Output Files</h2>
+<table>
+<thead>
+<tr>
+<th>Extension</th>
+<th>Contents</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>.chk</code></td>
+<td>Human-readable summary of all parsed parameters (for verification)</td>
+<td>Always</td>
+</tr>
+<tr>
+<td><code>.sp</code> / <code>.cir</code> / <code>.net</code></td>
+<td>SPICE netlist (ready to simulate)</td>
+<td>Always</td>
+</tr>
+<tr>
+<td><code>.plt</code></td>
+<td>LTspice plot settings file</td>
+<td>When <code>netlist=sp</code></td>
+</tr>
+<tr>
+<td><code>.pfg</code></td>
+<td>QSPICE plot settings file</td>
+<td>When <code>netlist=sp</code></td>
+</tr>
+<tr>
+<td><code>.atn</code></td>
+<td>Re-exported input file</td>
+<td>When using <code>sp+</code>/<code>net+</code>/<code>cir+</code></td>
+</tr>
+<tr>
+<td><code>.raw</code></td>
+<td>NGSPICE binary/ASCII simulation output</td>
+<td>When <code>Y+</code> selected or run via ecTrans</td>
+</tr>
+<tr>
+<td><code>.out</code></td>
+<td>Tab-separated simulation results</td>
+<td>After NGSPICE run + raw_reader</td>
+</tr>
+<tr>
+<td><code>.log</code></td>
+<td>NGSPICE log output</td>
+<td>After NGSPICE run</td>
+</tr>
+<tr>
+<td><code>.gp</code></td>
+<td>Gnuplot script (auto-generated)</td>
+<td>After NGSPICE run + raw_reader</td>
+</tr>
+<tr>
+<td><code>_3d.out</code></td>
+<td>3D concentration profile data matrix</td>
+<td>When CP output selected</td>
+</tr>
+<tr>
+<td><code>_xyz.out</code></td>
+<td>3-column file: t, x, c</td>
+<td>When <code>CP&lt;n&gt;+</code> selected</td>
+</tr>
+</tbody></table>
+<h3 class="atx" id="51-the-atn-output-file-and-the-netspcir-option">5.1 The <code>.atn</code> output file and the <code>net+</code>/<code>sp+</code>/<code>cir+</code> option</h3>
+<p>When you append <code>+</code> to the netlist format (<code>net+</code>, <code>sp+</code>, or <code>cir+</code>) at the
+<code>[Netlist: net/cir/sp]</code> prompt, ecNetSim sets an internal flag (<code>atn_out$ = "+"</code>)
+and changes its output behavior:</p>
+<p><strong>1.  Netlist file — input content appended inside</strong></p>
+<p>The program appends the entire <code>.atn</code> input file after a delimiter block at the
+end of the generated netlist:</p>
+<pre><code class="fenced-code-block">* INPUT SOURCE (for reference, not part of netlist)
+* ==================================================
+[Number of Reaction-diffusion Species(no period)]
+5
+...
+[END]</code></pre>
+<p>This embedded copy allows ecNetSim to <strong>re-run the simulation directly from the
+netlist file</strong>, without requiring the original <code>.atn</code> file to be present.</p>
+<p><strong>2.  Standalone <code>.atn</code> output file</strong></p>
+<p>A separate <code>.atn</code> file is also written to the output directory
+(<code>outputDir$ + file_name$ + ".atn"</code>), containing the same content.
+This gives you a clean, standalone copy of the input that produced the netlist.</p>
+<p><strong>3.  Re-running from the netlist file</strong></p>
+<p>When you later run:</p>
+<pre><code class="fenced-code-block language-bash">ecNetSimV10.x.exe myfile.sp</code></pre>
+<p>...the program detects the <code>* INPUT SOURCE...</code> marker, extracts the embedded
+<code>.atn</code> content, re-parses it, and regenerates the netlist.  This is
+functionally equivalent to re-running with the original <code>.atn</code> file.</p>
+<p><strong>4.  Without the <code>+</code> suffix (<code>net</code> / <code>sp</code> / <code>cir</code>)</strong></p>
+<p>The <code>.atn</code> content is <strong>not</strong> appended to the netlist.  The netlist file
+contains only SPICE netlist statements.  To re-run the simulation, you must
+keep the original <code>.atn</code> file separately.</p>
+<blockquote>
+<p><strong>Note:</strong> ecTrans does NOT use the <code>+</code> suffix.  It reads the netlist file
+directly and does not need the embedded <code>.atn</code> content.  The <code>+</code> suffix is
+an ecNetSim-only feature for convenience when iterating on input files.</p>
+</blockquote>
+<hr>
+<h2 class="atx" id="6-simulation-modes">6. Simulation Modes</h2>
+<h3 class="atx" id="cyclic-voltammetry-cv">Cyclic Voltammetry (CV)</h3>
+<p>The applied potential waveform is:</p>
+<pre><code class="fenced-code-block">Ei → Es (first half-scan) → Et → Es (second half-scan) → ... × cycles</code></pre>
+<p>The potential step <code>dE</code> (mV) controls the time resolution. Smaller <code>dE</code> = finer resolution but slower.</p>
+<h3 class="atx" id="chronoamperometry-ca">Chronoamperometry (CA)</h3>
+<p>The potential is stepped from Ei to Es (near-instantaneously) and held at Es. The "scan rate" field in the input file is reinterpreted as total time <code>τ</code> (s). <code>dE</code> is reinterpreted as the time step <code>dt</code> (s). For multi-cycle CA, the potential alternates between Es and Et each half-cycle.</p>
+<h3 class="atx" id="advanced-waveforms-swv-dpv-acv-eis">Advanced Waveforms (SWV, DPV, ACV, EIS)</h3>
+<p>ecNetSim generates the CV/CA waveform automatically. For other waveforms (SWV, DPV, ACV, EIS), commented-out SPICE source lines are inserted into the netlist as templates. The user manually un-comments the relevant lines:</p>
+<ul>
+<li><strong>ACV:</strong> uncomment <code>Vsin_Eapp1</code> (SIN source), comment out <code>Vdc0_Eapp1</code>.</li>
+<li><strong>SCV:</strong> uncomment <code>VSawtooth_Eapp1</code>, comment out <code>Vdc0_Eapp1</code>.</li>
+<li><strong>SWV (Osteryoung):</strong> uncomment <code>VSawtooth_Eapp1</code> and <code>Vpulse_Eapp_sum</code>, comment out <code>Vdc0_Eapp1</code> and <code>Vdc0_Eapp_sum</code>.</li>
+<li><strong>SWV (Barker/ramped):</strong> uncomment <code>Vpulse_Eapp_sum</code>, comment out <code>Vdc0_Eapp_sum</code>. The existing CV ramp is used as the base waveform.</li>
+<li><strong>DPV:</strong> uncomment <code>Vsawtooth_Eapp1</code> and <code>Vdpv_Eapp_sum</code>, comment out <code>Vdc0_Eapp1</code> and <code>Vdc0_Eapp_sum</code>.</li>
+<li><strong>EIS:</strong> uncomment <code>.include PWL_white_noise.txt</code>, comment out <code>Vdc0_Eapp1</code>.</li>
+</ul>
+<hr>
+<h2 class="atx" id="7-diffusion-geometries">7. Diffusion Geometries</h2>
+<h3 class="atx" id="linear-l">Linear (L)</h3>
+<p>Semi-infinite 1D diffusion to a planar electrode. Input: electrode area A (cm²).</p>
+<h3 class="atx" id="spherical-s">Spherical (S)</h3>
+<p>Semi-infinite spherical diffusion to a microelectrode. Input: electrode radius r (μm).</p>
+<h3 class="atx" id="cylindrical-c">Cylindrical (C)</h3>
+<p>Semi-infinite cylindrical diffusion. Input: radius (cm), length (cm).</p>
+<h3 class="atx" id="rotational-disk-electrode-rde">Rotational Disk Electrode (RDE)</h3>
+<p>Uses the Levich–Koutecký model. Input: angular velocity ω (rad/s), kinematic viscosity ν (cm²/s), electrode area A (cm²).<br>Default Lmax = 3·δ_Levich.</p>
+<h3 class="atx" id="finite-diffusion-fd">Finite Diffusion (FD)</h3>
+<p>Thin-layer cell with a reflective boundary at x = L. Input: area A (cm²), layer thickness L (cm).</p>
+<h3 class="atx" id="surface-confined-sf">Surface-confined (SF)</h3>
+<p>No spatial diffusion. All species are surface-confined (thin-film or adsorbed monolayer).<br>Input: electrode area A (cm²).<br>Rate constant k⁰ has units s⁻¹.<br>Concentration has units mol/cm².<br>CF output is not available for SF.</p>
+<hr>
+<h2 class="atx" id="8-electrochemical-techniques-supported">8. Electrochemical Techniques Supported</h2>
+<table>
+<thead>
+<tr>
+<th>Technique</th>
+<th>Method parameter</th>
+<th>Waveform</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CV</td>
+<td><code>CV</code></td>
+<td>Auto-generated sawtooth</td>
+<td>Standard</td>
+</tr>
+<tr>
+<td>CA</td>
+<td><code>CA</code></td>
+<td>DC potential step</td>
+<td>Standard</td>
+</tr>
+<tr>
+<td>LSV</td>
+<td><code>CV</code> (1 cycle, Et = Es)</td>
+<td>Single sweep</td>
+<td>Set cycles=1, Et=Es</td>
+</tr>
+<tr>
+<td>SCV</td>
+<td>Netlist template</td>
+<td>Staircase PULSE</td>
+<td>Manual edit required</td>
+</tr>
+<tr>
+<td>SWV (Osteryoung)</td>
+<td>Netlist template</td>
+<td>Staircase + square pulse</td>
+<td>Manual edit</td>
+</tr>
+<tr>
+<td>SWV (Barker)</td>
+<td>Netlist template</td>
+<td>Ramped CV + square pulse</td>
+<td>Manual edit</td>
+</tr>
+<tr>
+<td>DPV</td>
+<td>Netlist template</td>
+<td>Staircase + differential pulse</td>
+<td>Manual edit</td>
+</tr>
+<tr>
+<td>ACV</td>
+<td>Netlist template</td>
+<td>DC + SIN perturbation</td>
+<td>Manual edit</td>
+</tr>
+<tr>
+<td>EIS</td>
+<td>Netlist template</td>
+<td>White noise <code>.include</code></td>
+<td>Manual edit</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 class="atx" id="9-adsorption-support">9. Adsorption Support</h2>
+<p>To enable adsorption, append <code>a</code> to a species number in the ETR or HCR reaction formula (e.g. <code>1a</code> means species 1 is adsorbed). The program then expects:</p>
+<ul>
+<li><code>[Saturated Surface Excesses...]</code> block — Γ_max (mol/cm²) for each adsorbed species.</li>
+<li><code>[Adsorption Coefficients...]</code> block — β (mM⁻¹) for equilibrium, or kads/kdes for kinetic adsorption.</li>
+</ul>
+<h3 class="atx" id="equilibrium-langmuir-adsorption">Equilibrium Langmuir Adsorption</h3>
+<p>The surface excess is determined by the instantaneous bulk concentration at x = 0.</p>
+<p><strong>Competitive (default, <code>comp_ads = 1</code>):</strong> All adsorbates share the same surface sites:</p>
+<pre><code class="fenced-code-block">Γ_j = β_j · c_j(0) · Γ_sat,j / (1 + Σ_k β_k · c_k(0))</code></pre>
+<p><strong>Non-competitive (<code>comp_ads = 0</code>):</strong> Each species adsorbs onto independent sites (triggered by a <code>-</code> prefix; see Section 4.2):</p>
+<pre><code class="fenced-code-block">Γ_j = β_j · c_j(0) · Γ_sat,j / (1 + β_j · c_j(0))</code></pre>
+<p>This is the default adsorption mode (<code>ads_kin = 0</code>). It is activated unless <strong>all</strong> adsorbate species in the block are given <code>kads,kdes</code> pairs (see Kinetic mode below).</p>
+<h3 class="atx" id="kinetic-langmuir-adsorption">Kinetic Langmuir Adsorption</h3>
+<p>The surface excess evolves dynamically.</p>
+<p><strong>Competitive (<code>comp_ads = 1</code>, default):</strong></p>
+<pre><code class="fenced-code-block">dΓ_j/dt = k_f,j · c_j(0) · (Γ_sat,j − Σ_k Γ_k) − k_b,j · Γ_j</code></pre>
+<p><strong>Non-competitive (<code>comp_ads = 0</code>):</strong></p>
+<pre><code class="fenced-code-block">dΓ_j/dt = k_f,j · c_j(0) · (Γ_sat,j − Γ_j) − k_b,j · Γ_j</code></pre>
+<p>Activated only when <strong>all</strong> adsorbate species in the block are given <code>kads,kdes</code> pairs (<code>ads_kin = 1</code>). If any species uses a single β value (Mode 1), <code>ads_kin</code> is reset to 0 and the entire block falls back to equilibrium adsorption (see Mixed Input below).</p>
+<h3 class="atx" id="mixed-input">Mixed Input</h3>
+<p>The <code>[Adsorption Coefficients]</code> block permits mixing Mode 1 (β) and Mode 2 (kads,kdes) entries for different species in the same block. When this occurs, the <code>kads,kdes</code> pairs are internally converted to <code>β = kf/kb</code>, and the simulation proceeds with <strong>equilibrium adsorption</strong> for all species. A runtime warning is emitted:</p>
+<blockquote>
+<p><code>&lt;Warning!&gt; Adsorption in equilibrium is assumed in simulation due to lack of required kads and kdes</code></p>
+</blockquote>
+<h3 class="atx" id="adsorbate-etr">Adsorbate ETR</h3>
+<p>Adsorbate ETRs are defined by prefixing the reaction line with <code>@</code> or <code>@@</code> and using species numbers with trailing <code>a</code> (e.g. <code>1a</code>, <code>2a</code>). The <code>@</code>/<code>@@</code> prefix determines whether the formal potential is corrected for adsorption free energy.</p>
+<p><strong><code>@</code> (dependent adsorbate ETR):</strong> The input E⁰ is the standard (bulk-solution) formal potential. The program applies the Nernst correction: <code>E⁰_corrected = E⁰_input − (RT/nF)·ln(β_Ox/β_Red)</code>. This requires <code>β</code> values for both oxidized and reduced adsorbates in the <code>[Adsorption Coefficients]</code> block. Use when the adsorbed ETR is thermodynamically coupled to solution-phase E⁰.</p>
+<p><strong><code>@@</code> (independent adsorbate ETR):</strong> The input E⁰ is the surface formal potential and is used directly without correction. Use when the E⁰ is defined for the adsorbed phase and does not depend on bulk β values.</p>
+<p>Both modes share identical SPICE netlist structure: surface concentration nodes (<code>az0_5</code>), rate normalization (<code>k0_nondim = k⁰ × τ</code>), and Butler-Volmer expression. The only difference is the E⁰ treatment.</p>
+<h3 class="atx" id="pre-adsorption-equilibrium">Pre-adsorption equilibrium</h3>
+<p>Append <code>+</code> before the terminator in the Adsorption Coefficients value to initialize all adsorbates at Langmuir equilibrium before the simulation starts. The initialization formula follows the active <code>comp_ads</code> setting (competitive or non-competitive):</p>
+<pre><code class="fenced-code-block">1|3e2,1.2e4+;</code></pre>
+<p>Both electrochemically active (participating in ETR) and inactive (participating in HCR only) adsorbed species are supported.</p>
+<hr>
+<h2 class="atx" id="10-ectrans-50--ngspice-integration-andamp-post-processing">10. ecTrans 5.0 — NGSPICE Integration &amp; Post-Processing</h2>
+<h3 class="atx" id="101-how-ectrans-works">10.1 How ecTrans works</h3>
+<p>ecTrans automates the entire NGSPICE → raw data → plot pipeline:</p>
+<pre><code class="fenced-code-block">1. Parse command-line path → extract directory and base filename
+2. Delete any existing .raw, .out, _xyz.out, _3d.out files for this name
+3. Call NGSPICE in batch mode:
+   Shell ".\ngspice\ngspice -b &lt;file&gt;.sp -r &lt;file&gt;.raw -o &lt;file&gt;.log"
+4. Check .raw file exists:
+   If NOT found → "Simulation failed!" → exit
+   If found:
+     a. Call raw_reader → parse binary/ASCII .raw data
+     b. Read metadata comment from .sp file:
+        "*info for data plotting by transient:"
+        Extracts: method, difftype, Ru, Cdl, conc_start, cp_yes,
+                 cp_ads_yes, tao, t_rest, Cmax, Dmax, Lmax
+     c. Write .gp Gnuplot script (multiple plot windows)
+     d. If CP data present: call data_3d → write _3d.out
+     e. Call gnuplot → display interactive plots</code></pre>
+<h3 class="atx" id="102-raw-file-format">10.2 Raw file format</h3>
+<p>NGSPICE outputs both binary and ASCII <code>.raw</code> files. ecTrans auto-detects the format by searching for <code>Binary:</code> in the header. For binary files, variables are stored as 64-bit doubles. The first variable is always time (<code>time</code>); subsequent variables are node voltages (<code>V(node)</code>).</p>
+<h3 class="atx" id="103-metadata-in-sp-file">10.3 Metadata in .sp file</h3>
+<p>When ecNetSim generates the netlist, it always appends a metadata comment block that ecTrans reads. The <code>sp+</code>/<code>cir+</code>/<code>net+</code> suffix only controls whether the <code>.atn</code> input content is also appended; the metadata block (<code>*info for data plotting by transient:</code>) is always present regardless of the <code>+</code> suffix.</p>
+<pre><code class="fenced-code-block">*info for data plotting by transient:
+*method: CV
+*difftype: L
+*Ru: 0
+*Cdl: 0
+...</code></pre>
+<p>This allows ecTrans to configure its post-processing automatically without requiring additional user input.</p>
+<h3 class="atx" id="104-running-ectrans-manually">10.4 Running ecTrans manually</h3>
+<pre><code class="fenced-code-block language-bash">ecTransV5.0.exe myfile.sp</code></pre>
+<p>Or with NGSPICE directly (without ecTrans):</p>
+<pre><code class="fenced-code-block language-bash">ngspice -b myfile.sp -r myfile.raw -o myfile.log
+gnuplot myfile.gp</code></pre>
+<blockquote>
+<p><strong>Note:</strong> When running NGSPICE manually (without ecTrans), the <code>.gp</code> script must be manually created or modified to match your simulation parameters, as ecTrans normally generates this file automatically.</p>
+</blockquote>
+<hr>
+<h2 class="atx" id="11-gnuplot-output-andamp-concentration-profiles">11. Gnuplot Output &amp; Concentration Profiles</h2>
+<h3 class="atx" id="standard-plots-generated-cv-mode">Standard plots generated (CV mode)</h3>
+<table>
+<thead>
+<tr>
+<th>Window</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Plot 1</td>
+<td>Dimensionless current vs. dimensionless potential</td>
+</tr>
+<tr>
+<td>Plot 2</td>
+<td>Real current (A) vs. real potential (V)</td>
+</tr>
+<tr>
+<td>Plot 3 (if CP)</td>
+<td>Concentration heatmap (time × space, false-color)</td>
+</tr>
+<tr>
+<td>Plot 4 (if CP)</td>
+<td>3D surface or matrix plot</td>
+</tr>
+</tbody></table>
+<h3 class="atx" id="standard-plots-generated-ca-mode">Standard plots generated (CA mode)</h3>
+<table>
+<thead>
+<tr>
+<th>Window</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Plot 1</td>
+<td>Real current (A) vs. real time (s)</td>
+</tr>
+<tr>
+<td>Plot 2</td>
+<td>Dimensionless current vs. dimensionless time</td>
+</tr>
+<tr>
+<td>Plot 3 (if CP)</td>
+<td>Concentration heatmap</td>
+</tr>
+</tbody></table>
+<h3 class="atx" id="out-file-columns-cv-ru--0-cdl--0"><code>.out</code> file columns (CV, Ru = 0, Cdl = 0)</h3>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Point index</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Dimensionless time t/τ</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Real potential E (V)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Dimensionless current i_norm</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Conversion factor: i(A) / i_norm</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Real current i (A) = col 4 × col 5</td>
+</tr>
+<tr>
+<td>7+</td>
+<td>Concentration values for each species/box (if <code>CP</code> output selected)</td>
+</tr>
+</tbody></table>
+<p>Additional columns appear when Ru ≠ 0 or Cdl ≠ 0 (Cdl current component and IR-corrected potential).</p>
+<h3 class="atx" id="concentration-profile-option">Concentration profile option</h3>
+<p>Set <code>[Simulation Output]</code> or <code>[Current Output]</code> to <code>CP&lt;n&gt;</code> where <code>&lt;n&gt;</code> is the species number (1, 2, ...).</p>
+<p>Use <code>CP&lt;n&gt;+</code> to also output <code>_xyz.out</code> (t, x, c format, suitable for external post-processing).</p>
+<p>Use <code>CP&lt;n&gt;a</code> for adsorbed species surface excess profiles.</p>
+<p>Use <code>CP&lt;n&gt;-</code> to plot the surface concentration of species <code>&lt;n&gt;</code> (c at x = 0) as a function of time instead of the full heatmap. This is useful for surface-dominated processes or when only the boundary concentration evolution is needed. Not applicable to SF.</p>
+<p>Use <code>CP&lt;n&gt;_</code> to plot the initial spatial concentration profile of species <code>&lt;n&gt;</code> at t = 0 (c vs x) instead of the time-evolved heatmap. This also triggers <code>_xyz.out</code> output. Not applicable to SF.</p>
+<hr>
+<h2 class="atx" id="12-annotated-input-file-examples">12. Annotated Input File Examples</h2>
+<h3 class="atx" id="example-1-reversible-cv-linear-diffusion-e--c-mechanism">Example 1: Reversible CV, linear diffusion (E + C mechanism)</h3>
+<p>Below is an E + C mechanism (1e⁻ reduction followed by irreversible chemical disappearance), 2 species, linear diffusion, 2 CV cycles. This follows the same format as the reference manual for v9.6.</p>
+<pre><code class="fenced-code-block">[Method(CV/CA: Cyclic Voltammetry/ChronoAmperometry)(no period)]
+CV
+
+[Number of Reaction-diffusion Species(no period)]
+2
+
+[Electron Transfer Reactions|E0(V)|arfa|arfa2|na|k0(cm/s or s^-1 for SF)(with period)]
+1+1e&lt;-&gt;2|0.0|0.5|0.5|1|0.01.
+
+[Homogeneous Chemical Reactions|kfc|kbc(with period)]
+2&lt;-&gt;0|100|0.
+
+[Diffusion Type(L/S/C/RDE/FD/SF: Linear/Spherical/Cylindrical/Rotational Disk/Finite Diffusion/SurFace)(no period)]
+L
+
+[Area(cm^2)/Radius(um)/Radius,Length(cm)/Angular Velocity(rad/s),Kinematic Viscosity(cm^2/s),Area/Area,Thickness(cm)/Area(no period)]
+0.0314
+
+[Experimental: cycles,Ei(V),Es(V),Et(V),v(V/s) or Time(s) for CA,Temper(C.D.)(no period)]
+2,-0.5,0.5,-0.5,0.1,25
+
+[Simulation: boxnum,beta,dE(mV) or dt(s) for CA(no period)]
+100,0.4,2
+
+[IR drop: Ru(ohm),Cdl(F)(no period)]
+0,0
+
+[Initial Concentrations(mM or mol/cm^2 for SF)(with period)]
+1|1.0;
+2|0.
+
+[Diffusion Coefficients(cm^2/s)(with period)]
+1,2|5e-6.
+
+[Current Output(CF/DF:Current Function/DeFault)(no period)]
+DF
+
+[Dimensionless Simulation Layer: Lmax(no period)]
+6
+
+[Netlist: net/cir/sp]
+sp+
+
+[Do you want to run the simulation immediately(Y/N)?(no period)]
+Y+
+
+[END]</code></pre>
+<h3 class="atx" id="example-2-adsorption-with-kinetic-model-solution--adsorbate-etrs">Example 2: Adsorption with kinetic model, solution + adsorbate ETRs</h3>
+<p>This example (adapted from <code>EC_CV_ADS_SF_ETR_HCR2.atn</code>) demonstrates:</p>
+<ul>
+<li>3 species with both solution and adsorbate ETRs</li>
+<li>Kinetic adsorption with pre-adsorption equilibrium</li>
+<li>Adsorbate HCR reactions</li>
+<li>Concentration profile output</li>
+</ul>
+<pre><code class="fenced-code-block">*for ecNetSim v10.2 and higher.
+[Method(CV/CA: Cyclic Voltammetry/ChronoAmperometry)(no period)]
+CV
+[Number of Reaction-diffusion Species(no period)]
+3
+[ET Reactions|E0(V)|arfa|na|k0(cm/s or s^-1 for SF)(prefix @/@@: dependent/independent ETRs of adsorbates)(with period)]
+1+e&lt;-&gt;2|0|0.5|1|1;
+@1a+e&lt;-&gt;2a|0|0.5|1|1e8.
+[Homogeneous Chemical Reactions|kfc|kbc(prefix @: reactions of adsorbates)(with period)]
+2&lt;-&gt;3|1e10|0;
+@2a&lt;-&gt;3a|1e12|0.
+[Diffusion Type(L/S/C/RDE/FD/SF: Linear/Spherical/Cylindrical/Rotational Disk/Finite Diffusion/SurFace)(no period)]
+L
+[Area(cm^2)/Radius(um)/Radius,Length(cm)/Angular Velocity(rad/s),Kinematic Viscosity(cm^2/s),Area/Area,Thickness(cm)/Area(no period)]
+0.196
+[Experimental: cycles,Ei(V),Es(V),Et(V),v(V/s) or Time(s) for CA,Rest time(s),Temper(C.D.)(no period)]
+1,1.2,-0.5,1.2,1e4,,25.0
+[Simulation: boxnum,beta,binary reading limit,dE(mV) or dt(s) for CA(no period)]
+30,0.5,,1
+[IR drop: Ru(ohm),Cdl(F)(no period)]
+0,0
+[Initial Concentrations(mM or mol/cm^2 for SF)(with period)]
+1|1;
+2,3|0.
+[Diffusion Coefficients(cm^2/s)(with period)]
+1-3|1e-5.
+[Saturated Surface Excesses(mol/cm^2 for adsorbates)(with period)]
+1-2|1e-10;
+3|1e-10.
+[Adsorption Coefficients(mM^-1 for adsorbates) or Rate Constants(kads,kdes)(with period)]
+1|3e2,1.2e4+;
+2|1e2,0.1;
+3|3e2,1.2e4.
+[Simulation Output(CF/DF/CPn:Current Function/DeFault/Concentration Profle)(no period)]
+*CP1
+[Dimensionless Natural Convection Layer and Simulation Layer: delta_Convec,Lmax(no period)]
+*0.06546,6
+[Netlist: net/cir/sp]
+sp
+[Do you want to run the simulation immediately(Y/N)?(no period)]
+Y+
+[END]</code></pre>
+<p><strong>Notes on this example:</strong></p>
+<ul>
+<li><code>@</code> prefix on ETR line 2: dependent adsorbate ETR. E0 = 0 V will be automatically corrected to <code>E0 − (RT/nF)·ln(β_1/β_2)</code>.</li>
+<li><code>@</code> prefix on HCR line 2: ALL species in that HCR are adsorbates, and the chemical reaction occurs on the electrode surface (not in solution). Only line 2 has the <code>@</code> prefix in this example.</li>
+<li><code>+</code> before <code>;</code> in adsorption coefficient: enables pre-adsorption equilibrium. Any species line can have the <code>+</code> marker; only one declaration is needed (no need to repeat on multiple lines).</li>
+<li><code>*</code> comment lines: the <code>*CP1</code> and <code>*0.06546,6</code> are commented out; uncomment to enable.</li>
+<li><code>[Saturated Surface Excesses]</code> and <code>[Adsorption Coefficients]</code> are both present → <code>sqerr = 18</code>.</li>
+</ul>
+<h3 class="atx" id="example-3-multi-step-etr-with-adsorption-fence-mechanism">Example 3: Multi-step ETR with adsorption (fence mechanism)</h3>
+<p>This example (adapted from <code>fence_set_ADS.atn</code>) demonstrates a complex electrochemical scheme with 4 sequential ETRs, HCR cross-coupling, and equilibrium adsorption.</p>
+<pre><code class="fenced-code-block">[Method(CV/CA: Cyclic Voltammetry/ChronoAmperometry)(no period)]
+CV
+[Number of Reaction-diffusion Species(no period)]
+6
+[Electron Transfer Reactions|E0(V)|arfa|na|k0(cm/s or s^-1 for SF)(with period)]
+1-e&lt;-&gt;2|0.49|0.5|1|1e6;
+2-e&lt;-&gt;3|1.15|0.5|1|1e6;
+4-e&lt;-&gt;5|0.050|0.5|1|1e6;
+5-e&lt;-&gt;6|0.63|0.5|1|1e6.
+[Homogeneous Chemical Reactions|kfc|kbc(with period)]
+4--&gt;1|600|0;
+2a--&gt;5|290|0;
+3--&gt;6|5e3|0;
+2+5a&lt;-&gt;1+6|4.3e2|1e5.
+[Diffusion Type(L/S/C/RDE/FD/SF: Linear/Spherical/Cylindrical/Rotational Disk/Finite Diffusion/SurFace)(no period)]
+L
+[Area(cm^2)/Radius(um)/Radius,Length(cm)/Angular Velocity(rad/s),Kinematic Viscosity(cm^2/s),Area/Area,Thickness(cm)/Area(no period)]
+0.000314
+[Experimental: cycles,Ei(V),Es(V),Et(V),v(V/s) or Time(s) for CA,Temper(C.D.)(no period)]
+1,-0.4,1.4,-0.4,200,25.0
+[Simulation: boxnum,beta,dE(mV) or dt(s) for CA(no period)]
+30,0.5,1
+[IR drop: Ru(ohm),Cdl(F)(no period)]
+0,0
+[Initial Concentrations(mM or mol/cm^2 for SF)(with period)]
+1|0.1e0;
+2-6|0e0.
+[Diffusion Coefficients(cm^2/s)(with period)]
+1-6|1.0e-05.
+[Saturated Surface Excesses(mol/cm^2 for adsorbates)(with period)]
+2|6.25e-10;
+5|10e-10.
+[Adsorption Coefficients(mM^-1 for adsorbates)(with period)]
+2|0.4;
+5|1.0.
+[Current Output(CF/DF:Current Function/DeFault)(no period)]
+[Dimensionless Simulation Layer: Lmax(no period)]
+[Netlist: net/cir/sp]
+sp
+[Do you want to run the simulation immediately(Y/N)?(no period)]
+Y+
+[END]</code></pre>
+<p><strong>Notes on this example:</strong></p>
+<ul>
+<li>4 oxidation ETRs (all use <code>-e</code> notation).</li>
+<li>HCR reactions use <code>--&gt;</code> for irreversible and <code>&lt;-&gt;</code> for reversible.</li>
+<li>Adsorbed species <code>2a</code> and <code>5a</code> participate in HCR through their dissolved state. The <code>a</code> suffix in non-<code>@</code> HCR lines indicates that the species is also involved in adsorption elsewhere, but the HCR itself involves the dissolved form. For reactions between adsorbed species on the electrode surface, use the <code>@</code> prefix (see HCR <code>@</code> prefix description).</li>
+<li><code>[Current Output]</code> and <code>[Dimensionless Simulation Layer]</code> data lines are omitted (defaults applied).</li>
+<li>Only <code>[Saturated Surface Excesses]</code> present (no <code>[Adsorption Coefficients]</code> variant with kads/kdes) → equilibrium adsorption.</li>
+</ul>
+<hr>
+<h2 class="atx" id="13-error-messages-reference">13. Error Messages Reference</h2>
+<table>
+<thead>
+<tr>
+<th>Message</th>
+<th>Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Cannot open file! (ERR=53)</code></td>
+<td>Input file not found</td>
+<td>Check path and extension.</td>
+</tr>
+<tr>
+<td><code>You must have changed the prompt lines in the input file!</code></td>
+<td>Total matched prompt count ≠ expected (15/16/17/18)</td>
+<td>Verify all prompt lines match the source exactly, character by character.</td>
+</tr>
+<tr>
+<td><code>At least one species should be initially present!</code></td>
+<td>All initial concentrations are zero.</td>
+<td>Set at least one concentration &gt; 0.</td>
+</tr>
+<tr>
+<td><code>Parameters for ... can NOT be omitted!</code></td>
+<td>A required data line is missing (next line starts with <code>[</code>).</td>
+<td>Provide the required data after each prompt.</td>
+</tr>
+<tr>
+<td><code>Parameters in: ... exceed number of species</code></td>
+<td>Species index &gt; snum in concentration/diffusion/ETR/HCR.</td>
+<td>Use valid species indices (1 … snum).</td>
+</tr>
+<tr>
+<td><code>Et is larger/smaller than Es!</code></td>
+<td>Inconsistent potential window for CV.</td>
+<td>Check Ei, Es, Et ordering.</td>
+</tr>
+<tr>
+<td><code>Invalid potential range!</code></td>
+<td>Es = Ei = Et (zero range).</td>
+<td>Adjust potential values.</td>
+</tr>
+<tr>
+<td><code>TAB spaces should be removed from: ...</code></td>
+<td>TAB character detected in input line.</td>
+<td>Replace all TABs with spaces.</td>
+</tr>
+<tr>
+<td><code>CF output cannot be used for a SF simulation!</code></td>
+<td>CF selected with SF diffusion type.</td>
+<td>Use DF instead.</td>
+</tr>
+<tr>
+<td><code>CF output cannot be used for a CA simulation!</code></td>
+<td>CF selected with CA method.</td>
+<td>Use DF instead.</td>
+</tr>
+<tr>
+<td><code>ETR line without an ending ";" or "."</code></td>
+<td>ETR data line missing terminator.</td>
+<td>Add <code>;</code> (more reactions) or <code>.</code> (last reaction).</td>
+</tr>
+<tr>
+<td><code>HCR line without an ending ";" or "."</code></td>
+<td>HCR data line missing terminator.</td>
+<td>Same fix.</td>
+</tr>
+<tr>
+<td><code>Invalid ETR input lines</code></td>
+<td>Malformed ETR (wrong number of pipe separators, invalid species, etc.).</td>
+<td>Check format.</td>
+</tr>
+<tr>
+<td><code>Invalid HCR input lines</code></td>
+<td>Malformed HCR.</td>
+<td>Check format.</td>
+</tr>
+<tr>
+<td><code>Ru and Cdl cannot be negative!</code></td>
+<td>Negative Ru or Cdl.</td>
+<td>Use non-negative values.</td>
+</tr>
+<tr>
+<td><code>Concentration cannot be negative!</code></td>
+<td>Negative initial concentration.</td>
+<td>Check input values.</td>
+</tr>
+<tr>
+<td><code>Diffusion coefficient cannot be negative or zero!</code></td>
+<td>D ≤ 0 for a diffusing species.</td>
+<td>Use positive values.</td>
+</tr>
+<tr>
+<td><code>delta_max CANNOT be defined for a non-RDE simulation!!!</code></td>
+<td><code>*delta_max</code> Lmax value used for non-RDE.</td>
+<td>Use a numeric Lmax value instead.</td>
+</tr>
+<tr>
+<td><code>Adsorption coefficient cannot be negative!</code></td>
+<td>Negative β, kads, or kdes.</td>
+<td>Use positive values.</td>
+</tr>
+<tr>
+<td><code>&lt;Warning!&gt; Adsorption in equilibrium is assumed ...</code></td>
+<td>Mixed β and kads,kdes in <code>[Adsorption Coefficients]</code>, or kads/kdes present but not all species use them.</td>
+<td>Equilibrium mode used; provide kads,kdes for <strong>all</strong> adsorbates to enable kinetic mode, or use single β values consistently.</td>
+</tr>
+<tr>
+<td><code>kads and kdes MUST be assigned for simulation of adsorbate reactions</code></td>
+<td>Adsorbate species participate in HCR reactions (via <code>@</code> prefix) but no kads/kdes were given.</td>
+<td>Supply kads,kdes pairs for all adsorbates in the <code>[Adsorption Coefficients]</code> block.</td>
+</tr>
+<tr>
+<td><code>Simulation failed!</code></td>
+<td>NGSPICE ran but produced no <code>.raw</code> file.</td>
+<td>Check <code>.log</code> for errors.</td>
+</tr>
+<tr>
+<td><code>NGSPICE.EXE does not exist under ...\ngspice\</code></td>
+<td>NGSPICE binary not found.</td>
+<td>Install/copy ngspice.exe.</td>
+</tr>
+<tr>
+<td><code>LTSPICE.LNK does not exist under ...\ltspice\</code></td>
+<td>LTspice shortcut not found.</td>
+<td>Install LTspice and create shortcut.</td>
+</tr>
+<tr>
+<td><code>Warning: temperature is zero or negative!</code></td>
+<td>Non-fatal; check your temperature input.</td>
+<td>Verify temperature value.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 class="atx" id="14-advanced-tips">14. Advanced Tips</h2>
+<h3 class="atx" id="re-running-from-a-netlist-file-with-ecnetsim">Re-running from a netlist file with ecNetSim</h3>
+<p>If you used <code>sp+</code>, the <code>.sp</code> file contains the embedded <code>.atn</code> input after the netlist. You can pass the <code>.sp</code> file directly:</p>
+<pre><code class="fenced-code-block">ecNetSimV10.x.exe myfile.sp</code></pre>
+<p>The program extracts the <code>.atn</code> content, re-parses it, and regenerates the netlist.</p>
+<h3 class="atx" id="re-running-with-ectrans-recommended-workflow">Re-running with ecTrans (recommended workflow)</h3>
+<pre><code class="fenced-code-block">ecNetSimV10.x.exe myfile.atn    (Netlist=sp, Run=N)
+ecTransV5.0.exe myfile.sp       (NGSPICE + raw parsing + Gnuplot)</code></pre>
+<p>This two-step approach allows you to inspect or edit the <code>.sp</code> netlist between generation and simulation.</p>
+<h3 class="atx" id="choosing-beta-grid-expansion">Choosing beta (grid expansion)</h3>
+<ul>
+<li><code>beta = 0</code>: uniform grid. Use for thin-layer (FD) simulations where concentration varies throughout. If <code>beta = 0</code> causes numerical overflow, set a small non-zero value (e.g., <code>1e-6</code>) instead.</li>
+<li><code>beta = 0.3–0.5</code>: logarithmic expansion. Recommended for semi-infinite geometries (L, S, C, RDE). More grid points near the electrode surface.</li>
+<li>Too large a <code>beta</code> can cause numerical noise in slow-reaction zones. Start with 0.4.</li>
+</ul>
+<h3 class="atx" id="concentration-profile-resolution">Concentration profile resolution</h3>
+<p>For a detailed heatmap, set <code>boxnum ≥ 100</code> and use <code>CP&lt;n&gt;</code>. The Gnuplot heatmap automatically scales x to dimensionless coordinates <code>x/√(D_max·τ)</code> and time to <code>t/τ</code>.</p>
+<h3 class="atx" id="multiple-electron-transfers">Multiple electron transfers</h3>
+<p>For a multi-step process where intermediates are detectable, define <strong>separate ETR lines</strong>:</p>
+<pre><code class="fenced-code-block">1-e&lt;-&gt;2|0.49|0.5|1|1e6;
+2-e&lt;-&gt;3|1.15|0.5|1|1e6.</code></pre>
+<h3 class="atx" id="oxidation-reactions">Oxidation reactions</h3>
+<p>Use <code>-</code> before <code>e</code> to indicate oxidation (species loses electrons):</p>
+<pre><code class="fenced-code-block">1-e&lt;-&gt;2|0.0|0.5|1|0.01.</code></pre>
+<p>The sign of <code>na</code> is automatically derived from the <code>+</code>/<code>-</code> direction: the program multiplies the input <code>na</code> value by <code>enum/Abs(enum)</code>. Therefore, always input <code>na</code> as a <strong>positive</strong> number.</p>
+<h3 class="atx" id="batch-wrapper-runbat">Batch wrapper (run.bat)</h3>
+<pre><code class="fenced-code-block language-bat">@echo off
+"C:\NETSIM\ecNetSimV10.x.exe" "%CD%\%~1"</code></pre>
+<p>Copy as <code>ecnetsim.bat</code> to a directory in PATH. Then:</p>
+<pre><code class="fenced-code-block language-cmd">cd C:\myproject
+ecnetsim input.atn</code></pre>
+<hr>
+<h2 class="atx" id="15-version-history-selected">15. Version History (selected)</h2>
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Change</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2007-01-30</td>
+<td>Multiple electron transfer reactions added</td>
+</tr>
+<tr>
+<td>2018-01-04</td>
+<td>QB64 compatibility (CALLS → CALL)</td>
+</tr>
+<tr>
+<td>2020-04-09</td>
+<td>Removed redundant 1kΩ resistors</td>
+</tr>
+<tr>
+<td>2023-03-31</td>
+<td>LTspice compatibility</td>
+</tr>
+<tr>
+<td>2023-06-14</td>
+<td>Bug fix: species #10 assignment in HCR</td>
+</tr>
+<tr>
+<td>2024-03-15</td>
+<td>Overflow fix for Es = Et; Ei = Es allowed</td>
+</tr>
+<tr>
+<td>2026-04-15</td>
+<td>PWL format updated for new LTspice version</td>
+</tr>
+<tr>
+<td>2026-04-19</td>
+<td><code>.net</code>, <code>.cir</code>, <code>.sp</code> format selection added</td>
+</tr>
+<tr>
+<td>2026-04-26</td>
+<td>Strict prompt-line validation; multiple parameter checks</td>
+</tr>
+<tr>
+<td>2026-04-30</td>
+<td>Terminator checks for ETR/HCR/concentration blocks; Current Output and Simulation Output as separate prompts</td>
+</tr>
+<tr>
+<td>2026-05-01</td>
+<td>TAB character detection; memo (<code>*</code>) line skip</td>
+</tr>
+<tr>
+<td>2026-05-04</td>
+<td>LTspice <code>.plt</code> and QSPICE <code>.pfg</code> plot file generation</td>
+</tr>
+<tr>
+<td>2026-05-06</td>
+<td>NGSPICE integration; <code>.tran UIC</code> fix for initial conditions</td>
+</tr>
+<tr>
+<td>2026-05-09</td>
+<td><code>SafeVal()</code> function — fixes QB64 <code>Val()</code> bug on negative-exponent sci-notation</td>
+</tr>
+<tr>
+<td>2026-05-13–16</td>
+<td>Adsorption of electrochemically active species</td>
+</tr>
+<tr>
+<td>2026-05-17–18</td>
+<td>Adsorption of electrochemically inactive species</td>
+</tr>
+<tr>
+<td>2026-05-22–23</td>
+<td>Concentration profile output (CP option)</td>
+</tr>
+<tr>
+<td>2026-05-23–24</td>
+<td>Heatmap plotting; binary 3D data reading</td>
+</tr>
+<tr>
+<td>2026-05-26</td>
+<td>SWV, SCV, DPV, ACV, EIS netlist templates</td>
+</tr>
+<tr>
+<td>2026-05-27</td>
+<td><code>_xyz.out</code> option (<code>CP&lt;n&gt;+</code>); large-file <code>data_3d</code> optimization</td>
+</tr>
+<tr>
+<td>2026-05-30</td>
+<td><code>@</code>/<code>@@</code> prefix for adsorbate ETRs; dependent (E⁰ corrected by β) vs independent (E⁰ direct)</td>
+</tr>
+<tr>
+<td>2026-05-31</td>
+<td>HCR <code>&lt;-&gt;</code>/<code>--&gt;</code> separator; <code>@</code> prefix for adsorbate HCR</td>
+</tr>
+<tr>
+<td>2026-06-01</td>
+<td>Kinetic adsorption (kads, kdes); pre-adsorption equilibrium marker (<code>+</code>)</td>
+</tr>
+<tr>
+<td>2026-06-01</td>
+<td>Rest time parameter; binary reading limit; natural convection correction</td>
+</tr>
+<tr>
+<td>2026-06-01</td>
+<td>ecTrans 4.0: standalone NGSPICE runner with raw_reader and Gnuplot integration</td>
+</tr>
+<tr>
+<td>2026-06-05</td>
+<td><code>arfa</code>/<code>arfa2</code> → <code>alpha</code>/<code>alpha2</code>; <code>E0</code> → <code>E0'</code> (ETR parameter rename)</td>
+</tr>
+<tr>
+<td>2026-06-05</td>
+<td><code>net+</code>/<code>sp+</code>/<code>cir+</code> option: append <code>.atn</code> input after netlist; re-export <code>.atn</code> file</td>
+</tr>
+<tr>
+<td>2026-06-06</td>
+<td>Grammar checks for <code>gamma_max</code> / <code>ads_kf_kb_beta</code>; adsorption input validation improved</td>
+</tr>
+<tr>
+<td>2026-06-08</td>
+<td><code>CP&lt;n&gt;-</code>: surface concentration vs time plot; <code>CP&lt;n&gt;_</code>: initial concentration profile at t=0</td>
+</tr>
+<tr>
+<td>2026-06-08</td>
+<td>ecTrans 5.0: supports <code>CP&lt;n&gt;-</code> (surface conc. vs time) and <code>CP&lt;n&gt;_</code> (t=0 profile) plotting</td>
+</tr>
+</tbody></table>
+<hr>
+<p><em>End of Manual — ecNetSim_LTPS_NGS V10.7 &amp; ecTrans V5.0</em></p>
+</article>
+  
+</body>
+</html>
