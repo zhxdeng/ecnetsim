@@ -265,6 +265,45 @@ p.subtitle { color:#666; margin:-4px 0 10px; text-align:center; font-size: 13px;
 #logPasswordMsg { font-size:13px; min-height:20px; margin-top:8px; }
 #logPasswordActions { display:flex; gap:8px; margin-top:16px; justify-content:center; }
 
+/* Custom modal overlay for tips */
+#customModalOverlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(0,0,0,0.55); z-index:4000;
+  justify-content:center; align-items:center;
+}
+#customModalBox {
+  background:white; padding:32px 36px 28px; border-radius:16px;
+  box-shadow:0 12px 48px rgba(0,0,0,0.35); text-align:center;
+  max-width:520px; width:90%;
+}
+#customModalIcon {
+  font-size:42px; margin-bottom:8px;
+}
+#customModalMsg {
+  font-size:15px; line-height:1.6; color:#222; margin:8px 0 20px;
+  text-align:left;
+}
+#customModalBtn {
+  background:#4a90d9; color:white; border:none; padding:10px 36px;
+  font-size:15px; border-radius:8px; cursor:pointer; font-weight:600;
+  transition:background .2s;
+}
+#customModalBtn:hover { background:#357abd; }
+#customModalBtn:active { background:#2a5f9e; }
+#customModalActions { display:flex; gap:12px; margin-top:20px; justify-content:center; }
+#customModalContinue {
+  background:#4a90d9; color:white; border:none; padding:10px 28px;
+  font-size:15px; border-radius:8px; cursor:pointer; font-weight:600;
+  transition:background .2s; min-width:100px;
+}
+#customModalContinue:hover { background:#357abd; }
+#customModalCancel {
+  background:#e0e0e0; color:#333; border:none; padding:10px 28px;
+  font-size:15px; border-radius:8px; cursor:pointer; font-weight:500;
+  transition:background .2s; min-width:100px;
+}
+#customModalCancel:hover { background:#ccc; }
+
 /* Input Editor Section */
 #inputEditor { resize: none; min-height: 100px; }
 
@@ -372,7 +411,7 @@ p.subtitle { color:#666; margin:-4px 0 10px; text-align:center; font-size: 13px;
     <!-- Right Panel: Netlist Output -->
     <div class="split-panel">
       <div class="split-panel-header">
-        <span class="split-panel-label">&#128196; Netlist Output</span><button type="button" id="btnDownload" class="btn-primary" style="padding: 3px 10px; font-size: 11px; margin-left: 8px;">&#128190; Save</button><button type="button" id="btnSimulate" class="btn-primary" style="padding: 4px 10px; font-size: 11px; margin-left: 4px; width: 72px;" title="On-line simulation with EEcircuit in &quot;netlist&quot; mode">Simulate</button><button type="button" id="btnSimulate2" class="btn-primary" style="padding: 4px 10px; font-size: 11px; margin-left: 4px; width: 72px;">Simulate2</button>
+        <span class="split-panel-label">&#128196; Netlist Output</span><button type="button" id="btnDownload" class="btn-primary" style="padding: 3px 10px; font-size: 11px; margin-left: 8px;">&#128190; Save</button><button type="button" id="btnSimulate" class="btn-primary" style="padding: 4px 10px; font-size: 11px; margin-left: 4px; width: 72px;" title="On-line simulation with EEcircuit">Simulate</button><button type="button" id="btnSimulate2" class="btn-primary" style="padding: 4px 10px; font-size: 11px; margin-left: 4px; width: 72px;">Simulate2</button><button type="button" id="btnSimulate3" class="btn-primary" style="padding: 4px 10px; font-size: 11px; margin-left: 4px; width: 72px;">Simulate3</button>
       </div>
       <div id="errorInOutput"></div>
       <textarea id="output" placeholder="Output will appear here..." spellcheck="false"></textarea>
@@ -399,6 +438,18 @@ p.subtitle { color:#666; margin:-4px 0 10px; text-align:center; font-size: 13px;
     <div id="logPasswordActions">
       <button type="button" class="btn-primary" id="logPwdOk">Confirm</button>
       <button type="button" class="btn-gray" id="logPwdCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Custom modal dialog -->
+<div id="customModalOverlay">
+  <div id="customModalBox">
+    <div id="customModalIcon">&#128161;</div>
+    <div id="customModalMsg"></div>
+    <div id="customModalActions">
+      <button type="button" id="customModalContinue">Continue</button>
+      <button type="button" id="customModalCancel">Cancel</button>
     </div>
   </div>
 </div>
@@ -1236,16 +1287,43 @@ document.getElementById('btnDownload').onclick = function() {
   }
 };
 
-// Simulate button - open GEN2 eecircuit.com in new window
+// Custom modal dialog
+function showModal(msgHtml, onContinue) {
+  var overlay = document.getElementById('customModalOverlay');
+  var msgEl = document.getElementById('customModalMsg');
+  msgEl.innerHTML = msgHtml;
+  overlay.style.display = 'flex';
+  document.getElementById('customModalContinue').onclick = function() {
+    overlay.style.display = 'none';
+    if (onContinue) onContinue();
+  };
+  document.getElementById('customModalCancel').onclick = function() {
+    overlay.style.display = 'none';
+  };
+}
+
+// Simulate button - open EEcircuit in new window
 document.getElementById('btnSimulate').onclick = function() {
   if (!isVerified('simulate')) return;
-  window.open('https://gen2.eecircuit.com', '_blank');
+  showModal('<span style="font-weight:700;">Important:</span> Set <span style="color:#e65100;font-weight:700;">"N+"</span> as the input parameter for <span style="color:#e65100;font-weight:700;">[Do you want to run the simulation immediately(Y/N)?(no period)]</span>, and <span style="font-weight:700;">Re-generate the netlist</span> file again before go to EEcircuit for on-line simulation.', function() {
+    window.open('https://eecircuit.com/', '_blank');
+  });
 };
 
-// Simulate2 button - open GEN1 eecircuit.com in new window
+// Simulate2 button - open GEN2 eecircuit.com in new window
 document.getElementById('btnSimulate2').onclick = function() {
   if (!isVerified('simulate2')) return;
-  window.open('https://gen1.eecircuit.com/', '_blank');
+  showModal('<span style="font-weight:700;">Important:</span> Set <span style="color:#e65100;font-weight:700;">"N+"</span> as the input parameter for <span style="color:#e65100;font-weight:700;">[Do you want to run the simulation immediately(Y/N)?(no period)]</span>, and <span style="font-weight:700;">Re-generate the netlist</span> file again before go to EEcircuit for on-line simulation.', function() {
+    window.open('https://gen2.eecircuit.com/', '_blank');
+  });
+};
+
+// Simulate3 button - open GEN1 eecircuit.com in new window
+document.getElementById('btnSimulate3').onclick = function() {
+  if (!isVerified('simulate3')) return;
+  showModal('<span style="font-weight:700;">Important:</span> Set <span style="color:#e65100;font-weight:700;">"N+"</span> as the input parameter for <span style="color:#e65100;font-weight:700;">[Do you want to run the simulation immediately(Y/N)?(no period)]</span>, and <span style="font-weight:700;">Re-generate the netlist</span> file again before go to EEcircuit for on-line simulation.', function() {
+    window.open('https://gen1.eecircuit.com/', '_blank');
+  });
 };
 
 // Download chk (via API)
