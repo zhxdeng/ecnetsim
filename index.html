@@ -1305,7 +1305,7 @@ function showModal(msgHtml, onContinue) {
 // Simulate button - open EEcircuit in new window
 document.getElementById('btnSimulate').onclick = function() {
   if (!isVerified('simulate')) return;
-  showModal('<span style="font-weight:700;">Important:</span> Set <span style="color:#e65100;font-weight:700;">"N+"</span> as the input parameter for <span style="color:#e65100;font-weight:700;">[Do you want to run the simulation immediately(Y/N)?(no period)]</span>, and <span style="font-weight:700;">Re-generate the netlist</span> file again before go to EEcircuit for on-line simulation.', function() {
+  showModal('<span style="font-weight:700;">Important:</span> Set <span style="color:#e65100;font-weight:700;">"Y+"</span> as the input parameter for <span style="color:#e65100;font-weight:700;">[Do you want to run the simulation immediately(Y/N)?(no period)]</span>, and <span style="font-weight:700;">Re-generate the netlist</span> file again before go to EEcircuit for on-line simulation.', function() {
     window.open('https://eecircuit.com/', '_blank');
   });
 };
@@ -1313,7 +1313,7 @@ document.getElementById('btnSimulate').onclick = function() {
 // Simulate2 button - open GEN2 eecircuit.com in new window
 document.getElementById('btnSimulate2').onclick = function() {
   if (!isVerified('simulate2')) return;
-  showModal('<span style="font-weight:700;">Important:</span> Set <span style="color:#e65100;font-weight:700;">"N+"</span> as the input parameter for <span style="color:#e65100;font-weight:700;">[Do you want to run the simulation immediately(Y/N)?(no period)]</span>, and <span style="font-weight:700;">Re-generate the netlist</span> file again before go to EEcircuit for on-line simulation.', function() {
+  showModal('<span style="font-weight:700;">Important:</span> Set <span style="color:#e65100;font-weight:700;">"Y+"</span> as the input parameter for <span style="color:#e65100;font-weight:700;">[Do you want to run the simulation immediately(Y/N)?(no period)]</span>, and <span style="font-weight:700;">Re-generate the netlist</span> file again before go to EEcircuit for on-line simulation.', function() {
     window.open('https://gen2.eecircuit.com/', '_blank');
   });
 };
@@ -1321,7 +1321,7 @@ document.getElementById('btnSimulate2').onclick = function() {
 // Simulate3 button - open GEN1 eecircuit.com in new window
 document.getElementById('btnSimulate3').onclick = function() {
   if (!isVerified('simulate3')) return;
-  showModal('<span style="font-weight:700;">Important:</span> Set <span style="color:#e65100;font-weight:700;">"N+"</span> as the input parameter for <span style="color:#e65100;font-weight:700;">[Do you want to run the simulation immediately(Y/N)?(no period)]</span>, and <span style="font-weight:700;">Re-generate the netlist</span> file again before go to EEcircuit for on-line simulation.', function() {
+  showModal('<span style="font-weight:700;">Important:</span> Set <span style="color:#e65100;font-weight:700;">"Y+"</span> as the input parameter for <span style="color:#e65100;font-weight:700;">[Do you want to run the simulation immediately(Y/N)?(no period)]</span>, and <span style="font-weight:700;">Re-generate the netlist</span> file again before go to EEcircuit for on-line simulation.', function() {
     window.open('https://gen1.eecircuit.com/', '_blank');
   });
 };
