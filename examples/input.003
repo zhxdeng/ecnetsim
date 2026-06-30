@@ -1,0 +1,49 @@
+[Method(CV/CA: Cyclic Voltammetry/ChronoAmperometry)(no period)]
+CV
+[Number of Reaction-diffusion Species(no period)]
+6
+[Electron Transfer Reactions|E0(V)|arfa|na|k0(cm/s or s^-1 for SF)(with period)]
+1-e<->2|0.49|0.5|1|1e6;
+2-e<->3|1.15|0.5|1|1e6;
+4-e<->5|0.050|0.5|1|1e6;
+5-e<->6|0.63|0.5|1|1e6.
+[Homogeneous Chemical Reactions|kfc|kbc(with period)]
+4-->1|600|0;
+2-->5|290|0;
+3-->6|5e3|0;
+2+5<->1+6|4.3e2|1e5.
+[Diffusion Type(L/S/C/RDE/FD/SF: Linear/Spherical/Cylindrical/Rotational Disk/Finite Diffusion/SurFace)(no period)]
+L
+[Area(cm^2)/Radius(um)/Radius,Length(cm)/Angular Velocity(rad/s),Kinematic Viscosity(cm^2/s),Area/Area,Thickness(cm)/Area(no period)]
+1E-6
+[Experimental: cycles,Ei(V),Es(V),Et(V),v(V/s) or Time(s) for CA,Temper(C.D.)(no period)]
+1,-0.4,1.4,-0.4,200,25.0
+[Simulation: boxnum,beta,dE(mV) or dt(s) for CA(no period)]
+20,0.5,1
+[IR drop: Ru(ohm),Cdl(F)(no period)]
+0,0
+[Initial Concentrations(mM or mol/cm^2 for SF)(with period)]
+1|1;
+2-6|0.
+[Diffusion Coefficients(cm^2/s)(with period)]
+1-6|1e-5.
+[Current Output(CF/DF:Current Function/DeFault)(no period)]
+DF
+[Dimensionless Simulation Layer: Lmax(no period)]
+[Netlist: net/cir/sp]
+cir
+[Do you want to run the simulation immediately(Y/N)?(no period)]
+Y
+[END]
+******************************************************
+<A fence scheme>
+
+Reference
+
+[1] Electrochemical Behavior of Thiolate-Bridged Manganese Dimers.
+
+    Organometallics, 1988, 7, 357-365
+
+    Leslie J. Lyons, Marvin H. Tegen, Kenneth J. Haller, Dennis H. Evans* and Paul M. Treichel
+
+    Department of Chemistry, University of Wisconsin-Madison, Madison(USA).

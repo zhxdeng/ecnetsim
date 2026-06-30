@@ -511,15 +511,27 @@ document.addEventListener('DOMContentLoaded', function() {
   loadDefaultFile();
 });
 
-// 自动加载默认 ATN 文件
+// 自动加载随机 ATN 文件（从 examples/ 目录中随机选取）
 function loadDefaultFile() {
-  var defaultFile = 'ee.atn';
-  fetch(defaultFile)
+  var manifestFile = 'examples/files.json';
+  fetch(manifestFile)
     .then(function(response) {
-      if (!response.ok) throw new Error('File not found');
-      return response.text();
+      if (!response.ok) throw new Error('Manifest not found');
+      return response.json();
     })
-    .then(function(atnContent) {
+    .then(function(fileList) {
+      if (!fileList || fileList.length === 0) throw new Error('Empty file list');
+      var defaultFile = fileList[Math.floor(Math.random() * fileList.length)];
+      return fetch('examples/' + defaultFile).then(function(response) {
+        if (!response.ok) throw new Error('File not found: ' + defaultFile);
+        return response.text();
+      }).then(function(atnContent) {
+        return { name: defaultFile, content: atnContent };
+      });
+    })
+    .then(function(result) {
+      var defaultFile = result.name;
+      var atnContent = result.content;
       // 如果原始文件没有 [Netlist: net/cir/sp]，则在 [Do you want to run...] 前插入
       if (!/\bNetlist:\s*net\/cir\/sp\b/i.test(atnContent)) {
         var lines = atnContent.split(/\r?\n/);

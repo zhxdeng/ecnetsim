@@ -1,0 +1,39 @@
+[Method(CV/CA: Cyclic Voltammetry/ChronoAmperometry)(no period)]
+CV
+[Number of Reaction-diffusion Species(no period)]
+4
+[Electron Transfer Reactions|E0(V)|arfa|na|k0(cm/s or s^-1 for SF)(with period)]
+1+e<->2|0.0|0.5|1|1e-2;
+3+e<->4|0.3|0.5|1|1e-2.
+[Homogeneous Chemical Reactions|kfc|kbc(with period)]
+2-->3|1e5|0;
+1+4<->3+3|0.5|1e-2.
+[Diffusion Type(L/S/C/RDE/FD/SF: Linear/Spherical/Cylindrical/Rotational Disk/Finite Diffusion/SurFace)(no period)]
+L
+[Area(cm^2)/Radius(um)/Radius,Length(cm)/Angular Velocity(rad/s),Kinematic Viscosity(cm^2/s),Area/Area,Thickness(cm)/Area(no period)]
+1E-6
+[Experimental: cycles,Ei(V),Es(V),Et(V),v(V/s) or Time(s) for CA,Temper(C.D.)(no period)]
+4,0.6,-0.4,0.6,1,25.0
+[Simulation: boxnum,beta,dE(mV) or dt(s) for CA(no period)]
+20,0.5,1
+[IR drop: Ru(ohm),Cdl(F)(no period)]
+0,0
+[Initial Concentrations(mM or mol/cm^2 for SF)(with period)]
+1|5;
+2-4|0.
+[Diffusion Coefficients(cm^2/s)(with period)]
+1-4|5e-6.
+[Current Output(CF/DF:Current Function/DeFault)(no period)]
+DF
+[Dimensionless Simulation Layer: Lmax(no period)]
+[Netlist: net/cir/sp]
+sp
+[Do you want to run the simulation immediately(Y/N)?(no period)]
+Y
+[END]
+******************************************************
+<A ECE-DISP SCHEME>
+
+Reference
+
+
