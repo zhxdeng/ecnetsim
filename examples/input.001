@@ -32,7 +32,7 @@ DF
 [Netlist: net/cir/sp]
 sp
 [Do you want to run the simulation immediately(Y/N)?(no period)]
-Y
+Y+
 [END]
 ******************************************************
 <A section of the fence scheme>
