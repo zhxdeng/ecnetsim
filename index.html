@@ -412,7 +412,7 @@ p.subtitle { color:#666; margin:-4px 0 10px; text-align:center; font-size: 13px;
     <!-- Right Panel: Netlist Output -->
     <div class="split-panel">
       <div class="split-panel-header">
-        <span class="split-panel-label">&#128196; Netlist Output</span><button type="button" id="btnDownload" class="btn-primary" style="padding: 3px 10px; font-size: 11px; margin-left: 8px;">&#128190; Save</button><button type="button" id="btnSimulate" class="btn-primary" style="padding: 4px 10px; font-size: 11px; margin-left: 4px; width: 72px;" title="Simulation with EEcircuit">Simulate</button><button type="button" id="btnSimulate2" class="btn-primary" style="padding: 4px 10px; font-size: 11px; margin-left: 4px; width: 72px;" title="Earlier version of EEcircuit">Simulate2</button><button type="button" id="btnSimulate3" class="btn-primary" style="padding: 4px 10px; font-size: 11px; margin-left: 4px; width: 72px;" title="Plotting of simulation results">CSV Plot</button>
+        <span class="split-panel-label">&#128196; Netlist Output</span><button type="button" id="btnDownload" class="btn-primary" style="padding: 3px 10px; font-size: 11px; margin-left: 8px;">&#128190; Save</button><button type="button" id="btnSimulate" class="btn-primary" style="padding: 4px 10px; font-size: 11px; margin-left: 4px; width: 72px;" title="Simulation with EEcircuit">Simulate</button><button type="button" id="btnSimulate3" class="btn-primary" style="padding: 4px 10px; font-size: 11px; margin-left: 4px; width: 72px;" title="Plotting of simulation results">CSV Plot</button><button type="button" id="btnHelp" class="btn-primary" style="padding: 4px 10px; font-size: 11px; margin-left: 4px; width: 72px;" title="Download help video">Help</button>
       </div>
       <div id="errorInOutput"></div>
       <textarea id="output" placeholder="Output will appear here..." spellcheck="false"></textarea>
@@ -1323,18 +1323,21 @@ document.getElementById('btnSimulate').onclick = function() {
   });
 };
 
-// Simulate2 button - open GEN1 eecircuit.com in new window
-document.getElementById('btnSimulate2').onclick = function() {
-  if (!isVerified('simulate2')) return;
-  showModal('<span style="font-weight:700;">Important:</span> Set "<span style="color:#e65100;font-weight:700;">Y+</span>" (or "<span style="color:#e65100;font-weight:700;">N+</span>") as the input parameter for <span style="color:#e65100;font-weight:700;">[Do you want to run the simulation immediately(Y/N)?(no period)]</span>, and <span style="font-weight:700;">Re-generate the netlist</span> file again before copying &amp; pasting it into EEcircuit for on-line simulation.', function() {
-    window.open('https://gen1.eecircuit.com/', '_blank');
-  });
-};
-
 // Simulate3 button - open CSV Plot in new window
 document.getElementById('btnSimulate3').onclick = function() {
   if (!isVerified('simulate3')) return;
   window.open('https://www.csvplot.com/', '_blank');
+};
+
+// Help button - download help video
+document.getElementById('btnHelp').onclick = function() {
+  if (!isVerified('help')) return;
+  var a = document.createElement('a');
+  a.href = 'Video_help.mp4';
+  a.download = 'Video_help.mp4';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 };
 
 // Download chk (via API)
