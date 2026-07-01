@@ -412,7 +412,7 @@ p.subtitle { color:#666; margin:-4px 0 10px; text-align:center; font-size: 13px;
     <!-- Right Panel: Netlist Output -->
     <div class="split-panel">
       <div class="split-panel-header">
-        <span class="split-panel-label">&#128196; Netlist Output</span><button type="button" id="btnDownload" class="btn-primary" style="padding: 3px 10px; font-size: 11px; margin-left: 8px;">&#128190; Save</button><button type="button" id="btnSimulate" class="btn-primary" style="padding: 4px 10px; font-size: 11px; margin-left: 4px; width: 72px;" title="Simulation with EEcircuit">Simulate</button><button type="button" id="btnSimulate3" class="btn-primary" style="padding: 4px 10px; font-size: 11px; margin-left: 4px; width: 72px;" title="Plotting of simulation results">CSV Plot</button><button type="button" id="btnHelp" class="btn-primary" style="padding: 4px 10px; font-size: 11px; margin-left: 4px; width: 72px;" title="Download help video">Help</button>
+        <span class="split-panel-label">&#128196; Netlist Output</span><button type="button" id="btnDownload" class="btn-primary" style="padding: 3px 10px; font-size: 11px; margin-left: 8px;">&#128190; Save</button><button type="button" id="btnSimulate" style="background:none; border:none; color:#1a5faa; padding:3px 0; font-size:12px; font-weight:600; cursor:pointer; margin-left:8px;" title="Simulate with EEcircuit">&#9654; Simulate</button><button type="button" id="btnSimulate3" style="background:none; border:none; color:#1a5faa; padding:3px 0; font-size:12px; font-weight:600; cursor:pointer; margin-left:8px;" title="Plot simulation results (*.CSV)">&#128200; Plot</button><button type="button" id="btnHelp" style="background:none; border:none; color:#1a5faa; padding:3px 0; font-size:12px; font-weight:600; cursor:pointer; margin-left:8px;" title="Download help video">&#10067; Help</button>
       </div>
       <div id="errorInOutput"></div>
       <textarea id="output" placeholder="Output will appear here..." spellcheck="false"></textarea>
@@ -1323,7 +1323,7 @@ document.getElementById('btnSimulate').onclick = function() {
   });
 };
 
-// Simulate3 button - open CSV Plot in new window
+// Simulate3 button - open Plot in new window
 document.getElementById('btnSimulate3').onclick = function() {
   if (!isVerified('simulate3')) return;
   window.open('https://www.csvplot.com/', '_blank');
