@@ -225,7 +225,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 
       <!-- Upload -->
       <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-        <input type="file" id="fileInput" accept="text/csv,text/plain,text/tab-separated-values,application/vnd.ms-excel" style="display:none">
+        <input type="file" id="fileInput" style="display:none">
         <div class="icon">📂</div>
         <div class="text">Drop CSV here, or <strong>click to browse</strong></div>
         <div class="upload-info" id="uploadInfo" style="display:none"></div>
@@ -450,7 +450,7 @@ function loadCSV(file){
 function handleFile(file){
   if(!file) return;
   const ext=file.name.split('.').pop().toLowerCase();
-  if(!['csv','tsv','txt'].includes(ext)){Toast.error('Please select a CSV/TSV/TXT file');return}
+  if(!['csv','tsv','txt'].includes(ext)){Toast.error('Unsupported: '+file.name+' — please select .csv/.tsv/.txt');return}
   loadCSV(file).then(res=>{
     const h=res.meta.fields||[],rd=res.data;
     if(!h.length||!rd.length){Toast.error('CSV is empty or malformed');return}
