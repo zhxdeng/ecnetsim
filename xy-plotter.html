@@ -28,8 +28,12 @@ body.dark{
 }
 body.dark .chart-wrap{background:#1e2128;border-color:#3a3f4b}
 body.dark .upload-zone{background:#25282f;border-color:#3a3f4b}
-body.dark #dataModal>div{background:#25282f;border-color:#3a3f4b}
-body.dark #dataModal table th{background:#1a1d23}
+body.dark #dataModal>div{background:#25282f!important;border-color:#3a3f4b;color:#e0e0e0}
+body.dark #dataModal table th{background:#1a1d23;color:#e0e0e0}
+body.dark #dataModal table td{color:#d0d4dc}
+body.dark #dataModal table .rn{color:#8b8fa3}
+body.dark #dataModal table tr:hover td{background:#2d313a}
+body.dark #dataModal button{color:#d0d4dc}
 body.dark input,body.dark select{background:#25282f;color:#e0e0e0;border-color:#3a3f4b}
 body.dark input::placeholder,body.dark select{color:#8b8fa3}
 
@@ -979,7 +983,7 @@ function esc(s){return typeof s!=='string'?String(s):s.replace(/&/g,'&amp;').rep
 
 console.log('X-Y Plotter for ecNetSimWeb ready. Upload a CSV file to begin.');
 
-// Dark mode: mobile follows system, desktop uses manual toggle with localStorage
+// Dark mode: mobile follows system, desktop manual toggle (no persistence)
 var sysDark=window.matchMedia('(prefers-color-scheme: dark)');
 var mobileMQ=window.matchMedia('(max-width: 900px)');
 var btnTheme=document.getElementById('btnTheme');
@@ -994,7 +998,7 @@ function setupTheme(){
     applyTheme(sysDark.matches,false);
   }else{
     btnTheme.style.display='';
-    applyTheme(localStorage.getItem('darkMode')==='1',false);
+    applyTheme(false,false);
   }
 }
 sysDark.addEventListener('change',function(e){if(mobileMQ.matches)applyTheme(e.matches,true)});
@@ -1002,7 +1006,6 @@ mobileMQ.addEventListener('change',function(){setupTheme();if(App.chart)renderCh
 btnTheme.addEventListener('click',function(){
   if(mobileMQ.matches)return;
   document.body.classList.toggle('dark');
-  localStorage.setItem('darkMode',document.body.classList.contains('dark')?'1':'0');
   btnTheme.textContent=document.body.classList.contains('dark')?'☀️':'🌙';
   if(App.chart)renderChart(true);
 });
