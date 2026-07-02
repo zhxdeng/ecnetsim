@@ -44,7 +44,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 /* ===== Upload Zone ===== */
 .upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:14px 16px;text-align:center;cursor:pointer;position:relative;transition:border .2s;background:var(--card);margin-bottom:6px}
 .upload-zone:hover,.upload-zone.dragover{border-color:var(--primary);background:#f0f3ff}
-.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
 .upload-zone .icon{font-size:30px;margin-bottom:6px}
 .upload-zone .text{font-size:14px;color:var(--text-muted)}
 .upload-zone .text strong{color:var(--primary)}
@@ -137,10 +136,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 }
 @media(max-width:600px){
   .app{padding:4px}
+  .header{display:flex!important;flex-direction:column;align-items:stretch!important;gap:4px}
   .header h1{font-size:14px}
-  .header-actions{flex-wrap:wrap;width:100%;gap:4px}
-  .header-actions .btn{padding:3px 7px;font-size:11px}
-  #dpiSelect{flex:1;min-width:56px;font-size:10px;padding:3px 4px}
+  .header>div{flex-wrap:nowrap!important;overflow-x:auto;gap:3px}
+  .header-actions{flex-wrap:nowrap!important;width:auto;gap:3px;flex-shrink:0}
+  .header-actions .btn{white-space:nowrap;padding:3px 5px;font-size:10px}
+  #chartTools{flex-wrap:nowrap!important;flex-shrink:0;gap:3px;font-size:10px}
+  #dpiSelect{flex-shrink:0;font-size:10px;padding:2px 4px;min-width:auto}
   .left-panel > div{padding:6px;margin-bottom:4px}
   .upload-zone{padding:8px;margin-bottom:4px}
   .upload-zone .icon{font-size:18px;margin-bottom:3px}
@@ -222,8 +224,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     <div class="left-panel">
 
       <!-- Upload -->
-      <div class="upload-zone" id="uploadZone">
-        <input type="file" id="fileInput" accept=".csv,.tsv,.txt">
+      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+        <input type="file" id="fileInput" accept="text/csv,text/plain,text/tab-separated-values,.csv,.tsv,.txt" style="display:none">
         <div class="icon">📂</div>
         <div class="text">Drop CSV here, or <strong>click to browse</strong></div>
         <div class="upload-info" id="uploadInfo" style="display:none"></div>
@@ -906,22 +908,28 @@ document.getElementById('btnFocus').addEventListener('click',()=>{
   tools.style.zIndex='1001'; tools.style.background='var(--card)';
   tools.style.padding='4px 16px'; tools.style.border='1px solid var(--border)';
   tools.style.borderRadius='8px'; tools.style.boxShadow='0 2px 12px rgba(0,0,0,0.12)';
-  tools.style.cursor='grab'; tools.style.userSelect='none';
-  // Drag support
+  tools.style.cursor='grab'; tools.style.userSelect='none'; tools.style.touchAction='none';
+  // Drag support (mouse + touch via Pointer Events)
   let dx=0,dy=0, dragging=false;
-  tools.addEventListener('mousedown',e=>{
+  tools.addEventListener('pointerdown',e=>{
     if(e.target.tagName==='INPUT'||e.target.tagName==='BUTTON'||e.target.tagName==='LABEL') return;
     dragging=true; const r=tools.getBoundingClientRect();
     dx=e.clientX-r.left; dy=e.clientY-r.top;
     tools.style.cursor='grabbing';
+    tools.setPointerCapture(e.pointerId);
     e.preventDefault();
   });
-  document.addEventListener('mousemove',e=>{
+  tools.addEventListener('pointermove',e=>{
     if(!dragging) return;
     tools.style.left=(e.clientX-dx)+'px'; tools.style.top=(e.clientY-dy)+'px';
     tools.style.right='auto'; tools.style.transform='none';
   });
-  document.addEventListener('mouseup',()=>{
+  tools.addEventListener('pointerup',e=>{
+    if(!dragging) return;
+    dragging=false; tools.style.cursor='grab';
+    try{tools.releasePointerCapture(e.pointerId)}catch(_){}
+  });
+  tools.addEventListener('pointercancel',()=>{
     if(!dragging) return;
     dragging=false; tools.style.cursor='grab';
   });
