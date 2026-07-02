@@ -429,7 +429,7 @@ const ExprEval = (() => {
 const App = {
   h:[], d:[], cm:{}, fn:'', traces:[], chart:null, _nid:1, xLabel:'', yLabel:'', showTooltips:false, showGrid:true, xRev:true, yRev:false, xMin:'', xMax:'', yMin:'', yMax:'', _rangeInit:false,
   L:'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-  _cs:['#4f6ef7','#e74c5e','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e67e22','#3498db','#e84393','#00b894'],
+  _cs:['#e74c5e','#4f6ef7','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e67e22','#3498db','#e84393','#00b894'],
   reset(){
     if(this.chart){this.chart.destroy();this.chart=null}
     this.h=[]; this.d=[]; this.cm={}; this.fn=''; this.traces=[]; this._nid=1; this.xLabel=''; this.yLabel=''; this.showTooltips=false; this.showGrid=true; this.xRev=true; this.yRev=false; this.xMin=''; this.xMax=''; this.yMin=''; this.yMax=''; this._rangeInit=false;
