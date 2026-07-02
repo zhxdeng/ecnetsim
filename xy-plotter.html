@@ -58,6 +58,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .axis-labels .al label{font-size:12px;color:var(--text-muted);font-weight:500;white-space:nowrap}
 .axis-labels .al input{padding:5px 10px;border:1px solid var(--border);border-radius:5px;font-size:14px;outline:none;width:110px}
 .axis-labels .al input:focus{border-color:var(--primary)}
+.axis-range{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;min-width:0}
+.axis-range .ar{display:flex;align-items:center;gap:3px;min-width:0}
+.axis-range .ar label{font-size:12px;color:var(--text-muted);font-weight:500;white-space:nowrap;width:34px;flex-shrink:0}
+.axis-range .ar input{width:58%;min-width:0;padding:2px 2px;border:1px solid var(--border);border-radius:4px;font-size:12px;outline:none;box-sizing:border-box}
+.axis-range .ar input:focus{border-color:var(--primary)}
 
 /* ===== Traces ===== */
 .trace-list{display:flex;flex-direction:column;gap:4px;margin-bottom:6px}
@@ -124,19 +129,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .toast.success{background:var(--primary)}
 
 /* ===== Responsive ===== */
-@media(max-width:1100px){
-  .main-grid{grid-template-columns:340px 1fr}
-}
 @media(max-width:900px){
   body{overflow-y:auto}
   .app{height:auto;min-height:100vh}
   .main-grid{grid-template-columns:1fr}
-  header[style*="grid-template-columns"]{grid-template-columns:1fr!important}
   .left-panel{overflow-y:visible}
 }
 @media(max-width:600px){
   .app{padding:4px}
-  .header{flex-direction:column;align-items:start;gap:4px}
   .header h1{font-size:14px}
   .header-actions{flex-wrap:wrap;width:100%;gap:4px}
   .header-actions .btn{padding:3px 7px;font-size:11px}
@@ -146,13 +146,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   .upload-zone .icon{font-size:18px;margin-bottom:3px}
   .upload-zone .text{font-size:11px}
   .upload-info{font-size:10px;gap:3px}
-  .axis-labels{gap:3px;margin-bottom:3px}
-  .axis-labels .al input{width:60px;font-size:11px;padding:2px 5px}
+  .axis-labels .al input{width:50px;font-size:11px;padding:2px 5px}
   .axis-labels .al label{font-size:10px}
+  .axis-range .ar label{font-size:9px;width:20px}
+  .axis-range .ar input{font-size:10px;padding:2px 2px;width:50%}
+  #btnAutoScale{font-size:10px!important}
   .trace-row{padding:4px 6px}
   .trace-row-header input[type=text]{font-size:10px;padding:1px 3px}
   .trace-exprs .eg label{font-size:10px}
-  .trace-exprs .eg .er select{flex:0 0 56px;font-size:10px;padding:1px 2px}
+  .trace-exprs .eg .er select{flex:0 0 50px;font-size:10px;padding:1px 2px}
   .trace-exprs .eg .er input[type=text]{font-size:10px;padding:1px 4px;height:22px}
   .trace-exprs .eg .hint{font-size:8px}
   .trace-style{gap:2px;margin-top:3px}
@@ -187,9 +189,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 
   <!-- Header -->
   <header class="header" style="display:grid;grid-template-columns:340px 1fr;gap:12px;align-items:center">
-    <h1>📈 Plotter for ecNetSimWeb</h1>
+    <h1 id="headerTitle">📈 Plotter for ecNetSimWeb</h1>
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px">
-      <div id="chartTools" style="display:none;align-items:center;gap:6px;flex-wrap:wrap;font-size:11px;color:var(--text-muted)">
+      <div id="chartTools" style="display:none;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px;color:var(--text-muted)">
         <span>🖱️ Drag · Pan · Dbl-click reset</span>
         <label style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:2px"><input type="checkbox" id="toggleTooltip"> Values</label>
         <label style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:2px"><input type="checkbox" id="toggleGrid" checked> Grid</label>
@@ -197,7 +199,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
         <label style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:2px"><input type="checkbox" id="toggleYRev"> Y↕</label>
         <button id="btnFocus" style="background:none;border:none;cursor:pointer;font-size:13px;padding:0 4px;color:var(--text-muted)" title="Expand chart">⛶</button>
       </div>
-      <div class="header-actions" style="flex-shrink:0">
+      <div class="header-actions" id="headerActions" style="flex-shrink:0">
       <button class="btn btn-outline btn-sm" id="btnData" title="View data table">📊 Data</button>
       <button class="btn btn-outline btn-sm" id="btnExportSVG" title="Export vector SVG">📐 SVG</button>
       <button class="btn btn-outline btn-sm" id="btnExport" title="Export chart as PNG">📷 PNG</button>
@@ -227,12 +229,19 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
         <div class="upload-info" id="uploadInfo" style="display:none"></div>
       </div>
 
-      <!-- Axis labels -->
+      <!-- Axis labels & range -->
       <div id="axisCard" class="hidden">
         <div class="axis-labels">
           <div class="al"><label>X label</label><input type="text" id="xLabel" placeholder="X"></div>
           <div class="al"><label>Y label</label><input type="text" id="yLabel" placeholder="Y"></div>
         </div>
+        <div class="axis-range">
+          <div class="ar"><label>X min</label><input type="number" id="xMin" step="0.05" placeholder="auto"></div>
+          <div class="ar"><label>Y min</label><input type="number" id="yMin" step="0.05" placeholder="auto"></div>
+          <div class="ar"><label>X max</label><input type="number" id="xMax" step="0.05" placeholder="auto"></div>
+          <div class="ar"><label>Y max</label><input type="number" id="yMax" step="0.05" placeholder="auto"></div>
+        </div>
+        <a id="btnAutoScale" style="cursor:pointer;color:var(--primary);text-decoration:none;font-size:12px;display:block;text-align:right;margin-top:1px">↻ Auto</a>
       </div>
 
       <!-- Traces -->
@@ -400,12 +409,12 @@ const ExprEval = (() => {
 //  App State
 // ============================================================
 const App = {
-  h:[], d:[], cm:{}, fn:'', traces:[], chart:null, _nid:1, xLabel:'', yLabel:'', showTooltips:false, showGrid:true, xRev:true, yRev:false,
+  h:[], d:[], cm:{}, fn:'', traces:[], chart:null, _nid:1, xLabel:'', yLabel:'', showTooltips:false, showGrid:true, xRev:true, yRev:false, xMin:'', xMax:'', yMin:'', yMax:'', _rangeInit:false,
   L:'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
   _cs:['#e74c5e','#4f6ef7','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e67e22','#3498db','#e84393','#00b894'],
   reset(){
     if(this.chart){this.chart.destroy();this.chart=null}
-    this.h=[]; this.d=[]; this.cm={}; this.fn=''; this.traces=[]; this._nid=1; this.xLabel=''; this.yLabel=''; this.showTooltips=false; this.showGrid=true; this.xRev=true; this.yRev=false;
+    this.h=[]; this.d=[]; this.cm={}; this.fn=''; this.traces=[]; this._nid=1; this.xLabel=''; this.yLabel=''; this.showTooltips=false; this.showGrid=true; this.xRev=true; this.yRev=false; this.xMin=''; this.xMax=''; this.yMin=''; this.yMax=''; this._rangeInit=false;
   },
   addTrace(x,y){
     const idx=this.traces.length;
@@ -460,8 +469,11 @@ function handleFile(file){
     document.getElementById('xLabel').value=rawX;
     document.getElementById('yLabel').value=rawY;
     document.getElementById('axisCard').classList.remove('hidden');
+    // Reset axis range inputs for new data
+    App.xMin=''; App.xMax=''; App.yMin=''; App.yMax=''; App._rangeInit=false;
+    ['xMin','xMax','yMin','yMax'].forEach(id=>document.getElementById(id).value='');
     // Auto-plot
-    setTimeout(renderChart, 50);
+    setTimeout(()=>renderChart(), 50);
   }).catch(e=>Toast.error('CSV parse failed: '+e.message));
 }
 
@@ -627,6 +639,9 @@ function renderChart(silent){
   datasets.forEach(ds=>ds.data.forEach(p=>{allX.push(p.x);allY.push(p.y)}));
   const nr=a=>{if(!a.length)return{min:-1,max:1};let mn=Math.min(...a),mx=Math.max(...a),r=mx-mn;if(r===0){mn-=1;mx+=1}else{const pad=r*0.05;mn-=pad;mx+=pad}return{min:mn,max:mx}};
   const xR=nr(allX),yR=nr(allY);
+  // Apply user-defined axis range if set
+  const xMin=App.xMin!==''?parseFloat(App.xMin):undefined,xMax=App.xMax!==''?parseFloat(App.xMax):undefined;
+  const yMin=App.yMin!==''?parseFloat(App.yMin):undefined,yMax=App.yMax!==''?parseFloat(App.yMax):undefined;
 
   Chart.register('zoom',ChartZoom);
   App.chart=new Chart(ctx,{
@@ -640,13 +655,24 @@ function renderChart(silent){
         zoom:{zoom:{wheel:{enabled:false},pinch:{enabled:true},drag:{enabled:true,backgroundColor:'rgba(79,110,247,0.08)',borderColor:'#4f6ef7',borderWidth:1},mode:'xy'},pan:{enabled:true,mode:'xy'},limits:{x:{min:'original',max:'original'},y:{min:'original',max:'original'}}}
       },
       scales:{
-        x:{type:'linear',reverse:App.xRev,position:'bottom',title:{display:true,text:App.xLabel||'X',color:'#000',font:{size:16,weight:'600'}},ticks:{color:'#000',font:{size:12}},grid:{color:App.showGrid?'rgba(0,0,0,0.12)':'transparent',display:App.showGrid},border:{color:'#000',width:1.5},suggestedMin:xR.min,suggestedMax:xR.max},
+        x:{type:'linear',reverse:App.xRev,position:'bottom',title:{display:true,text:App.xLabel||'X',color:'#000',font:{size:16,weight:'600'}},ticks:{color:'#000',font:{size:12}},grid:{color:App.showGrid?'rgba(0,0,0,0.12)':'transparent',display:App.showGrid},border:{color:'#000',width:1.5},suggestedMin:xR.min,suggestedMax:xR.max,min:xMin,max:xMax},
         xTop:{type:'linear',reverse:App.xRev,position:'top',grid:{display:false},border:{color:'#000',width:1.5},ticks:{display:false},title:{display:false}},
-        y:{type:'linear',reverse:App.yRev,position:'left',title:{display:true,text:App.yLabel||'Y',color:'#000',font:{size:16,weight:'600'}},ticks:{color:'#000',font:{size:12}},grid:{color:App.showGrid?'rgba(0,0,0,0.12)':'transparent',display:App.showGrid},border:{color:'#000',width:1.5},suggestedMin:yR.min,suggestedMax:yR.max},
+        y:{type:'linear',reverse:App.yRev,position:'left',title:{display:true,text:App.yLabel||'Y',color:'#000',font:{size:16,weight:'600'}},ticks:{color:'#000',font:{size:12}},grid:{color:App.showGrid?'rgba(0,0,0,0.12)':'transparent',display:App.showGrid},border:{color:'#000',width:1.5},suggestedMin:yR.min,suggestedMax:yR.max,min:yMin,max:yMax},
         yRight:{type:'linear',reverse:App.yRev,position:'right',grid:{display:false},border:{color:'#000',width:1.5},ticks:{display:false},title:{display:false}}
       }
     }
   });
+  // Fill auto range values after chart renders
+  if(!App._rangeInit) setTimeout(()=>{
+    App._rangeInit=true;
+    const xs=App.chart?.scales?.x, ys=App.chart?.scales?.y;
+    if(xs&&ys){
+      document.getElementById('xMin').value=xs.min.toPrecision(4);
+      document.getElementById('xMax').value=xs.max.toPrecision(4);
+      document.getElementById('yMin').value=ys.min.toPrecision(4);
+      document.getElementById('yMax').value=ys.max.toPrecision(4);
+    }
+  },100);
   // Toggle init
   document.getElementById('toggleTooltip').checked=App.showTooltips;
   document.getElementById('toggleGrid').checked=App.showGrid;
@@ -673,7 +699,7 @@ const uz=document.getElementById('uploadZone'),fi=document.getElementById('fileI
 uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('dragover')});
 uz.addEventListener('dragleave',()=>uz.classList.remove('dragover'));
 uz.addEventListener('drop',e=>{e.preventDefault();uz.classList.remove('dragover');const f=e.dataTransfer.files[0];if(f)handleFile(f)});
-fi.addEventListener('change',()=>{if(fi.files[0])handleFile(fi.files[0])});
+fi.addEventListener('change',()=>{const f=fi.files[0];fi.value='';if(f)handleFile(f)});
 
 document.getElementById('btnAddTrace').addEventListener('click',()=>{App.addTrace('','');renderTraces()});
 document.getElementById('btnPlot').addEventListener('click',renderChart);
@@ -701,6 +727,35 @@ document.getElementById('yLabel').addEventListener('input',()=>{
   App.yLabel=document.getElementById('yLabel').value;
   if(App.chart){App.chart.options.scales.y.title.text=App.yLabel||'Y';App.chart.update()}
 });
+// Axis range handlers
+['xMin','xMax','yMin','yMax'].forEach(id=>{
+  const el=document.getElementById(id);
+  el.addEventListener('input',()=>{
+    App[id]=el.value;
+    if(App.chart) renderChart(true);
+  });
+  // On focus, if empty, fill from current chart scale
+  el.addEventListener('focus',()=>{
+    if(el.value.trim()===''&&App.chart){
+      const axis=id[0], bound=id.endsWith('Min')?'min':'max';
+      const v=App.chart.scales[axis][bound];
+      if(v!=null){el.value=v.toPrecision(4);el.dispatchEvent(new Event('input'))}
+    }
+  });
+  // Wheel: start from current chart scale
+  el.addEventListener('wheel',e=>{
+    e.preventDefault();
+    const step=parseFloat(el.step)||0.05;
+    let cur=parseFloat(el.value);
+    if(isNaN(cur)){
+      const axis=id[0], bound=id.endsWith('Min')?'min':'max';
+      cur=App.chart?.scales?.[axis]?.[bound];
+      if(cur==null) cur=0;
+    }
+    el.value=(cur+(e.deltaY<0?step:-step)).toPrecision(4);
+    el.dispatchEvent(new Event('input'));
+  },{passive:false});
+});
 document.getElementById('toggleTooltip').addEventListener('change',()=>{
   App.showTooltips=document.getElementById('toggleTooltip').checked;
   if(App.chart){App.chart.options.plugins.tooltip.enabled=App.showTooltips;App.chart.update()}
@@ -715,6 +770,13 @@ document.getElementById('toggleGrid').addEventListener('change',()=>{
     });
     App.chart.update()
   }
+});
+// Auto Scale: reset to auto range
+document.getElementById('btnAutoScale').addEventListener('click',()=>{
+  if(!App.chart){Toast.error('Plot first');return}
+  App.xMin=''; App.xMax=''; App.yMin=''; App.yMax=''; App._rangeInit=false;
+  ['xMin','xMax','yMin','yMax'].forEach(id=>document.getElementById(id).value='');
+  renderChart(true);
 });
 
 document.getElementById('toggleXRev').addEventListener('change',()=>{
@@ -791,6 +853,7 @@ document.getElementById('btnReset').addEventListener('click',()=>{
   document.getElementById('axisCard').classList.add('hidden');
   showCards(false);
   fi.value='';
+  ['xMin','xMax','yMin','yMax'].forEach(id=>document.getElementById(id).value='');
   Toast.info('Reset complete');
 });
 
@@ -814,7 +877,7 @@ document.getElementById('btnFocus').addEventListener('click',()=>{
   if(chart.style.display==='none'||!App.chart){Toast.error('Plot first');return}
   // Save states
   focusState={};
-  ['header','input-area','axisCard','tracesCard'].forEach(id=>{
+  ['headerTitle','headerActions','input-area','axisCard','tracesCard'].forEach(id=>{
     const el=document.getElementById(id)||document.querySelector('.'+id);
     if(el){focusState[id]={disp:el.style.display||'',el}}
   });
@@ -833,6 +896,35 @@ document.getElementById('btnFocus').addEventListener('click',()=>{
   const canvas=document.getElementById('chartCanvas');
   canvas.style.flex='1'; canvas.style.width='100%'; canvas.style.minHeight='0';
   if(App.chart){App.chart.options.maintainAspectRatio=false;App.chart.resize()}
+  // Bring chartTools as a draggable floating bar
+  const tools=document.getElementById('chartTools');
+  focusState._toolsDisp=tools.style.display;
+  focusState._toolsCS=tools.style.cssText;
+  tools.style.cssText=''; // reset then apply
+  tools.style.display='flex'; tools.style.fontSize='12px'; tools.style.gap='10px'; tools.style.position='fixed';
+  tools.style.top='10px'; tools.style.right='60px';
+  tools.style.zIndex='1001'; tools.style.background='var(--card)';
+  tools.style.padding='4px 16px'; tools.style.border='1px solid var(--border)';
+  tools.style.borderRadius='8px'; tools.style.boxShadow='0 2px 12px rgba(0,0,0,0.12)';
+  tools.style.cursor='grab'; tools.style.userSelect='none';
+  // Drag support
+  let dx=0,dy=0, dragging=false;
+  tools.addEventListener('mousedown',e=>{
+    if(e.target.tagName==='INPUT'||e.target.tagName==='BUTTON'||e.target.tagName==='LABEL') return;
+    dragging=true; const r=tools.getBoundingClientRect();
+    dx=e.clientX-r.left; dy=e.clientY-r.top;
+    tools.style.cursor='grabbing';
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove',e=>{
+    if(!dragging) return;
+    tools.style.left=(e.clientX-dx)+'px'; tools.style.top=(e.clientY-dy)+'px';
+    tools.style.right='auto'; tools.style.transform='none';
+  });
+  document.addEventListener('mouseup',()=>{
+    if(!dragging) return;
+    dragging=false; tools.style.cursor='grab';
+  });
   // Save for exit
   focusState._chart=chart;
   focusState._asp=App.chart?.options?.maintainAspectRatio;
@@ -850,6 +942,10 @@ function exitFocus(){
   focusState._grid.el.style.maxWidth=focusState._grid.mw;
   focusState._chart.style.cssText='';
   document.getElementById('chartCanvas').style.cssText='';
+  // Restore chartTools
+  const t=document.getElementById('chartTools');
+  t.style.cssText=focusState._toolsCS||'';
+  t.style.display=focusState._toolsDisp||'none';
   renderChart(true);
   document.getElementById('btnFocus').textContent='⛶';
   document.getElementById('btnFocus').title='Expand chart';
