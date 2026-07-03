@@ -229,7 +229,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
         <option value="6">432 DPI</option>
         <option value="8">576 DPI</option>
       </select>
-      <button class="btn btn-outline btn-sm" id="btnReset">🔄 Reset</button>
+      <label style="display:inline-flex;align-items:center;gap:2px;font-size:12px;color:var(--text-muted);cursor:pointer"><input type="checkbox" id="pngWhiteBg" checked> BG</label>
     </div>
   </header>
 
@@ -243,7 +243,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
         <input type="file" id="fileInput" style="display:none">
         <div class="icon">📂</div>
-        <div class="text">Drop CSV here, or <strong>click to browse</strong></div>
+        <div class="text">Drop CSV file here, or <strong>click to browse</strong></div>
         <div class="upload-info" id="uploadInfo" style="display:none"></div>
       </div>
 
@@ -427,12 +427,12 @@ const ExprEval = (() => {
 //  App State
 // ============================================================
 const App = {
-  h:[], d:[], cm:{}, fn:'', traces:[], chart:null, _nid:1, xLabel:'', yLabel:'', showTooltips:false, showGrid:true, xRev:true, yRev:false, xMin:'', xMax:'', yMin:'', yMax:'', _rangeInit:false,
+  h:[], d:[], cm:{}, fn:'', traces:[], chart:null, _nid:1, xLabel:'', yLabel:'', showTooltips:false, showGrid:true, xRev:true, yRev:false, xMin:'', xMax:'', yMin:'', yMax:'', _rangeInit:false, padL:0, padR:0, padT:0, padB:0,
   L:'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
   _cs:['#e74c5e','#4f6ef7','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e67e22','#3498db','#e84393','#00b894'],
   reset(){
     if(this.chart){this.chart.destroy();this.chart=null}
-    this.h=[]; this.d=[]; this.cm={}; this.fn=''; this.traces=[]; this._nid=1; this.xLabel=''; this.yLabel=''; this.showTooltips=false; this.showGrid=true; this.xRev=true; this.yRev=false; this.xMin=''; this.xMax=''; this.yMin=''; this.yMax=''; this._rangeInit=false;
+    this.h=[]; this.d=[]; this.cm={}; this.fn=''; this.traces=[]; this._nid=1; this.xLabel=''; this.yLabel=''; this.showTooltips=false; this.showGrid=true; this.xRev=true; this.yRev=false; this.xMin=''; this.xMax=''; this.yMin=''; this.yMax=''; this._rangeInit=false; this.padL=0; this.padR=0; this.padT=0; this.padB=0;
   },
   addTrace(x,y){
     const idx=this.traces.length;
@@ -446,12 +446,22 @@ const App = {
 // ============================================================
 //  CSV Loading
 // ============================================================
-function loadCSV(file){
+function loadCSV(file,skipFirst){
   return new Promise((res,rej)=>{
     const r=new FileReader();
     r.onload=e=>{
-      Papa.parse(e.target.result,{
-        header:true,skipEmptyLines:true,dynamicTyping:true,
+      let raw=e.target.result;
+      if(skipFirst) raw=raw.split('\n').slice(1).join('\n');
+      // Delimiter detection: check first line for \t, ',', ';'
+      const firstLine=raw.split('\n')[0];
+      const counts={'\t':0,',':0,';':0};
+      for(const ch of firstLine){if(ch in counts)counts[ch]++}
+      let delim=','; let max=0;
+      for(const [d,c] of Object.entries(counts)){
+        if(c>max){max=c;delim=d}
+      }
+      Papa.parse(raw,{
+        header:true,skipEmptyLines:true,dynamicTyping:true,delimiter:delim,
         transformHeader:h=>h.trim(),
         transform:v=>typeof v==='string'?isNaN(parseFloat(v))?v:parseFloat(v):v,
         complete:r=>{if(r.errors.length)console.warn('CSV warnings:',r.errors);res(r)},
@@ -466,8 +476,9 @@ function loadCSV(file){
 function handleFile(file){
   if(!file) return;
   const ext=file.name.split('.').pop().toLowerCase();
-  if(ext!=='csv'){Toast.error('Unsupported: '+file.name+' — please select a .csv file');return}
-  loadCSV(file).then(res=>{
+  if(!['csv','dat','out','txt'].includes(ext)){Toast.error('Unsupported: '+file.name+' — please select .csv/.dat/.out/.txt file');return}
+  const isOut=ext==='out';
+  loadCSV(file,isOut).then(res=>{
     const h=res.meta.fields||[],rd=res.data;
     if(!h.length||!rd.length){Toast.error('CSV is empty or malformed');return}
     const cm={}; h.forEach((n,i)=>{cm[n]=i; if(i<26&&!/^[A-Za-z]$/.test(n)) cm[App.L[i]]=i});
@@ -478,11 +489,11 @@ function handleFile(file){
     document.getElementById('uploadInfo').innerHTML=`<span class="badge badge-ok">✓ ${file.name}</span><span>${d.length} rows</span><span>${h.length} cols</span>`;
 
     showPreview();
-    initTraces();
+    initTraces(isOut?2:-1,isOut?3:-1);
     showCards(true);
-    // Set default axis labels from the first trace's columns
-    const rawX=h.length>1?h[1]:(h[0]||'X');
-    const rawY=h.length>2?h[2]:(h.length>1?h[1]:(h[0]||'Y'));
+    // Set default axis labels
+    const rawX=isOut?(h[2]||'X'):(h.length>1?h[1]:(h[0]||'X'));
+    const rawY=isOut?(h[3]||'Y'):(h.length>2?h[2]:(h.length>1?h[1]:(h[0]||'Y')));
     App.xLabel=rawX; App.yLabel=rawY;
     document.getElementById('xLabel').value=rawX;
     document.getElementById('yLabel').value=rawY;
@@ -519,10 +530,12 @@ function showPreview(){
 //  UI: Traces
 // ============================================================
 
-function initTraces(){
+function initTraces(xIdx,yIdx){
   App.traces=[]; App._nid=1;
   const c=App.h, l=App.L;
-  App.addTrace(c.length>1?l[1]:c.length>0?l[0]:'', c.length>2?l[2]:c.length>1?l[1]:c.length>0?l[0]:'');
+  const xc=xIdx!=null&&xIdx>=0&&xIdx<c.length?l[xIdx]:(c.length>1?l[1]:c.length>0?l[0]:'');
+  const yc=yIdx!=null&&yIdx>=0&&yIdx<c.length?l[yIdx]:(c.length>2?l[2]:c.length>1?l[1]:c.length>0?l[0]:'');
+  App.addTrace(xc, yc);
   renderTraces();
 }
 
@@ -669,6 +682,7 @@ function renderChart(silent){
     options:{
       responsive:true,maintainAspectRatio:false,animation:{duration:300},
       interaction:{mode:'nearest',intersect:false},
+      layout:{padding:{left:App.padL,right:App.padR,top:App.padT,bottom:App.padB}},
       plugins:{
         legend:{position:'top',labels:{usePointStyle:true,boxWidth:8,boxHeight:8,padding:4,font:{size:13}},title:{display:false}},
         tooltip:{enabled:App.showTooltips,backgroundColor:tc.tooltipBg,titleColor:tc.tooltipText,bodyColor:tc.tooltipText,cornerRadius:4,padding:10,titleFont:{size:14},bodyFont:{size:14},callbacks:{label:ctx=>{const p=ctx.parsed;return` ${ctx.dataset.label}: (${p.x.toPrecision(5)}, ${p.y.toPrecision(5)})`}}},
@@ -722,11 +736,16 @@ uz.addEventListener('drop',e=>{e.preventDefault();uz.classList.remove('dragover'
 fi.addEventListener('change',()=>{const f=fi.files[0];fi.value='';if(f)handleFile(f)});
 
 document.getElementById('btnAddTrace').addEventListener('click',()=>{App.addTrace('','');renderTraces()});
-document.getElementById('btnPlot').addEventListener('click',renderChart);
+document.getElementById('btnPlot').addEventListener('click',()=>{
+  if(App.chart){App.padL=0;App.padR=0;App.padT=0;App.padB=0}
+  renderChart();
+});
 
 // Double-click on chart to restore original view
 document.getElementById('chartCard').addEventListener('dblclick',()=>{
-  if(App.chart){renderChart(true)}
+  if(!App.chart) return;
+  App.padL=0; App.padR=0; App.padT=0; App.padB=0;
+  renderChart(true);
   if(focusState&&App.chart){
     const cc=document.getElementById('chartCard');
     cc.style.display='flex'; cc.style.flexDirection='column';
@@ -815,6 +834,47 @@ document.getElementById('toggleYRev').addEventListener('change',()=>{
   }
 });
 
+// ===== Adjust chart area padding =====
+const PAD_STEP=10;
+function adjustPadding(dir){
+  if(!App.chart) return;
+  switch(dir){
+    case 'up':    App.padB+=PAD_STEP; break;
+    case 'down':  App.padT+=PAD_STEP; break;
+    case 'left':  App.padR+=PAD_STEP; break;
+    case 'right': App.padL+=PAD_STEP; break;
+  }
+  App.chart.options.layout.padding={left:App.padL,right:App.padR,top:App.padT,bottom:App.padB};
+  App.chart.update();
+}
+
+// Keyboard arrows
+document.addEventListener('keydown',e=>{
+  const dirMap={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right'};
+  const dir=dirMap[e.key];
+  if(!dir) return;
+  const tag=e.target.tagName;
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;
+  e.preventDefault();
+  adjustPadding(dir);
+});
+
+// Touch swipe on canvas
+let touchX=0,touchY=0;
+document.getElementById('chartCanvas').addEventListener('touchstart',e=>{
+  const t=e.touches[0]; touchX=t.clientX; touchY=t.clientY;
+},{passive:true});
+document.getElementById('chartCanvas').addEventListener('touchend',e=>{
+  const t=e.changedTouches[0];
+  const dx=t.clientX-touchX, dy=t.clientY-touchY;
+  if(Math.abs(dx)<30&&Math.abs(dy)<30) return;
+  if(Math.abs(dx)>Math.abs(dy)){
+    adjustPadding(dx>0?'right':'left');
+  }else{
+    adjustPadding(dy>0?'down':'up');
+  }
+},{passive:true});
+
 document.getElementById('btnExport').addEventListener('click',()=>{
   if(!App.chart){Toast.error('Plot first');return}
   const scale=parseFloat(document.getElementById('dpiSelect').value);
@@ -823,6 +883,13 @@ document.getElementById('btnExport').addEventListener('click',()=>{
   // Use Chart.js devicePixelRatio for true high-res render
   chart.options.devicePixelRatio=scale;
   chart.resize(); chart.render({duration:0,lazy:false});
+  // Apply background if not transparent
+  if(document.getElementById('pngWhiteBg').checked){
+    const cv=chart.canvas, cx=cv.getContext('2d');
+    cx.save(); cx.globalCompositeOperation='destination-over';
+    cx.fillStyle='#fff'; cx.fillRect(0,0,cv.width,cv.height);
+    cx.restore();
+  }
   const a=document.createElement('a');
   a.download=(App.fn?App.fn.replace(/\.[^.]+$/,''):'plot')+'.png';
   a.href=chart.toBase64Image('image/png',1); a.click();
@@ -864,19 +931,6 @@ document.getElementById('btnExportSVG').addEventListener('click',()=>{
   }catch(e){Toast.error('SVG export failed: '+e.message)}
 });
 
-document.getElementById('btnReset').addEventListener('click',()=>{
-  if(!confirm('Reset all data?')) return;
-  App.reset();
-  document.getElementById('uploadInfo').style.display='none';
-  document.getElementById('chartCard').style.display='none';
-  document.getElementById('chartTools').style.display='none';
-  document.getElementById('chartEmpty').style.display='block';
-  document.getElementById('axisCard').classList.add('hidden');
-  showCards(false);
-  fi.value='';
-  ['xMin','xMax','yMin','yMax'].forEach(id=>document.getElementById(id).value='');
-  Toast.info('Reset complete');
-});
 
 // --- Data modal ---
 document.getElementById('btnData').addEventListener('click',()=>{
@@ -983,9 +1037,11 @@ function esc(s){return typeof s!=='string'?String(s):s.replace(/&/g,'&amp;').rep
 
 console.log('X-Y Plotter for ecNetSimWeb ready. Upload a CSV file to begin.');
 
-// Dark mode: mobile follows system, desktop manual toggle (no persistence)
+// Dark mode + file filter
 var sysDark=window.matchMedia('(prefers-color-scheme: dark)');
 var mobileMQ=window.matchMedia('(max-width: 900px)');
+// Desktop: add file type filter; mobile: show all files
+if(!mobileMQ.matches) document.getElementById('fileInput').accept='.csv,.dat,.out,.txt';
 var btnTheme=document.getElementById('btnTheme');
 function applyTheme(dark,rerender){
   document.body.classList.toggle('dark',dark);
@@ -1002,7 +1058,10 @@ function setupTheme(){
   }
 }
 sysDark.addEventListener('change',function(e){if(mobileMQ.matches)applyTheme(e.matches,true)});
-mobileMQ.addEventListener('change',function(){setupTheme();if(App.chart)renderChart(true)});
+mobileMQ.addEventListener('change',function(){
+  document.getElementById('fileInput').accept=mobileMQ.matches?'':'.csv,.dat,.out,.txt';
+  setupTheme();if(App.chart)renderChart(true)
+});
 btnTheme.addEventListener('click',function(){
   if(mobileMQ.matches)return;
   document.body.classList.toggle('dark');
