@@ -13,6 +13,7 @@
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.5.2/papaparse.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+*:focus{outline:none!important}
 :root{
   --bg:#f2f4f8;--card:#fff;--border:#dce0e8;
   --text:#0d1522;--text-muted:#4a5a70;--primary:#4f6ef7;
@@ -43,7 +44,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 /* ===== Header ===== */
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
 .header h1{font-size:17px;font-weight:700;display:flex;align-items:center;gap:8px}
-.header-actions{display:flex;gap:8px;align-items:center}
+.header-actions{display:flex;gap:4px;align-items:center}
 
 /* ===== Main Grid ===== */
 .main-grid{display:grid;grid-template-columns:340px 1fr;gap:12px;align-items:stretch;flex:1;min-height:0}
@@ -208,7 +209,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   <header class="header" style="display:grid;grid-template-columns:340px 1fr;gap:12px;align-items:center">
     <h1 id="headerTitle">📈 Plotter for ecNetSimWeb</h1>
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px">
-      <div id="chartTools" style="display:none;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px;color:var(--text-muted)">
+      <div id="chartTools" style="display:none;align-items:center;gap:3px;flex-wrap:wrap;font-size:13px;color:var(--text-muted)">
         <span>🖱️ Drag · Pan · Dbl-click reset</span>
         <label style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:2px"><input type="checkbox" id="toggleTooltip"> Values</label>
         <label style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:2px"><input type="checkbox" id="toggleGrid" checked> Grid</label>
@@ -216,18 +217,24 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
         <label style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:2px"><input type="checkbox" id="toggleYRev"> Y↕</label>
         <button id="btnTheme" style="background:none;border:none;cursor:pointer;font-size:14px;padding:0 4px;color:var(--text-muted)" title="Toggle dark mode">🌙</button>
         <button id="btnFocus" style="background:none;border:none;cursor:pointer;font-size:13px;padding:0 4px;color:var(--text-muted)" title="Expand chart">⛶</button>
+        <button class="dir-btn" data-dir="left" style="background:none;border:none;cursor:pointer;font-size:11px;padding:0 1px;color:var(--text-muted)" title="Right padding">←</button>
+        <button class="dir-btn" data-dir="right" style="background:none;border:none;cursor:pointer;font-size:11px;padding:0 1px;color:var(--text-muted)" title="Left padding">→</button>
+        <button class="dir-btn" data-dir="up" style="background:none;border:none;cursor:pointer;font-size:11px;padding:0 1px;color:var(--text-muted)" title="Bottom padding">↑</button>
+        <button class="dir-btn" data-dir="down" style="background:none;border:none;cursor:pointer;font-size:11px;padding:0 1px;color:var(--text-muted)" title="Top padding">↓</button>
       </div>
       <div class="header-actions" id="headerActions" style="flex-shrink:0">
       <button class="btn btn-outline btn-sm" id="btnData" title="View data table">📊 Data</button>
       <button class="btn btn-outline btn-sm" id="btnExportSVG" title="Export vector SVG">📐 SVG</button>
       <button class="btn btn-outline btn-sm" id="btnExport" title="Export chart as PNG">📷 PNG</button>
-      <select id="dpiSelect" style="padding:4px 8px;border:1px solid var(--border);border-radius:5px;font-size:12px;background:var(--card);cursor:pointer">
-        <option value="1">72 DPI</option>
-        <option value="2" selected>144 DPI</option>
-        <option value="3">216 DPI</option>
-        <option value="4">288 DPI</option>
-        <option value="6">432 DPI</option>
-        <option value="8">576 DPI</option>
+      <select id="dpiSelect" style="padding:2px 1px;border:1px solid var(--border);border-radius:3px;font-size:9px;background:var(--card);cursor:pointer">
+        <option value="1">72 dpi</option>
+        <option value="2" selected>144 dpi</option>
+        <option value="3">216 dpi</option>
+        <option value="4">288 dpi</option>
+        <option value="6">432 dpi</option>
+        <option value="8">576 dpi</option>
+        <option value="10">720 dpi</option>
+        <option value="12">864 dpi</option>
       </select>
       <label style="display:inline-flex;align-items:center;gap:2px;font-size:12px;color:var(--text-muted);cursor:pointer"><input type="checkbox" id="pngWhiteBg" checked> BG</label>
     </div>
@@ -859,6 +866,11 @@ document.addEventListener('keydown',e=>{
   adjustPadding(dir);
 });
 
+// Direction button clicks
+document.querySelectorAll('.dir-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>adjustPadding(btn.dataset.dir));
+});
+
 // Touch swipe on canvas
 let touchX=0,touchY=0;
 document.getElementById('chartCanvas').addEventListener('touchstart',e=>{
@@ -1040,8 +1052,6 @@ console.log('X-Y Plotter for ecNetSimWeb ready. Upload a CSV file to begin.');
 // Dark mode + file filter
 var sysDark=window.matchMedia('(prefers-color-scheme: dark)');
 var mobileMQ=window.matchMedia('(max-width: 900px)');
-// Desktop: add file type filter; mobile: show all files
-if(!mobileMQ.matches) document.getElementById('fileInput').accept='.csv,.dat,.out,.txt';
 var btnTheme=document.getElementById('btnTheme');
 function applyTheme(dark,rerender){
   document.body.classList.toggle('dark',dark);
@@ -1058,10 +1068,7 @@ function setupTheme(){
   }
 }
 sysDark.addEventListener('change',function(e){if(mobileMQ.matches)applyTheme(e.matches,true)});
-mobileMQ.addEventListener('change',function(){
-  document.getElementById('fileInput').accept=mobileMQ.matches?'':'.csv,.dat,.out,.txt';
-  setupTheme();if(App.chart)renderChart(true)
-});
+mobileMQ.addEventListener('change',function(){setupTheme();if(App.chart)renderChart(true)});
 btnTheme.addEventListener('click',function(){
   if(mobileMQ.matches)return;
   document.body.classList.toggle('dark');
