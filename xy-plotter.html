@@ -47,7 +47,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .header-actions{display:flex;gap:4px;align-items:center}
 
 /* ===== Main Grid ===== */
-.main-grid{display:grid;grid-template-columns:340px 1fr;gap:12px;align-items:stretch;flex:1;min-height:0}
+.main-grid{display:grid;grid-template-columns:355px 1fr;gap:12px;align-items:stretch;flex:1;min-height:0}
 @media(max-width:900px){.main-grid{grid-template-columns:1fr}}
 
 /* ===== Left Panel ===== */
@@ -89,11 +89,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .trace-row-header .btn-remove{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:20px;padding:0 4px;border-radius:3px}
 .trace-row-header .btn-remove:hover{color:var(--danger)}
 .trace-exprs{display:flex;flex-direction:column;gap:6px}
-.trace-exprs .eg{display:flex;flex-direction:column;gap:3px}
-.trace-exprs .eg label{font-size:12px;color:var(--text-muted);font-weight:500;margin-left:2px}
-.trace-exprs .eg .er{display:flex;gap:4px;align-items:stretch}
+.trace-exprs .eg{display:flex;flex-direction:row;align-items:center;gap:6px}
+.trace-exprs .eg label{font-size:12px;color:var(--text-muted);font-weight:500;min-width:14px;text-align:right}
+.trace-exprs .eg .er{display:flex;gap:4px;align-items:stretch;flex:1}
 .trace-exprs .eg .er select{flex:0 0 100px;border:1px solid var(--border);border-radius:5px;font-size:13px;background:var(--card);cursor:pointer;padding:3px 6px}
-.trace-exprs .eg .er input[type=text]{flex:1;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:var(--mono);outline:none;padding:3px 10px}
+.trace-exprs .eg .er input[type=text]{width:150px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:var(--mono);outline:none;padding:3px 10px}
 .trace-exprs .eg .er input[type=text]:focus{border-color:var(--primary)}
 .trace-exprs .eg .hint{font-size:11px;color:var(--text-muted);padding:0 2px;line-height:1.3}
 .trace-style{display:flex;gap:6px;align-items:center;margin-top:4px}
@@ -157,7 +157,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   .header>div{flex-wrap:nowrap!important;overflow-x:auto;gap:3px}
   .header-actions{flex-wrap:nowrap!important;width:auto;gap:3px;flex-shrink:0}
   .header-actions .btn{white-space:nowrap;padding:3px 5px;font-size:10px}
-  #chartTools{flex-wrap:nowrap!important;flex-shrink:0;gap:3px;font-size:10px}
+  #chartTools{flex-wrap:nowrap!important;flex-shrink:0;gap:3px;font-size:10px;margin-left:0}
   #dpiSelect{flex-shrink:0;font-size:10px;padding:2px 4px;min-width:auto}
   .left-panel > div{padding:6px;margin-bottom:4px}
   .upload-zone{padding:8px;margin-bottom:4px}
@@ -171,7 +171,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   #btnAutoScale{font-size:10px!important}
   .trace-row{padding:4px 6px}
   .trace-row-header input[type=text]{font-size:10px;padding:1px 3px}
-  .trace-exprs .eg label{font-size:10px}
+  .trace-exprs .eg label{font-size:10px;min-width:12px}
   .trace-exprs .eg .er select{flex:0 0 50px;font-size:10px;padding:1px 2px}
   .trace-exprs .eg .er input[type=text]{font-size:10px;padding:1px 4px;height:22px}
   .trace-exprs .eg .hint{font-size:8px}
@@ -209,8 +209,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   <header class="header" style="display:grid;grid-template-columns:340px 1fr;gap:12px;align-items:center">
     <h1 id="headerTitle">📈 Plotter for ecNetSimWeb</h1>
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px">
-      <div id="chartTools" style="display:none;align-items:center;gap:3px;flex-wrap:wrap;font-size:13px;color:var(--text-muted)">
-        <span>🖱️ Drag · Pan · Dbl-click reset</span>
+      <div id="chartTools" style="display:none;align-items:center;gap:3px;flex-wrap:wrap;font-size:13px;color:var(--text-muted);margin-left:12px">
+        <span>🖱️ Drag zoom · Dbl-click reset</span>
         <label style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:2px"><input type="checkbox" id="toggleTooltip"> Values</label>
         <label style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:2px"><input type="checkbox" id="toggleGrid" checked> Grid</label>
         <label style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:2px"><input type="checkbox" id="toggleXRev" checked> X↔</label>
@@ -283,7 +283,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     <!-- ===== RIGHT PANEL: chart ===== -->
     <div class="chart-wrap" id="chartCard" style="display:none">
       <div class="chart-empty" id="chartEmpty">
-        <div class="icon">📊</div>
+        <div class="icon">&#128202;</div>
         <div>Load a CSV, then configure traces &amp; click <strong>Plot</strong></div>
       </div>
       <canvas id="chartCanvas"></canvas>
@@ -356,8 +356,10 @@ const ExprEval = (() => {
         let id='';
         while(i<s.length&&/[a-zA-Z0-9_\u00c0-\u024f\u0400-\u04ff.]/.test(s[i])) id+=s[i++];
         const u=id.toUpperCase();
-        if(u==='PI'){tks.push({t:'num',v:Math.PI});continue}
-        if(u==='E'){tks.push({t:'num',v:Math.E});continue}
+        if(u==='_PI'){tks.push({t:'num',v:Math.PI});continue}
+        if(u==='_E'){tks.push({t:'num',v:Math.E});continue}
+        if(id==='e'){tks.push({t:'num',v:Math.E});continue}
+        if(id==='pi'){tks.push({t:'num',v:Math.PI});continue}
         tks.push({t:'id',v:id}); continue;
       }
       const two=s.substr(i,2);
@@ -434,16 +436,16 @@ const ExprEval = (() => {
 //  App State
 // ============================================================
 const App = {
-  h:[], d:[], cm:{}, fn:'', traces:[], chart:null, _nid:1, xLabel:'', yLabel:'', showTooltips:false, showGrid:true, xRev:true, yRev:false, xMin:'', xMax:'', yMin:'', yMax:'', _rangeInit:false, padL:0, padR:0, padT:0, padB:0,
+  h:[], d:[], cm:{}, fn:'', traces:[], chart:null, _nid:1, xLabel:'', yLabel:'', showTooltips:false, showGrid:true, xRev:true, yRev:false, xMin:'', xMax:'', yMin:'', yMax:'', _rangeInit:false, padL:0, padR:0, padT:5, padB:0,
   L:'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
   _cs:['#e74c5e','#4f6ef7','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e67e22','#3498db','#e84393','#00b894'],
   reset(){
     if(this.chart){this.chart.destroy();this.chart=null}
-    this.h=[]; this.d=[]; this.cm={}; this.fn=''; this.traces=[]; this._nid=1; this.xLabel=''; this.yLabel=''; this.showTooltips=false; this.showGrid=true; this.xRev=true; this.yRev=false; this.xMin=''; this.xMax=''; this.yMin=''; this.yMax=''; this._rangeInit=false; this.padL=0; this.padR=0; this.padT=0; this.padB=0;
+    this.h=[]; this.d=[]; this.cm={}; this.fn=''; this.traces=[]; this._nid=1; this.xLabel=''; this.yLabel=''; this.showTooltips=false; this.showGrid=true; this.xRev=true; this.yRev=false; this.xMin=''; this.xMax=''; this.yMin=''; this.yMax=''; this._rangeInit=false; this.padL=0; this.padR=0; this.padT=5; this.padB=0;
   },
   addTrace(x,y){
     const idx=this.traces.length;
-    const t={id:this._nid++,name:`Trace ${idx+1}`,xExpr:x||'',yExpr:y||'',color:this._cs[idx%this._cs.length],showLine:true,pointRadius:0,pointStyle:'circle',step:1,hollow:false};
+    const t={id:this._nid++,name:`Trace ${this._nid - 1}`,legendLabel:'',_nameCustomized:false,xExpr:x||'',yExpr:y||'',color:this._cs[idx%this._cs.length],showLine:true,showPoints:false,pointRadius:0.5,borderWidth:1.5,pointBorderWidth:0.5,pointStyle:'circle',step:1,hollow:false};
     this.traces.push(t); return t;
   },
   rmTrace(id){const i=this.traces.findIndex(t=>t.id===id);if(i>=0)this.traces.splice(i,1)},
@@ -496,14 +498,19 @@ function handleFile(file){
     document.getElementById('uploadInfo').innerHTML=`<span class="badge badge-ok">✓ ${file.name}</span><span>${d.length} rows</span><span>${h.length} cols</span>`;
 
     showPreview();
-    initTraces(isOut?2:-1,isOut?3:-1);
+    // 自动检测 X/Y 列
+    var xy = autoDetectXY(h, isOut);
+    initTraces(xy.xIdx, xy.yIdx);
     showCards(true);
     // Set default axis labels
-    const rawX=isOut?(h[2]||'X'):(h.length>1?h[1]:(h[0]||'X'));
-    const rawY=isOut?(h[3]||'Y'):(h.length>2?h[2]:(h.length>1?h[1]:(h[0]||'Y')));
+    var rawX = (xy.xIdx >= 0 && xy.xIdx < h.length) ? h[xy.xIdx] : 'X';
+    var rawY = (xy.yIdx >= 0 && xy.yIdx < h.length) ? h[xy.yIdx] : 'Y';
     App.xLabel=rawX; App.yLabel=rawY;
     document.getElementById('xLabel').value=rawX;
     document.getElementById('yLabel').value=rawY;
+    // X 轴反向：仅当 x 为 v(eapp) 时默认反向
+    App.xRev = (rawX.toLowerCase().indexOf('v(eapp)') >= 0);
+    document.getElementById('toggleXRev').checked = App.xRev;
     document.getElementById('axisCard').classList.remove('hidden');
     // Reset axis range inputs for new data
     App.xMin=''; App.xMax=''; App.yMin=''; App.yMax=''; App._rangeInit=false;
@@ -511,6 +518,68 @@ function handleFile(file){
     // Auto-plot
     setTimeout(()=>renderChart(), 50);
   }).catch(e=>Toast.error('CSV parse failed: '+e.message));
+}
+
+// ==================== 自动检测 X/Y 列 ====================
+function autoDetectXY(h, isOut) {
+  var n = h.length;
+  // 小写化所有列名
+  var lc = [];
+  for (var _ai = 0; _ai < n; _ai++) lc.push(h[_ai].toLowerCase().trim());
+
+  function findName(exact) {
+    for (var i = 0; i < n; i++) { if (lc[i] === exact) return i; }
+    return -1;
+  }
+  function findContain(sub, skipIdx) {
+    for (var i = 0; i < n; i++) {
+      if (i === skipIdx) continue;
+      if (lc[i].indexOf(sub) >= 0) return i;
+    }
+    return -1;
+  }
+
+  if (!isOut) {
+    // ===== CSV (.csv/.dat/.txt) =====
+    // 检查是否 SPICE 风格列名
+    var hasSpice = (findContain('v(eapp)') >= 0 || findContain('v(v_vout_if)') >= 0 ||
+                    findContain('i(v_it)') >= 0 || findContain('i(e_it)') >= 0);
+
+    if (hasSpice) {
+      // x: 若含有 v(s1z1) 则用 time，否则用 v(eapp)
+      var hasS1z1 = findContain('v(s1z1)') >= 0;
+      var xIdx = hasS1z1 ? (findName('time') >= 0 ? findName('time') : findContain('time')) : findName('v(eapp)');
+      if (xIdx < 0) xIdx = 0;
+
+      // y: 优先含 "it"，其次含 "if"
+      var yIdx = findContain('it', xIdx);
+      if (yIdx < 0) yIdx = findContain('if', xIdx);
+      if (yIdx < 0) yIdx = Math.min(1, n - 1);
+
+      return { xIdx: xIdx, yIdx: yIdx };
+    } else {
+      // 非 SPICE 普通文件：第1列为x，第2列为y
+      return { xIdx: 0, yIdx: Math.min(1, n - 1) };
+    }
+  } else {
+    // ===== .out 格式 =====
+    // x: 若含 v(s1z1) 或 v(s1z0) 则用 time，否则用 v(eapp)
+    var hasS1z1 = findContain('v(s1z1)') >= 0 || findContain('v(s1z0)') >= 0;
+    var xIdx = hasS1z1 ? (findName('time') >= 0 ? findName('time') : findContain('time')) : findName('v(eapp)');
+    if (xIdx < 0) xIdx = findContain('v(eapp)');
+    if (xIdx < 0) xIdx = 0;
+
+    // y: 优先含 "it"，其次含 "if"
+    var yIdx = findContain('it', xIdx);
+    if (yIdx < 0) yIdx = findContain('if', xIdx);
+
+    if (yIdx < 0) {
+      // 均未找到 → 默认：第1列为x，第2列为y
+      return { xIdx: 0, yIdx: Math.min(1, n - 1) };
+    }
+
+    return { xIdx: xIdx, yIdx: yIdx };
+  }
 }
 
 // ============================================================
@@ -542,7 +611,10 @@ function initTraces(xIdx,yIdx){
   const c=App.h, l=App.L;
   const xc=xIdx!=null&&xIdx>=0&&xIdx<c.length?l[xIdx]:(c.length>1?l[1]:c.length>0?l[0]:'');
   const yc=yIdx!=null&&yIdx>=0&&yIdx<c.length?l[yIdx]:(c.length>2?l[2]:c.length>1?l[1]:c.length>0?l[0]:'');
-  App.addTrace(xc, yc);
+  var t = App.addTrace(xc, yc);
+  // 默认图例名称为 Y 列名，卡片名称保持 "Trace 1"
+  var yn = (yIdx >= 0 && yIdx < c.length) ? c[yIdx] : yc;
+  t.legendLabel = yn;
   renderTraces();
 }
 
@@ -554,7 +626,34 @@ function renderTraces(){
     // Match expression (a single letter) to dropdown
     if(/^[A-Z]$/.test(t.xExpr)) e.querySelector('.sx').value=t.xExpr;
     if(/^[A-Z]$/.test(t.yExpr)) e.querySelector('.sy').value=t.yExpr;
-    e.querySelector('.tn').addEventListener('input',ev=>App.upTrace(t.id,{name:ev.target.value}));
+    e.querySelector('.tn').addEventListener('input',ev=>{
+      var val = ev.target.value.trim();
+      // 禁止同名 Trace N
+      if (/^Trace\s+\d+$/.test(val) && App.traces.some(function(ot){return ot.id!==t.id && ot.name===val;})) {
+        ev.target.value = t.name;
+        return;
+      }
+      var isDefault = /^Trace\s+\d+$/.test(val);
+      var upd = {name:val, _nameCustomized:!isDefault};
+      if (isDefault) {
+        var yL = App.L.indexOf(t.yExpr);
+        upd.legendLabel = (yL >= 0 && yL < App.h.length) ? App.h[yL] : t.yExpr;
+      } else {
+        upd.legendLabel = val;
+      }
+      App.upTrace(t.id, upd);
+      autoPlot();
+    });
+    e.querySelector('.tn').addEventListener('blur',ev=>{
+      if (!ev.target.value.trim()) {
+        var defName = 'Trace ' + t.id;
+        var yL = App.L.indexOf(t.yExpr);
+        var defLabel = (yL >= 0 && yL < App.h.length) ? App.h[yL] : t.yExpr;
+        ev.target.value = defName;
+        App.upTrace(t.id,{name:defName,legendLabel:defLabel,_nameCustomized:false});
+        autoPlot();
+      }
+    });
     e.querySelector('.sx').addEventListener('change',ev=>{
       const letter=ev.target.value;
       const idx=App.L.indexOf(letter);
@@ -567,7 +666,10 @@ function renderTraces(){
       const letter=ev.target.value;
       const idx=App.L.indexOf(letter);
       const colName=idx>=0&&idx<App.h.length?App.h[idx]:letter;
-      e.querySelector('.ty').value=letter; App.upTrace(t.id,{yExpr:letter}); valTrace(t.id);
+      e.querySelector('.ty').value=letter;
+      var upd = {yExpr:letter};
+      if (!t._nameCustomized) upd.legendLabel = colName;
+      App.upTrace(t.id, upd); valTrace(t.id);
       App.yLabel=colName; document.getElementById('yLabel').value=colName;
       autoPlot();
     });
@@ -582,22 +684,34 @@ function renderTraces(){
     e.querySelector('.tc').addEventListener('input',ev=>{App.upTrace(t.id,{color:ev.target.value});autoPlot()});
     e.querySelector('.tl').addEventListener('change',ev=>{
       const v=ev.target.value;
-      App.upTrace(t.id,{showLine:v==='lp'||v==='l',pointRadius:v==='l'?0:3.5});
+      var pr = v==='l'?0.5:3.5;
+      var upd = {showLine:v==='lp'||v==='l',showPoints:v!=='l',pointRadius:pr};
+      if (v !== 'l') upd.pointBorderWidth = 1.5;
+      App.upTrace(t.id, upd);
+      // 同步滑块
+      var psEl = e.querySelector('.t-ps');
+      if (psEl) { psEl.value = pr; e.querySelector('.t-ps-v').textContent = pr; }
+      var pbwEl = e.querySelector('.t-pbw');
+      if (v !== 'l' && pbwEl) { pbwEl.value = 1.5; e.querySelector('.t-pbw-v').textContent = 1.5; }
       autoPlot();
     });
     e.querySelector('.tp').addEventListener('change',ev=>{App.upTrace(t.id,{pointStyle:ev.target.value});autoPlot()});
     e.querySelector('.th').addEventListener('change',ev=>{App.upTrace(t.id,{hollow:ev.target.checked});autoPlot()});
     e.querySelector('.ts').addEventListener('change',ev=>{const v=parseInt(ev.target.value)||1;ev.target.value=v;App.upTrace(t.id,{step:v});autoPlot()});
     e.querySelector('.ts').addEventListener('input',ev=>{const v=parseInt(ev.target.value)||1;App.upTrace(t.id,{step:v})});
+    e.querySelector('.ts').addEventListener('wheel',ev=>{ev.preventDefault();const inp=ev.target;const d=ev.deltaY>0?-1:1;let v=(parseInt(inp.value)||1)+d;v=Math.max(parseInt(inp.min)||1,Math.min(parseInt(inp.max)||999,v));inp.value=v;App.upTrace(t.id,{step:v});autoPlot()});
+    e.querySelector('.t-lw').addEventListener('input',ev=>{const v=parseFloat(ev.target.value)||0.5;e.querySelector('.t-lw-v').textContent=v;App.upTrace(t.id,{borderWidth:v});autoPlot()});
+    e.querySelector('.t-ps').addEventListener('input',ev=>{const v=parseFloat(ev.target.value)||0.5;e.querySelector('.t-ps-v').textContent=v;App.upTrace(t.id,{pointRadius:v});autoPlot()});
+    e.querySelector('.t-pbw').addEventListener('input',ev=>{const v=parseFloat(ev.target.value)||0.5;e.querySelector('.t-pbw-v').textContent=v;App.upTrace(t.id,{pointBorderWidth:v});autoPlot()});
     e.querySelector('.b-rm').addEventListener('click',()=>{
       if(App.traces.length<=1){Toast.info('Keep at least one trace');return}
-      App.rmTrace(t.id); renderTraces();
+      App.rmTrace(t.id); renderTraces(); autoPlot();
     });
   });
 }
 
 function renderRow(t,i){
-  const lp=t.showLine&&t.pointRadius>0?'selected':'', l=t.showLine&&t.pointRadius===0?'selected':'', p=!t.showLine?'selected':'';
+  const lp=t.showLine&&t.showPoints?'selected':'', l=t.showLine&&!t.showPoints?'selected':'', p=!t.showLine?'selected':'';
   const colOpts=App.h.map((c,i)=>`<option value="${App.L[i]}">${App.L[i]}: ${esc(c)}</option>`).join('');
   return `<div class="trace-row" id="t-${t.id}">
     <div class="trace-row-header">
@@ -625,6 +739,12 @@ function renderRow(t,i){
         <input type="checkbox" class="th" ${t.hollow?'checked':''}>○
       </label>
       <span class="ts-wrap">step <input type="number" class="ts" value="${t.step}" min="1" max="999" style="width:50px;padding:3px 4px;border:1px solid var(--border);border-radius:4px;font-size:12px;text-align:center"></span>
+    </div>
+    <div class="trace-sub-style" style="display:flex;gap:6px;margin-top:4px;align-items:center;flex-wrap:wrap">
+      <span style="font-size:11px;display:flex;align-items:center;gap:1px">Line: <input type="range" class="t-lw" value="${t.borderWidth}" min="0.5" max="5" step="0.5" style="width:40px;vertical-align:middle" title="Line width"><span class="t-lw-v" style="font-size:11px;min-width:14px;display:inline-block;text-align:center">${t.borderWidth}</span></span>
+      <span style="font-size:11px;display:flex;align-items:center;gap:1px">Point: <input type="range" class="t-ps" value="${t.pointRadius}" min="0.5" max="10" step="0.5" style="width:40px;vertical-align:middle" title="Point size"><span class="t-ps-v" style="font-size:11px;min-width:14px;display:inline-block;text-align:center">${t.pointRadius}</span></span>
+      <span style="font-size:11px;display:flex;align-items:center;gap:1px">Edge: <input type="range" class="t-pbw" value="${t.pointBorderWidth}" min="0.5" max="4" step="0.5" style="width:40px;vertical-align:middle" title="Point border width"><span class="t-pbw-v" style="font-size:11px;min-width:14px;display:inline-block;text-align:center">${t.pointBorderWidth}</span></span>
+    </div>
     </div>
     <div class="trace-error" id="err-${t.id}"></div>
   </div>`;
@@ -657,11 +777,19 @@ function renderChart(silent){
     if(!ok){let d=`"${trace.name}" — all points invalid`;if(fE)d+=` (first: ${fE})`;console.warn('[XY-Plotter]',d);if(!silent)Toast.error(d);hasErr=true;continue}
     hasData=true;
     datasets.push({
-      label:trace.name,data:pts,
-      backgroundColor:trace.hollow?'transparent':trace.color+'80',borderColor:trace.color,borderWidth:trace.showLine?1.5:0,
-      pointBackgroundColor:trace.hollow?'transparent':trace.color,pointBorderColor:trace.color,pointBorderWidth:trace.hollow?2:0,pointRadius:trace.pointRadius,
-      pointHoverRadius:trace.pointRadius>0?6:0,pointStyle:trace.pointStyle,
-      showLine:trace.showLine,tension:0.1,fill:false,
+      label:trace.legendLabel || trace.name,data:pts,_showPoints:trace.showPoints,
+      backgroundColor:trace.hollow?'transparent':trace.color+'80',borderColor:trace.color,borderWidth:trace.showLine?trace.borderWidth:0,
+      pointBackgroundColor:!trace.showPoints?'transparent':(trace.hollow?'transparent':trace.color),
+      pointBorderColor:!trace.showPoints?'transparent':trace.color,
+      pointBorderWidth:trace.pointBorderWidth,
+      pointRadius:!trace.showPoints?0.01:trace.pointRadius,
+      pointStyle:!trace.showPoints?function(){
+        var c=document.createElement('canvas');c.width=20;c.height=4;
+        var cx=c.getContext('2d');cx.fillStyle=trace.color;
+        cx.fillRect(0,0,20,4);return c;
+      }():trace.pointStyle,
+      pointHoverRadius:!trace.showPoints?0.01:trace.pointRadius,
+      showLine:trace.showLine,tension:0.01,fill:false,
     });
   }
   if(hasErr) return;
@@ -684,16 +812,19 @@ function renderChart(silent){
   const yMin=App.yMin!==''?parseFloat(App.yMin):undefined,yMax=App.yMax!==''?parseFloat(App.yMax):undefined;
 
   Chart.register('zoom',ChartZoom);
+  var _showLegend = datasets.length > 1;
   App.chart=new Chart(ctx,{
     type:'scatter',data:{datasets},
     options:{
       responsive:true,maintainAspectRatio:false,animation:{duration:300},
-      interaction:{mode:'nearest',intersect:false},
-      layout:{padding:{left:App.padL,right:App.padR,top:App.padT,bottom:App.padB}},
+      interaction:{mode:'nearest',intersect:false,axis:'xy'},
+      hover:{mode:null},
+      layout:{padding:{left:App.padL,right:App.padR,top:_showLegend?0:App.padT,bottom:App.padB}},
       plugins:{
-        legend:{position:'top',labels:{usePointStyle:true,boxWidth:8,boxHeight:8,padding:4,font:{size:13}},title:{display:false}},
+        legend:{display:_showLegend,position:'top',labels:{usePointStyle:true,boxWidth:14,boxHeight:14,padding:16,font:{size:13},color:dark?'#ffffff':'#000000'},title:{display:false}},
+        title:{display:!_showLegend,text:!_showLegend?App.fn:'',color:'#d32f2f',font:{size:14,weight:'600'},padding:{bottom:2}},
         tooltip:{enabled:App.showTooltips,backgroundColor:tc.tooltipBg,titleColor:tc.tooltipText,bodyColor:tc.tooltipText,cornerRadius:4,padding:10,titleFont:{size:14},bodyFont:{size:14},callbacks:{label:ctx=>{const p=ctx.parsed;return` ${ctx.dataset.label}: (${p.x.toPrecision(5)}, ${p.y.toPrecision(5)})`}}},
-        zoom:{zoom:{wheel:{enabled:false},pinch:{enabled:true},drag:{enabled:true,backgroundColor:'rgba(79,110,247,0.08)',borderColor:'#4f6ef7',borderWidth:1},mode:'xy'},pan:{enabled:true,mode:'xy'},limits:{x:{min:'original',max:'original'},y:{min:'original',max:'original'}}}
+        zoom:{zoom:{wheel:{enabled:false},pinch:{enabled:true},drag:{enabled:true,backgroundColor:'rgba(79,110,247,0.08)',borderColor:'#4f6ef7',borderWidth:1},mode:'xy'},pan:{enabled:false},limits:{x:{min:'original',max:'original'},y:{min:'original',max:'original'}}}
       },
       scales:{
         x:{type:'linear',reverse:App.xRev,position:'bottom',title:{display:true,text:App.xLabel||'X',color:tc.text,font:{size:16,weight:'600'}},ticks:{color:tc.text,font:{size:12}},grid:{color:App.showGrid?tc.grid:'transparent',display:App.showGrid},border:{color:tc.border,width:1.5},suggestedMin:xR.min,suggestedMax:xR.max,min:xMin,max:xMax},
@@ -742,22 +873,33 @@ uz.addEventListener('dragleave',()=>uz.classList.remove('dragover'));
 uz.addEventListener('drop',e=>{e.preventDefault();uz.classList.remove('dragover');const f=e.dataTransfer.files[0];if(f)handleFile(f)});
 fi.addEventListener('change',()=>{const f=fi.files[0];fi.value='';if(f)handleFile(f)});
 
-document.getElementById('btnAddTrace').addEventListener('click',()=>{App.addTrace('','');renderTraces()});
+document.getElementById('btnAddTrace').addEventListener('click',()=>{
+  const c=App.h, l=App.L;
+  const defX=App.traces.length?App.traces[0].xExpr:(c.length>1?l[1]:(c.length?l[0]:''));
+  const defY=App.traces.length?App.traces[0].yExpr:(c.length>2?l[2]:(c.length>1?l[1]:(c.length?l[0]:'')));
+  var t = App.addTrace(defX,defY);
+  // 新 trace 图例名称为 Y 列名
+  var yIdx = l.indexOf(defY);
+  t.legendLabel = (yIdx >= 0 && yIdx < c.length) ? c[yIdx] : defY;
+  renderTraces();
+  autoPlot();
+});
 document.getElementById('btnPlot').addEventListener('click',()=>{
-  if(App.chart){App.padL=0;App.padR=0;App.padT=0;App.padB=0}
+  if(App.chart){App.padL=0;App.padR=0;App.padT=5;App.padB=0}
   renderChart();
 });
 
 // Double-click on chart to restore original view
 document.getElementById('chartCard').addEventListener('dblclick',()=>{
   if(!App.chart) return;
-  App.padL=0; App.padR=0; App.padT=0; App.padB=0;
+  App.padL=0; App.padR=0; App.padT=5; App.padB=0;
+  if (focusState) App.padT=12;
   renderChart(true);
   if(focusState&&App.chart){
     const cc=document.getElementById('chartCard');
     cc.style.display='flex'; cc.style.flexDirection='column';
     cc.style.position='fixed'; cc.style.inset='0'; cc.style.zIndex='1000';
-    cc.style.padding='0'; cc.style.background='var(--card)'; cc.style.border='none'; cc.style.borderRadius='0';
+    cc.style.background='var(--card)'; cc.style.border='none'; cc.style.borderRadius='0';
     App.chart.options.maintainAspectRatio=false;
     const cv=document.getElementById('chartCanvas');
     cv.style.flex='1'; cv.style.width='100%'; cv.style.minHeight='0';
@@ -971,6 +1113,8 @@ document.getElementById('btnFocus').addEventListener('click',()=>{
   // Hide them
   Object.values(focusState).forEach(s=>{if(s.el)s.el.style.display='none'});
   // Save app/grid styles
+  focusState._padT=App.padT;
+  focusState._chartCS=chart.style.cssText;
   focusState._app={el:document.getElementById('app'),mw:document.getElementById('app').style.maxWidth,pd:document.getElementById('app').style.padding};
   document.getElementById('app').style.maxWidth='none'; document.getElementById('app').style.padding='0';
   focusState._grid={el:document.querySelector('.main-grid'),mw:document.querySelector('.main-grid').style.maxWidth};
@@ -978,11 +1122,12 @@ document.getElementById('btnFocus').addEventListener('click',()=>{
   // Chart as fullscreen flex container
   chart.style.position='fixed'; chart.style.inset='0'; chart.style.zIndex='1000';
   chart.style.background='var(--card)'; chart.style.border='none'; chart.style.borderRadius='0';
-  chart.style.padding='0'; chart.style.display='flex'; chart.style.flexDirection='column';
+  chart.style.display='flex'; chart.style.flexDirection='column';
   // Make canvas fill all space between header and footer
   const canvas=document.getElementById('chartCanvas');
   canvas.style.flex='1'; canvas.style.width='100%'; canvas.style.minHeight='0';
-  if(App.chart){App.chart.options.maintainAspectRatio=false;App.chart.resize()}
+  App.padT=12;
+  if(App.chart){App.chart.options.layout.padding.top=App.traces.length>1?0:App.padT;App.chart.options.maintainAspectRatio=false;App.chart.resize()}
   // Bring chartTools as a draggable floating bar
   const tools=document.getElementById('chartTools');
   focusState._toolsDisp=tools.style.display;
@@ -1033,12 +1178,14 @@ function exitFocus(){
   focusState._app.el.style.maxWidth=focusState._app.mw;
   focusState._app.el.style.padding=focusState._app.pd;
   focusState._grid.el.style.maxWidth=focusState._grid.mw;
-  focusState._chart.style.cssText='';
+  focusState._chart.style.cssText=focusState._chartCS||'';
   document.getElementById('chartCanvas').style.cssText='';
   // Restore chartTools
   const t=document.getElementById('chartTools');
   t.style.cssText=focusState._toolsCS||'';
   t.style.display=focusState._toolsDisp||'none';
+  // Restore top padding
+  App.padT=focusState._padT!==undefined?focusState._padT:5;
   renderChart(true);
   document.getElementById('btnFocus').textContent='⛶';
   document.getElementById('btnFocus').title='Expand chart';
