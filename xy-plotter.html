@@ -286,6 +286,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
         <div class="icon">&#128202;</div>
         <div>Load a CSV, then configure traces &amp; click <strong>Plot</strong></div>
       </div>
+      <div id="chartStatus" style="display:none; text-align:center; font-size:12px; color:#4a6fa5; padding:8px;"></div>
       <canvas id="chartCanvas"></canvas>
   </div>
 
@@ -493,9 +494,10 @@ function handleFile(file){
     const cm={}; h.forEach((n,i)=>{cm[n]=i; if(i<26&&!/^[A-Za-z]$/.test(n)) cm[App.L[i]]=i});
     const d=rd.map((row,i)=>{const a=h.map(c=>row[c]);a._i=i+1;return a});
     App.h=h; App.d=d; App.cm=cm; App.fn=file.name;
+    App._step = d.length > 20000 ? Math.ceil(d.length / 20000) : 1;
 
     document.getElementById('uploadInfo').style.display='flex';
-    document.getElementById('uploadInfo').innerHTML=`<span class="badge badge-ok">✓ ${file.name}</span><span>${d.length} rows</span><span>${h.length} cols</span>`;
+    document.getElementById('uploadInfo').innerHTML=`<div style="width:100%;"><span class="badge badge-ok">✓ ${file.name}</span></div><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;"><span>${d.length} rows</span><span>${h.length} cols</span></div>`;
 
     showPreview();
     // 自动检测 X/Y 列
@@ -587,6 +589,7 @@ function autoDetectXY(h, isOut) {
 // ============================================================
 function showPreview(){
   const {h,d}=App;
+  var step = App.traces.length ? App.traces[0].step : 1;
   // Build table header
   let head='<tr><th class="rn">#</th>';
   h.forEach(c=>{head+=`<th>${esc(c)}</th>`});
@@ -594,6 +597,7 @@ function showPreview(){
   // Build table body
   let body='';
   d.forEach((row,i)=>{
+    if (i % step !== 0) return;
     body+=`<tr><td class="rn">${i+1}</td>`;
     row.forEach((v,j)=>{const s=typeof v==='number'?v.toPrecision(6):(v??'');body+=`<td>${esc(String(s))}</td>`});
     body+='</tr>';
@@ -612,6 +616,7 @@ function initTraces(xIdx,yIdx){
   const xc=xIdx!=null&&xIdx>=0&&xIdx<c.length?l[xIdx]:(c.length>1?l[1]:c.length>0?l[0]:'');
   const yc=yIdx!=null&&yIdx>=0&&yIdx<c.length?l[yIdx]:(c.length>2?l[2]:c.length>1?l[1]:c.length>0?l[0]:'');
   var t = App.addTrace(xc, yc);
+  t.step = App._step || 1;
   // 默认图例名称为 Y 列名，卡片名称保持 "Trace 1"
   var yn = (yIdx >= 0 && yIdx < c.length) ? c[yIdx] : yc;
   t.legendLabel = yn;
@@ -698,7 +703,7 @@ function renderTraces(){
     e.querySelector('.tp').addEventListener('change',ev=>{App.upTrace(t.id,{pointStyle:ev.target.value});autoPlot()});
     e.querySelector('.th').addEventListener('change',ev=>{App.upTrace(t.id,{hollow:ev.target.checked});autoPlot()});
     e.querySelector('.ts').addEventListener('change',ev=>{const v=parseInt(ev.target.value)||1;ev.target.value=v;App.upTrace(t.id,{step:v});autoPlot()});
-    e.querySelector('.ts').addEventListener('input',ev=>{const v=parseInt(ev.target.value)||1;App.upTrace(t.id,{step:v})});
+    e.querySelector('.ts').addEventListener('input',ev=>{const v=parseInt(ev.target.value)||1;App.upTrace(t.id,{step:v});autoPlot()});
     e.querySelector('.ts').addEventListener('wheel',ev=>{ev.preventDefault();const inp=ev.target;const d=ev.deltaY>0?-1:1;let v=(parseInt(inp.value)||1)+d;v=Math.max(parseInt(inp.min)||1,Math.min(parseInt(inp.max)||999,v));inp.value=v;App.upTrace(t.id,{step:v});autoPlot()});
     e.querySelector('.t-lw').addEventListener('input',ev=>{const v=parseFloat(ev.target.value)||0.5;e.querySelector('.t-lw-v').textContent=v;App.upTrace(t.id,{borderWidth:v});autoPlot()});
     e.querySelector('.t-ps').addEventListener('input',ev=>{const v=parseFloat(ev.target.value)||0.5;e.querySelector('.t-ps-v').textContent=v;App.upTrace(t.id,{pointRadius:v});autoPlot()});
@@ -798,6 +803,8 @@ function renderChart(silent){
   document.getElementById('chartCard').style.display='block';
   document.getElementById('chartEmpty').style.display='none';
   document.getElementById('chartTools').style.display='flex';
+  var cs = document.getElementById('chartStatus');
+  if (cs) cs.style.display = 'none';
   const canvas=document.getElementById('chartCanvas'),ctx=canvas.getContext('2d');
   if(App.chart){App.chart.destroy();App.chart=null}
   const dark=document.body.classList.contains('dark');
@@ -805,7 +812,7 @@ function renderChart(silent){
 
   let allX=[],allY=[];
   datasets.forEach(ds=>ds.data.forEach(p=>{allX.push(p.x);allY.push(p.y)}));
-  const nr=a=>{if(!a.length)return{min:-1,max:1};let mn=Math.min(...a),mx=Math.max(...a),r=mx-mn;if(r===0){mn-=1;mx+=1}else{const pad=r*0.05;mn-=pad;mx+=pad}return{min:mn,max:mx}};
+  const nr=a=>{if(!a.length)return{min:-1,max:1};let mn=a[0],mx=a[0];for(let i=1;i<a.length;i++){const v=a[i];if(v<mn)mn=v;if(v>mx)mx=v}let r=mx-mn;if(r===0){mn-=1;mx+=1}else{const pad=r*0.05;mn-=pad;mx+=pad}return{min:mn,max:mx}};
   const xR=nr(allX),yR=nr(allY);
   // Apply user-defined axis range if set
   const xMin=App.xMin!==''?parseFloat(App.xMin):undefined,xMax=App.xMax!==''?parseFloat(App.xMax):undefined;
@@ -862,7 +869,16 @@ function showCards(show){
 
 // Debounce helper for auto-plot
 let _deb=null;
-function autoPlot(){clearTimeout(_deb);_deb=setTimeout(()=>{if(App.chart)renderChart(true)},400)}
+function autoPlot(){
+  clearTimeout(_deb);
+  var step = App.traces.length ? App.traces[0].step : 1;
+  if (App._lastStep !== step) {
+    App._lastStep = step;
+    var s = document.getElementById('chartStatus');
+    if (s) { s.textContent = '⏳ Rendering ' + App.d.length + ' rows (step=' + step + ')...'; s.style.display = 'block'; }
+  }
+  _deb=setTimeout(()=>{if(App.chart)renderChart(true)},400)
+}
 
 // ============================================================
 //  Event Bindings
@@ -1060,7 +1076,7 @@ document.getElementById('btnExportSVG').addEventListener('click',()=>{
     const w=600,h=400,pad=55,plotW=w-2*pad,plotH=h-2*pad;
     let allX=[],allY=[];
     ds.forEach(d=>d.data.forEach(p=>{allX.push(p.x);allY.push(p.y)}));
-    const nr=a=>{if(!a.length)return{min:-1,max:1};let mn=Math.min(...a),mx=Math.max(...a),r=mx-mn;if(r===0){mn-=1;mx+=1}else{const pa=r*0.05;mn-=pa;mx+=pa}return{min:mn,max:mx}};
+    const nr=a=>{if(!a.length)return{min:-1,max:1};let mn=a[0],mx=a[0];for(let i=1;i<a.length;i++){const v=a[i];if(v<mn)mn=v;if(v>mx)mx=v}let r=mx-mn;if(r===0){mn-=1;mx+=1}else{const pa=r*0.05;mn-=pa;mx+=pa}return{min:mn,max:mx}};
     const xR=nr(allX),yR=nr(allY);
     const sx=v=>(v-xR.min)/(xR.max-xR.min)*plotW+pad;
     const sy=v=>(1-(v-yR.min)/(yR.max-yR.min))*plotH+pad;
@@ -1089,6 +1105,7 @@ document.getElementById('btnExportSVG').addEventListener('click',()=>{
 // --- Data modal ---
 document.getElementById('btnData').addEventListener('click',()=>{
   if(!App.h.length){Toast.error('Load a CSV first');return}
+  showPreview();
   document.getElementById('dataModal').style.display='block';
 });
 document.getElementById('closeModal').addEventListener('click',()=>{
@@ -1223,6 +1240,15 @@ btnTheme.addEventListener('click',function(){
   if(App.chart)renderChart(true);
 });
 setupTheme();
+
+// Listen for CSV data from simulator via postMessage
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'csv-data' && e.data.csv) {
+    var blob = new Blob([e.data.csv], { type: 'text/csv' });
+    var file = new File([blob], e.data.filename || 'simulation_results.csv', { type: 'text/csv' });
+    handleFile(file);
+  }
+});
 </script>
 </body>
 </html>
