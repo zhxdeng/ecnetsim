@@ -894,6 +894,8 @@ document.getElementById('btnAddTrace').addEventListener('click',()=>{
   const defX=App.traces.length?App.traces[0].xExpr:(c.length>1?l[1]:(c.length?l[0]:''));
   const defY=App.traces.length?App.traces[0].yExpr:(c.length>2?l[2]:(c.length>1?l[1]:(c.length?l[0]:'')));
   var t = App.addTrace(defX,defY);
+  // 新 trace 继承第一个 trace 的 step
+  t.step = App.traces.length > 1 ? App.traces[0].step : (App._step || 1);
   // 新 trace 图例名称为 Y 列名
   var yIdx = l.indexOf(defY);
   t.legendLabel = (yIdx >= 0 && yIdx < c.length) ? c[yIdx] : defY;
