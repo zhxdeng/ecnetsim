@@ -406,6 +406,7 @@ p.subtitle { color:#666; margin:-4px 0 10px; text-align:center; font-size: 13px;
         <span class="split-panel-label">&#128221; ATN Input</span>
         <button type="button" id="btnLoadFromNetlist" class="btn-secondary" style="padding: 3px 10px; font-size: 11px; margin-left: 8px;" title="Load input from netlist file">&#128194; Load from netlist file</button>
         <button type="button" id="btnSaveATN" class="btn-primary" style="padding: 3px 10px; font-size: 11px; margin-left: 4px;">&#128190; Save</button>
+        <button type="button" id="btnExportECN" class="btn-secondary" style="padding: 3px 10px; font-size: 11px; margin-left: 4px;">&#128229; Export</button>
       </div>
       <textarea id="inputEditor" placeholder="Select an ATN file or paste ATN content here..." spellcheck="false"></textarea>
     </div>
@@ -482,9 +483,12 @@ function updateSaveButtons() {
   var btnSave = document.getElementById('btnSaveATN');
   var btnDownload = document.getElementById('btnDownload');
   var btnPreview = document.getElementById('btnPreview');
+  var btnExport = document.getElementById('btnExportECN');
+  var isAuthorized = (_currentUserName || '').toLowerCase() === 'zhaoxiang deng';
   if (btnSave) btnSave.disabled = false;
   if (btnDownload) btnDownload.disabled = false;
   if (btnPreview) btnPreview.disabled = false;
+  if (btnExport) btnExport.disabled = !isAuthorized;
 }
 
 // 将 ATN 文件内容中 ETR 提示行的 arfa 替换为 alpha，用于界面显示
@@ -510,6 +514,12 @@ document.addEventListener('DOMContentLoaded', function() {
   updateSaveButtons();
   // 自动加载默认的 ee.atn 示例文件
   loadDefaultFile();
+});
+
+// 输入姓名后立即更新 Export 按钮状态，邓改
+document.getElementById('userNameInput').addEventListener('input', function() {
+  _currentUserName = this.value.trim();
+  updateSaveButtons();
 });
 
 // 自动加载随机 ATN 文件（从 examples/ 目录中随机选取）
@@ -1039,7 +1049,7 @@ function showErrorsInOutput(errors) {
   for (var i = 0; i < errors.length; i++) {
     var e = errors[i];
     var icon = e.type === 'fatal' ? '[FATAL]' : (e.type === 'compat' ? '[ERROR]' : '[WARN]');
-    errText += icon + ' ' + (e.header || '') + '\n' + (e.message || '') + '\n\n';
+    errText += '* ' + icon + ' ' + (e.header || '') + ' ' + (e.message || '').split('\n').join('\n* ') + '\n\n';
   }
   out.value += errText;
 
@@ -1111,7 +1121,7 @@ async function doAutoGenerate(inputFileName) {
       
       // 如果有 fatal error，不显示 netlist，只显示错误
       if (hasFatal) {
-        var errMsgs = errors.map(function(e) { return '* ' + (e.header || '') + ' ' + (e.message || ''); }).join('\n');
+        var errMsgs = errors.map(function(e) { return '* ' + (e.header || '') + ' ' + (e.message || '').split('\n').join('\n* '); }).join('\n');
         document.getElementById('output').value = '* [ERROR] Netlist generation failed - command error\n' + errMsgs;
         document.getElementById('output').style.color = '#ff3333';
         document.getElementById('status').innerText = '\u26D4\uFE0F Netlist generation failed';
@@ -1125,7 +1135,7 @@ async function doAutoGenerate(inputFileName) {
             var msg = e.message || '';
             var isGreen = (e.type === 'compat' && (msg.indexOf('k0 = 0') >= 0 || msg.indexOf('arfa2') >= 0));
             var icon = isGreen ? '* [WARN] ' : '* [ERROR] ';
-            return icon + (e.header || '') + ' ' + msg;
+            return icon + (e.header || '') + ' ' + msg.split('\n').join('\n* ');
           }).join('\n');
           // 警告时网表被推到后面，AUTONET 不在第一行，需要加 *
           var netlistWithStar = (data.netlist || '').replace(/^AUTONET\./m, '* AUTONET.');
@@ -1526,7 +1536,7 @@ function updateFromEditor() {
       
       // 如果有 fatal error，不显示 netlist，只显示错误
       if (hasFatal) {
-        var errMsgs = errors.map(function(e) { return '* ' + (e.header || '') + ' ' + (e.message || ''); }).join('\n');
+        var errMsgs = errors.map(function(e) { return '* ' + (e.header || '') + ' ' + (e.message || '').split('\n').join('\n* '); }).join('\n');
         document.getElementById('output').value = '* [ERROR] Netlist generation failed - command error\n' + errMsgs;
         document.getElementById('output').style.color = '#ff3333';
         document.getElementById('status').innerText = '\u26D4\uFE0F Netlist generation failed';
@@ -1540,7 +1550,7 @@ function updateFromEditor() {
             var msg = e.message || '';
             var isGreen = (e.type === 'compat' && (msg.indexOf('k0 = 0') >= 0 || msg.indexOf('arfa2') >= 0));
             var icon = isGreen ? '* [WARN] ' : '* [ERROR] ';
-            return icon + (e.header || '') + ' ' + msg;
+            return icon + (e.header || '') + ' ' + msg.split('\n').join('\n* ');
           }).join('\n');
           // 警告时网表被推到后面，AUTONET 不在第一行，需要加 *
           var netlistWithStar = (data.netlist || '').replace(/^AUTONET\./m, '* AUTONET.');
@@ -1700,6 +1710,173 @@ function updateLogStatus(){
   var count=getUsageLogCount(), el=document.getElementById('logStatus');
   el.innerText=count>0?'('+count+' operations recorded)':'';
 }
+
+// Export ECN button - export input file in .ecn format
+// 将 textarea 中的 ATN 格式提示行转换为 template.ecn 最新格式，邓改
+document.getElementById('btnExportECN').onclick = async function() {
+  var atnContent = document.getElementById('inputEditor').value;
+  if (!atnContent.trim()) {
+    alert('No content to export!');
+    return;
+  }
+  
+  // 提示行转换映射：ATN 格式 → ECN template 格式，邓改
+  var promptMap = {};
+  promptMap['[Electron Transfer Reactions|E0\'(V)|alpha|alpha2|na|k0(cm/s or s^-1 for SF)(with period)]'] = '[ET Reactions|E0\'(V)|alpha|alpha2|na|k0(cm/s or s^-1 for SF)(prefix @/@@: dependent/independent ETRs of adsorbates)(with period)]';
+  promptMap['[Electron Transfer Reactions|E0\'(V)|alpha|na|k0(cm/s or s^-1 for SF)(with period)]'] = '[ET Reactions|E0\'(V)|alpha|na|k0(cm/s or s^-1 for SF)(prefix @/@@: dependent/independent ETRs of adsorbates)(with period)]';
+  promptMap['[Experimental: cycles,Ei(V),Es(V),Et(V),v(V/s) or Time(s) for CA,Temper(C.D.)(no period)]'] = '[Experimental: cycles,Ei(V),Es(V),Et(V),v(V/s) or Time(s) for CA,Rest time(s),Temper(C.D.)(no period)]';
+  promptMap['[Simulation: boxnum,beta,dE(mV) or dt(s) for CA(no period)]'] = '[Simulation: boxnum,beta,binary reading limit,variable limit,dE(mV) or dt(s) for CA(no period)]';
+  promptMap['[Current Output(CF/DF:Current Function/DeFault)(no period)]'] = '[Simulation Output(CF/DF/CPn:Current Function/DeFault/Concentration Profle)(no period)]';
+  promptMap['[Dimensionless Simulation Layer: Lmax(no period)]'] = '[Dimensionless Natural Convection Layer and Simulation Layer: delta_Convec,Lmax(no period)]';
+  promptMap['[Homogeneous Chemical Reactions|kfc|kbc(with period)]'] = '[Homogeneous Chemical Reactions|kfc|kbc(prefix @: reactions of adsorbates)(with period)]';
+  promptMap['[Electron Transfer Reactions|E0(V)|arfa|arfa2|na|k0(cm/s or s^-1 for SF)(with period)]'] = '[ET Reactions|E0\'(V)|alpha|alpha2|na|k0(cm/s or s^-1 for SF)(prefix @/@@: dependent/independent ETRs of adsorbates)(with period)]';
+  promptMap['[Electron Transfer Reactions|E0(V)|arfa|na|k0(cm/s or s^-1 for SF)(with period)]'] = '[ET Reactions|E0\'(V)|alpha|na|k0(cm/s or s^-1 for SF)(prefix @/@@: dependent/independent ETRs of adsorbates)(with period)]';
+  promptMap['[Adsorption Coefficients(mM^-1 for adsorbates)(with period)]'] = '[Adsorption Coefficients(mM^-1 for adsorbates) or Rate Constants(kads,kdes)(with period)]';
+  promptMap['[Diffusion Type(L/S/C/RDE/FD/SF: Linear/Spherical/Cylindrical/Rotational Disk/Finite Diffusion/SurFace)(no period)]'] = '[Diffusion Type(L/S/C/RDE/FD/SF: Linear/Spherical/Cylindrical/Rotating Disk/Finite Diffusion/SurFace)(no period)]';
+  promptMap['[ET Reactions|E0(V)|arfa|arfa2|na|k0(cm/s or s^-1 for SF)(prefix @/@@: dependent/independent ETRs of adsorbates)(with period)]'] = '[ET Reactions|E0\'(V)|alpha|alpha2|na|k0(cm/s or s^-1 for SF)(prefix @/@@: dependent/independent ETRs of adsorbates)(with period)]';
+  promptMap['[ET Reactions|E0(V)|arfa|na|k0(cm/s or s^-1 for SF)(prefix @/@@: dependent/independent ETRs of adsorbates)(with period)]'] = '[ET Reactions|E0\'(V)|alpha|na|k0(cm/s or s^-1 for SF)(prefix @/@@: dependent/independent ETRs of adsorbates)(with period)]';
+  promptMap['[Simulation: boxnum,beta,binary reading limit,dE(mV) or dt(s) for CA(no period)]'] = '[Simulation: boxnum,beta,binary reading limit,variable limit,dE(mV) or dt(s) for CA(no period)]';
+  
+  var content = atnContent.trim();
+  // 逐行替换提示行，邓改
+  var lines = content.split(/\r?\n/);
+  for (var i = 0; i < lines.length; i++) {
+    var trimmed = lines[i].trim();
+    if (promptMap.hasOwnProperty(trimmed)) {
+      lines[i] = promptMap[trimmed];
+    }
+  }
+  // 数据行转换：ECN 新增参数在原 ATN 数据中没有时留空，邓改
+  var ecnDataKeys = [
+    { probe: '[Experimental: cycles,Ei(V),Es(V),Et(V),v(V/s) or Time(s) for CA,Rest time(s),Temper(C.D.)(no period)]',
+      fix: function(arr) { if (arr.length === 6) arr.splice(5, 0, ''); } },
+    { probe: '[Simulation: boxnum,beta,binary reading limit,variable limit,dE(mV) or dt(s) for CA(no period)]',
+      fix: function(arr) { if (arr.length === 3) arr.splice(2, 0, '', ''); else if (arr.length === 4) arr.splice(3, 0, ''); } },
+    { probe: '[Dimensionless Natural Convection Layer and Simulation Layer: delta_Convec,Lmax(no period)]',
+      fix: function(arr) { if (arr.length === 1) arr.unshift(''); } }
+  ];
+  for (var di = 0; di < lines.length; di++) {
+    var dtLine = lines[di].trim();
+    for (var dk = 0; dk < ecnDataKeys.length; dk++) {
+      if (dtLine === ecnDataKeys[dk].probe) {
+        var dataIdx = di + 1;
+        while (dataIdx < lines.length) {
+          var dataVal = lines[dataIdx].trim();
+          if (dataVal && dataVal.charAt(0) !== '[') {
+            var parts = dataVal.split(',');
+            ecnDataKeys[dk].fix(parts);
+            lines[dataIdx] = parts.join(',');
+            break;
+          }
+          if (dataVal && dataVal.charAt(0) === '[') break;
+          dataIdx++;
+        }
+        break;
+      }
+    }
+  }
+  content = lines.join('\n');
+  
+  // 补充 template.ecn 中有但原 ATN 没有的提示行（按模板顺序定位），邓改
+  var ecnOnlySections = [
+    { line: '[Saturated Surface Excesses(mol/cm^2 for adsorbates)(with period)]', trailer: '*1-2|2e-10.', anchor: '[Simulation Output(CF/DF/CPn:Current Function/DeFault/Concentration Profle)(no period)]', pos: 'before' },
+    { line: '[Adsorption Coefficients(mM^-1 for adsorbates) or Rate Constants(kads,kdes)(with period)]', trailer: '*1|3e2,1.2e4+.', anchor: '[Simulation Output(CF/DF/CPn:Current Function/DeFault/Concentration Profle)(no period)]', pos: 'before' },
+    { line: '[Do you want to run the simulation immediately(Y/N)?(no period)]', trailer: '*Y+', anchor: '[END]', pos: 'before' }
+  ];
+  for (var k = 0; k < ecnOnlySections.length; k++) {
+    if (content.indexOf(ecnOnlySections[k].line) === -1) {
+      var refIdx = content.indexOf(ecnOnlySections[k].anchor);
+      var insertBlock = ecnOnlySections[k].line + '\n' + ecnOnlySections[k].trailer + '\n';
+      if (refIdx !== -1) {
+        content = content.substring(0, refIdx) + insertBlock + content.substring(refIdx);
+      } else {
+        var fallbackIdx = content.lastIndexOf('[END]');
+        if (fallbackIdx !== -1) {
+          content = content.substring(0, fallbackIdx) + insertBlock + content.substring(fallbackIdx);
+        } else {
+          content += insertBlock;
+        }
+      }
+    }
+  }
+  
+  // 构建 ECN 完整内容：头部 + 转换后内容 + [END] 后附加说明，邓改
+  // 逐段检查原文是否已包含，已包含则跳过不重复添加，邓改
+  var commentSections = [
+    ['@:assign a regular E0 which is automatically converted into E0-/+(RT/nF)ln(bA/bB) (-/+: red/ox)',
+     '@@:assign E0 for an adsorbate ETR (no thermodynamic conversion needed for E0)',
+     'Not used for the SF mode.'],
+    ['Dependent adsorbate ETRs: adsorbate electron transfer reactions accompanied by regular solution/electrode ETRs,',
+     'thermodynamic consistency (E0-/+(RT/nF)ln(bA/bB)) should be explicitly guaranteed during E0 assignment.'],
+    ['Independent adsorbate ETRs: surface ETRs un-accompanied by regular solution/electrode ETRs.'],
+    ['arfa and arfa2 are forward (cathodic/anodic) and backward (anodic/cathodic) electron transfer coefficients, respectively, in the B-V equation',
+     'The program sets arfa2=1-arfa if n=na. If n>na, arfa2 is defined by user input (for example arfa2=n-arfa)'],
+    ['[Adsorption Coefficients(mM^-1 for adsorbates) or Rate Constants(kads,kdes)(with period)]',
+     '1|3e2,1.2e4+;',
+     'A "+" symbol before ";" or "." switches on a pre-equilibrium of all adsorbates.']
+  ];
+  // 确保 [END] 后有一行分隔行 ***，邓改
+  var endIdx = content.lastIndexOf('[END]');
+  var endComments = '';
+  for (var si = 0; si < commentSections.length; si++) {
+    if (endComments) endComments += '\n\n';
+    endComments += commentSections[si].join('\n');
+  }
+  endComments = '******************************************************\n' + endComments + '\n******************************************************';
+  
+  var extraAfterEnd = '', endCommentsLines = endComments.split('\n');
+  if (endIdx !== -1) {
+    var afterEnd = content.substring(endIdx + 5);
+    if (afterEnd.trim()) {
+      var origLines = afterEnd.split('\n');
+      for (var oi = 0; oi < origLines.length; oi++) {
+        var ol = origLines[oi].trim();
+        var isStandard = false;
+        for (var ei = 0; ei < endCommentsLines.length; ei++) {
+          if (ol === endCommentsLines[ei].trim()) { isStandard = true; break; }
+        }
+        if (!isStandard && ol) {
+          extraAfterEnd += (extraAfterEnd ? '\n' : '') + origLines[oi];
+        }
+      }
+    }
+  }
+  
+  var hasHeader = content.indexOf('*for ecNetSim v11.0 and higher.') === 0;
+  var ecnContent = hasHeader ? '' : '*for ecNetSim v11.0 and higher.\n';
+  if (endIdx !== -1) {
+    ecnContent += content.substring(0, endIdx + 5);
+  } else {
+    ecnContent += content;
+  }
+  ecnContent += '\n' + endComments + '\n';
+  if (extraAfterEnd) ecnContent += extraAfterEnd + '\n';
+  
+  var defaultName = _currentFileName 
+    ? _currentFileName.replace(/\.[^.]+$/, '') + '.ecn' 
+    : 'input.ecn';
+  
+  try {
+    if (window.showSaveFilePicker) {
+      var handle = await window.showSaveFilePicker({
+        suggestedName: defaultName,
+        types: [{
+          description: 'LTPS Input Files',
+          accept: { 'chemical/x-ecn': ['.ecn'] }
+        }]
+      });
+      var writable = await handle.createWritable();
+      await writable.write(ecnContent);
+      await writable.close();
+    } else {
+      downloadBlob(ecnContent, defaultName);
+    }
+  } catch (err) {
+    if (err.name !== 'AbortError') {
+      alert('Export failed: ' + err.message);
+    }
+  }
+};
 
 // ============================================================
 </script>
