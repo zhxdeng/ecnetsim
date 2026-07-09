@@ -1725,7 +1725,7 @@ document.getElementById('btnExportECN').onclick = async function() {
   promptMap['[Electron Transfer Reactions|E0\'(V)|alpha|alpha2|na|k0(cm/s or s^-1 for SF)(with period)]'] = '[ET Reactions|E0\'(V)|alpha|alpha2|na|k0(cm/s or s^-1 for SF)(prefix @/@@: dependent/independent ETRs of adsorbates)(with period)]';
   promptMap['[Electron Transfer Reactions|E0\'(V)|alpha|na|k0(cm/s or s^-1 for SF)(with period)]'] = '[ET Reactions|E0\'(V)|alpha|na|k0(cm/s or s^-1 for SF)(prefix @/@@: dependent/independent ETRs of adsorbates)(with period)]';
   promptMap['[Experimental: cycles,Ei(V),Es(V),Et(V),v(V/s) or Time(s) for CA,Temper(C.D.)(no period)]'] = '[Experimental: cycles,Ei(V),Es(V),Et(V),v(V/s) or Time(s) for CA,Rest time(s),Temper(C.D.)(no period)]';
-  promptMap['[Simulation: boxnum,beta,dE(mV) or dt(s) for CA(no period)]'] = '[Simulation: boxnum,beta,binary reading limit,variable limit,dE(mV) or dt(s) for CA(no period)]';
+  promptMap['[Simulation: boxnum,beta,dE(mV) or dt(s) for CA(no period)]'] = '[Simulation: boxnum,beta,binary reading limit,INTERP,TSTEP,dE(mV) or dt(s) for CA(no period)]';
   promptMap['[Current Output(CF/DF:Current Function/DeFault)(no period)]'] = '[Simulation Output(CF/DF/CPn:Current Function/DeFault/Concentration Profle)(no period)]';
   promptMap['[Dimensionless Simulation Layer: Lmax(no period)]'] = '[Dimensionless Natural Convection Layer and Simulation Layer: delta_Convec,Lmax(no period)]';
   promptMap['[Homogeneous Chemical Reactions|kfc|kbc(with period)]'] = '[Homogeneous Chemical Reactions|kfc|kbc(prefix @: reactions of adsorbates)(with period)]';
@@ -1735,7 +1735,9 @@ document.getElementById('btnExportECN').onclick = async function() {
   promptMap['[Diffusion Type(L/S/C/RDE/FD/SF: Linear/Spherical/Cylindrical/Rotational Disk/Finite Diffusion/SurFace)(no period)]'] = '[Diffusion Type(L/S/C/RDE/FD/SF: Linear/Spherical/Cylindrical/Rotating Disk/Finite Diffusion/SurFace)(no period)]';
   promptMap['[ET Reactions|E0(V)|arfa|arfa2|na|k0(cm/s or s^-1 for SF)(prefix @/@@: dependent/independent ETRs of adsorbates)(with period)]'] = '[ET Reactions|E0\'(V)|alpha|alpha2|na|k0(cm/s or s^-1 for SF)(prefix @/@@: dependent/independent ETRs of adsorbates)(with period)]';
   promptMap['[ET Reactions|E0(V)|arfa|na|k0(cm/s or s^-1 for SF)(prefix @/@@: dependent/independent ETRs of adsorbates)(with period)]'] = '[ET Reactions|E0\'(V)|alpha|na|k0(cm/s or s^-1 for SF)(prefix @/@@: dependent/independent ETRs of adsorbates)(with period)]';
-  promptMap['[Simulation: boxnum,beta,binary reading limit,dE(mV) or dt(s) for CA(no period)]'] = '[Simulation: boxnum,beta,binary reading limit,variable limit,dE(mV) or dt(s) for CA(no period)]';
+  promptMap['[Simulation: boxnum,beta,binary reading limit,dE(mV) or dt(s) for CA(no period)]'] = '[Simulation: boxnum,beta,binary reading limit,INTERP,TSTEP,dE(mV) or dt(s) for CA(no period)]';
+  promptMap['[Simulation: boxnum,beta,binary reading limit,variable limit,dE(mV) or dt(s) for CA(no period)]'] = '[Simulation: boxnum,beta,binary reading limit,INTERP,TSTEP,dE(mV) or dt(s) for CA(no period)]';
+  promptMap['[Simulation: boxnum,beta,INTERP,TSTEP,dE(mV) or dt(s) for CA(no period)]'] = '[Simulation: boxnum,beta,binary reading limit,INTERP,TSTEP,dE(mV) or dt(s) for CA(no period)]';
   
   var content = atnContent.trim();
   // 逐行替换提示行，邓改
@@ -1750,8 +1752,8 @@ document.getElementById('btnExportECN').onclick = async function() {
   var ecnDataKeys = [
     { probe: '[Experimental: cycles,Ei(V),Es(V),Et(V),v(V/s) or Time(s) for CA,Rest time(s),Temper(C.D.)(no period)]',
       fix: function(arr) { if (arr.length === 6) arr.splice(5, 0, ''); } },
-    { probe: '[Simulation: boxnum,beta,binary reading limit,variable limit,dE(mV) or dt(s) for CA(no period)]',
-      fix: function(arr) { if (arr.length === 3) arr.splice(2, 0, '', ''); else if (arr.length === 4) arr.splice(3, 0, ''); } },
+    { probe: '[Simulation: boxnum,beta,binary reading limit,INTERP,TSTEP,dE(mV) or dt(s) for CA(no period)]',
+      fix: function(arr) { if (arr.length === 3) arr.splice(2, 0, '', '', ''); else if (arr.length === 4) arr.splice(3, 0, '', ''); else if (arr.length === 5) arr.splice(2, 0, ''); } },
     { probe: '[Dimensionless Natural Convection Layer and Simulation Layer: delta_Convec,Lmax(no period)]',
       fix: function(arr) { if (arr.length === 1) arr.unshift(''); } }
   ];
