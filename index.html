@@ -509,6 +509,19 @@ function atnRotationalToRotating(text) {
   );
 }
 
+// 将 ATN 文件内容中旧版 Simulation 提示行更新为新版（含 INTERP,TSTEP），邓改
+function atnSimPromptUpdate(text) {
+  text = text.replace(
+    /\[Simulation: boxnum,beta(?:,binary reading limit)?(?:,variable limit)?,dE\(mV\) or dt\(s\) for CA\(no period\)\]/g,
+    '[Simulation: boxnum,beta,INTERP,TSTEP,dE(mV) or dt(s) for CA(no period)]'
+  );
+  text = text.replace(
+    /^(\d+,[\d.eE+-]+),([\d.eE+-]+)$/gm,
+    '$1,1,,$2'
+  );
+  return text;
+}
+
 // 页面加载完成后初始化保存按钮状态，并自动加载默认文件
 document.addEventListener('DOMContentLoaded', function() {
   updateSaveButtons();
@@ -558,7 +571,7 @@ function loadDefaultFile() {
       _currentATN = atnContent;
       _currentFileName = defaultFile;
       document.getElementById('fileName').innerText = 'Imported: ' + defaultFile;
-      document.getElementById('inputEditor').value = atnRotationalToRotating(atnArfaToAlpha(_currentATN));
+      document.getElementById('inputEditor').value = atnRotationalToRotating(atnArfaToAlpha(atnSimPromptUpdate(_currentATN)));
       _defaultAtnFirstPreview = true; // 标记首次 Preview 需记录日志
       // 不调用 doAutoGenerate，保持输出框空白
     })
@@ -1023,7 +1036,7 @@ document.getElementById('fileInput').onchange = function() {
     _currentATN = atnContent;
     _currentFileName = file.name;
     document.getElementById('fileName').innerText = 'Imported: ' + file.name;
-    document.getElementById('inputEditor').value = atnRotationalToRotating(atnArfaToAlpha(_currentATN));
+    document.getElementById('inputEditor').value = atnRotationalToRotating(atnArfaToAlpha(atnSimPromptUpdate(_currentATN)));
     doAutoGenerate(file.name);
   };
   reader.readAsText(file);
