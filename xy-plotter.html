@@ -207,7 +207,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 
   <!-- Header -->
   <header class="header" style="display:grid;grid-template-columns:340px 1fr;gap:12px;align-items:center">
-    <h1 id="headerTitle">📈 Plotter for ecNetSimWeb</h1>
+    <h1 id="headerTitle">📈 Plotter for ecNetSimWeb <a href="./index.html?skipSplash=1" target="_blank" style="font-size:16px;text-decoration:none;" title="Back to home">🏠</a></h1>
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px">
       <div id="chartTools" style="display:none;align-items:center;gap:3px;flex-wrap:wrap;font-size:13px;color:var(--text-muted);margin-left:12px">
         <span>🖱️ Drag zoom · Dbl-click reset</span>
@@ -562,6 +562,8 @@ function handleFile(file){
   const ext=file.name.split('.').pop().toLowerCase();
   if(!['csv','dat','out','txt','raw'].includes(ext)){Toast.error('Unsupported: '+file.name+' — please select .csv/.dat/.out/.txt/.raw file');return}
   if (ext === 'raw') {
+    var rawUser = (window.opener && window.opener._currentUserName) || sessionStorage.getItem('simUserName') || '';
+    if (rawUser.toLowerCase() !== 'zhaoxiang deng') { Toast.error('Raw file conversion not authorized.'); return; }
     var r = new FileReader();
     r.onload = function(e) {
       var buf = e.target.result;
