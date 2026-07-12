@@ -99,8 +99,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .trace-style{display:flex;gap:6px;align-items:center;margin-top:4px}
 .trace-style .ts-wrap{display:flex;align-items:center;gap:2px;font-size:11px;color:var(--text-muted);flex-shrink:0}
 .trace-sub-style .ts-wrap{display:flex;align-items:center;gap:2px;font-size:11px;color:var(--text-muted);flex-shrink:0}
+.ts-wrap input[type=number]::-webkit-inner-spin-button{width:8px!important}
+#combineWidth::-webkit-inner-spin-button,#combineWidth::-webkit-outer-spin-button{display:none!important}
+#combineWidth{-moz-appearance:textfield!important;appearance:none!important}
+.ttn::-webkit-inner-spin-button,.ttn::-webkit-outer-spin-button{display:none!important}
+.ttn{-moz-appearance:textfield!important;appearance:none!important}
 .trace-style input[type=color]{width:23px;height:23px;border:1px solid var(--border);border-radius:4px;cursor:pointer;padding:1px}
-.trace-style select{padding:5px 5px;border:1px solid var(--border);border-radius:4px;font-size:13px;background:var(--card);cursor:pointer}
+.trace-style select.tl{font-size:11px;padding-left:0;padding-right:0;width:60px}
+.trace-style select.tp{font-size:11px;padding:5px 0;width:30px}
+.trace-style select{padding:5px 1px;border:1px solid var(--border);border-radius:4px;font-size:13px;background:var(--card);cursor:pointer;}
 .trace-error{color:var(--danger);font-size:12px;margin-top:4px;display:none}
 .trace-error.show{display:block}
 .trace-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
@@ -177,7 +184,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   .trace-exprs .eg .er input[type=text]{font-size:10px;padding:1px 4px;height:22px}
   .trace-exprs .eg .hint{font-size:8px}
   .trace-style{gap:2px;margin-top:3px}
-  .trace-style select{font-size:10px;padding:1px 2px}
+  .trace-style select{font-size:12px;padding:4px 1px}
   .trace-style input[type=color]{width:20px;height:20px}
   .trace-style .ts-wrap{font-size:9px}
   .trace-style .ts-wrap input[type=number]{width:32px!important;font-size:9px!important;padding:1px 2px!important}
@@ -431,8 +438,22 @@ const ExprEval = (() => {
     try{const tks=tokenize(expr),p=new Parser(tks);p.parse();return{ok:true,err:null}}catch(e){return{ok:false,err:e.message}}
   }
 
-  return{compile,validate};
+  function evaluate(expr){
+  const tks=tokenize(expr), p=new Parser(tks), ast=p.parse();
+  return eval(ast, {}, []);
+}
+return{compile,validate,evaluate};
 })();
+
+function cubicSpline(pts,nPer){if(!pts||pts.length<3)return pts;var n=pts.length,xs=[],ys=[],i;for(i=0;i<n;i++){xs.push(pts[i].x);ys.push(pts[i].y)}var h=[];for(i=0;i<n-1;i++)h.push(xs[i+1]-xs[i]);var alp=[0];for(i=1;i<n-1;i++)alp.push(3/h[i]*(ys[i+1]-ys[i])-3/h[i-1]*(ys[i]-ys[i-1]));var l=[1],mu=[0],z=[0];for(i=1;i<n-1;i++){l.push(2*(xs[i+1]-xs[i-1])-h[i-1]*mu[i-1]);mu.push(h[i]/l[i]);z.push((alp[i]-h[i-1]*z[i-1])/l[i])}l.push(1);z.push(0);var c2=Array(n).fill(0),b2=Array(n).fill(0),d2=Array(n).fill(0);for(i=n-2;i>=0;i--){c2[i]=z[i]-mu[i]*c2[i+1];b2[i]=(ys[i+1]-ys[i])/h[i]-h[i]*(c2[i+1]+2*c2[i])/3;d2[i]=(c2[i+1]-c2[i])/(3*h[i])}var res=[];for(i=0;i<n-1;i++){var st=nPer||20;for(var j=0;j<st;j++){var t=j/st,dx=t*h[i];res.push({x:xs[i]+dx,y:ys[i]+b2[i]*dx+c2[i]*dx*dx+d2[i]*dx*dx*dx})}}res.push({x:xs[n-1],y:ys[n-1]});return res;}
+
+function parseAndEval(expr, vals){
+  var replaced = expr.replace(/T(\d+)/g, function(m, idx) {
+    return vals[m] !== undefined ? vals[m] : "0";
+  });
+  try { return new Function("return " + replaced)(); }
+  catch(e) { return null; }
+}
 
 // ============================================================
 //  App State
@@ -443,15 +464,16 @@ const App = {
   _cs:['#e74c5e','#4f6ef7','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e67e22','#3498db','#e84393','#00b894'],
   reset(){
     if(this.chart){this.chart.destroy();this.chart=null}
-    this.h=[]; this.d=[]; this.cm={}; this.fn=''; this.traces=[]; this._nid=1; this.xLabel=''; this.yLabel=''; this.showTooltips=false; this.showGrid=true; this.xRev=true; this.yRev=false; this.xMin=''; this.xMax=''; this.yMin=''; this.yMax=''; this._rangeInit=false; this.padL=0; this.padR=0; this.padT=5; this.padB=0;
+    this.h=[]; this.d=[]; this.cm={}; this.fn=''; this.traces=[]; this._nid=1; this.xLabel=''; this.yLabel=''; this.showTooltips=false; this.showGrid=true; this.xRev=true; this.yRev=false; this.xMin=''; this.xMax=''; this.yMin=''; this.yMax=''; this._rangeInit=false; this.padL=0; this.padR=0; this.padT=5; this.padB=0; this._combineExpr=""; this._combineEnabled=false; this._combineColor="#e74c5e"; this._combineStyle=0; this._combineSmooth=false; this._combineWidth=1.5; this._combineTime=0; this._combineXExpr="";
   },
   addTrace(x,y){
-    const idx=this.traces.length;
-    const t={id:this._nid++,name:`Trace ${this._nid - 1}`,legendLabel:'',_nameCustomized:false,xExpr:x||'',yExpr:y||'',color:this._cs[idx%this._cs.length],showLine:true,showPoints:false,pointRadius:0.5,borderWidth:1.5,pointBorderWidth:0.5,pointStyle:'circle',step:1,start:1,hollow:false};
+    const _a=this;const idx=_a.traces.length;
+    const t={id:this._nid++,name:'Trace',legendLabel:'',_nameCustomized:false,xExpr:x||'',yExpr:y||'',color:function(){var used=new Set(_a.traces.map(function(t){return t.color}));for(var _ci=0;_ci<_a._cs.length;_ci++){if(!used.has(_a._cs[_ci]))return _a._cs[_ci]}return _a._cs[_a.traces.length%_a._cs.length]}(),showLine:true,showPoints:false,pointRadius:0.5,borderWidth:1.5,pointBorderWidth:0.5,pointStyle:'circle',step:1,start:1,hollow:false,visible:true,smooth:false,tension:0.01,_time:Date.now()};
     this.traces.push(t); return t;
   },
   rmTrace(id){const i=this.traces.findIndex(t=>t.id===id);if(i>=0)this.traces.splice(i,1)},
-  upTrace(id,p){const t=this.traces.find(t=>t.id===id);if(t)Object.assign(t,p)}
+  upTrace(id,p){const t=this.traces.find(t=>t.id===id);if(t)Object.assign(t,p)},
+  _combineExpr:"", _combineEnabled:false, _combineColor:"#e74c5e", _combineStyle:0, _combineSmooth:false, _combineWidth:1.5,_combineTime:0,_combineXExpr:""
 };
 window.downloadCSV = function() {
   if (window._csvUrl) {
@@ -724,6 +746,7 @@ function showPreview(){
   let body='';
   d.forEach((row,i)=>{
     if (i < so || (i - so) % step !== 0) return;
+    if (i < so || (i - so) % step !== 0) return;
     body+=`<tr><td class="rn">${i+1}</td>`;
     row.forEach((v,j)=>{const s=typeof v==='number'?v.toPrecision(6):(v??'');body+=`<td>${esc(String(s))}</td>`});
     body+='</tr>';
@@ -750,6 +773,8 @@ function initTraces(xIdx,yIdx){
 }
 
 function renderTraces(){
+  // Auto-update trace names, Deng
+  App.traces.forEach(function(t,i){if(!t._nameCustomized)t.name="Trace "+(i+1)});
   const el=document.getElementById('tracesContainer');
   el.innerHTML=App.traces.map((t,i)=>renderRow(t,i)).join('');
   App.traces.forEach(t=>{
@@ -757,14 +782,14 @@ function renderTraces(){
     // Match expression (a single letter) to dropdown
     if(/^[A-Z]$/.test(t.xExpr)) e.querySelector('.sx').value=t.xExpr;
     if(/^[A-Z]$/.test(t.yExpr)) e.querySelector('.sy').value=t.yExpr;
-    e.querySelector('.tn').addEventListener('input',ev=>{
+    var _tnBusy=false; e.querySelector('.tn').addEventListener('input',ev=>{if(_tnBusy)return;
       var val = ev.target.value.trim();
       // 禁止同名 Trace N
       if (/^Trace\s+\d+$/.test(val) && App.traces.some(function(ot){return ot.id!==t.id && ot.name===val;})) {
         ev.target.value = t.name;
         return;
       }
-      var isDefault = /^Trace\s+\d+$/.test(val);
+      var isDefault = !val||/^Trace\s+\d+$/.test(val);
       var upd = {name:val, _nameCustomized:!isDefault};
       if (isDefault) {
         var yL = App.L.indexOf(t.yExpr);
@@ -777,12 +802,12 @@ function renderTraces(){
     });
     e.querySelector('.tn').addEventListener('blur',ev=>{
       if (!ev.target.value.trim()) {
-        var defName = 'Trace ' + t.id;
+        var defName = 'Trace ' + (App.traces.indexOf(t)+1);
         var yL = App.L.indexOf(t.yExpr);
         var defLabel = (yL >= 0 && yL < App.h.length) ? App.h[yL] : t.yExpr;
-        ev.target.value = defName;
+        _tnBusy=true; ev.target.value = defName;
         App.upTrace(t.id,{name:defName,legendLabel:defLabel,_nameCustomized:false});
-        autoPlot();
+        _tnBusy=false; autoPlot();
       }
     });
     e.querySelector('.sx').addEventListener('change',ev=>{
@@ -804,8 +829,8 @@ function renderTraces(){
       App.yLabel=colName; document.getElementById('yLabel').value=colName;
       autoPlot();
     });
-    e.querySelector('.tx').addEventListener('input',()=>{App.upTrace(t.id,{xExpr:e.querySelector('.tx').value});valTrace(t.id);autoPlot()});
-    e.querySelector('.ty').addEventListener('input',()=>{App.upTrace(t.id,{yExpr:e.querySelector('.ty').value});valTrace(t.id);autoPlot()});
+    e.querySelector('.tx').addEventListener('input',()=>{App.upTrace(t.id,{xExpr:e.querySelector('.tx').value});autoPlot()});
+    e.querySelector('.ty').addEventListener('input',()=>{App.upTrace(t.id,{yExpr:e.querySelector('.ty').value});autoPlot()});
     e.querySelector('.tx').addEventListener('blur',()=>{
       if(!e.querySelector('.tx').value.trim()){const l=e.querySelector('.sx').value;e.querySelector('.tx').value=l;App.upTrace(t.id,{xExpr:l});valTrace(t.id);autoPlot()}
     });
@@ -839,13 +864,43 @@ function renderTraces(){
     e.querySelector('.t-pbw').addEventListener('input',ev=>{const v=parseFloat(ev.target.value)||0.5;e.querySelector('.t-pbw-v').textContent=v;App.upTrace(t.id,{pointBorderWidth:v});autoPlot()});
     e.querySelector('.b-rm').addEventListener('click',()=>{
       if(App.traces.length<=1){Toast.info('Keep at least one trace');return}
-      App.rmTrace(t.id); renderTraces(); autoPlot();
+      App.rmTrace(t.id); renderTraces(); if(App.chart)renderChart(true); else autoPlot();
       if (App._activeTraceId === t.id) App._activeTraceId = App.traces.length ? App.traces[0].id : null;
     });
     // 点击 Trace 行头部设为当前活跃 Trace，用于预览跳行，邓改
+    
+        e.querySelector(".tv").addEventListener("change",function(){if(!this.checked&&App.traces.filter(function(x){return x.visible&&x.id!==t.id}).length===0&&!App._combineEnabled){this.checked=true;return}if(this.checked){var _ix=App.traces.indexOf(t);if(_ix>=0){App.traces.splice(_ix,1);App.traces.push(t);t._time=Date.now()}}App.upTrace(t.id,{visible:this.checked});autoPlot()});
+    
+    e.querySelector(".tsm").addEventListener("change",function(){App.upTrace(t.id,{smooth:this.checked});autoPlot()});e.querySelector(".ttn").addEventListener("input",function(){var v=parseFloat(this.value)||0.01;v=Math.max(0,Math.min(1,v));App.upTrace(t.id,{tension:v})});e.querySelector(".ttn").addEventListener("change",function(){autoPlot()});
     e.querySelector('.trace-row-header').addEventListener('click',function(){App._activeTraceId=t.id;showPreview()});
     if(!App._activeTraceId) App._activeTraceId=t.id;
   });
+  // Combine UI，邓改
+  if(App.traces.length<2)return;
+  if(App._combineColor=="#e74c5e"||App.traces.some(function(tx){return tx.color===App._combineColor})){for(var _i=0;_i<App._cs.length;_i++){if(!App.traces.some(function(tx){return tx.color===App._cs[_i]})){App._combineColor=App._cs[_i];break}}}
+  var combineHtml = '<div class="trace-combine" id="traceCombine" style="margin-top:6px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:12px">' +
+    '<div style="display:flex;gap:2px;align-items:center;flex-wrap:wrap">' +
+      '<label style="font-size:11px;cursor:pointer;display:flex;align-items:center;gap:2px">' +
+      '<input type="checkbox" id="combineEnable" ' + (App._combineEnabled ? "checked" : "") + '>' +
+      '</label>' +
+      '<span style="font-weight:600;margin-right:2px">Mix</span>' +
+      '<input type="color" id="combineColor" value="' + (App._combineColor || "#e74c5e") + '" style="width:18px;height:18px;padding:0;border:1px solid var(--border);border-radius:3px;cursor:pointer">' +
+      '<span style="font-size:10px;color:var(--text-muted)">X:</span><input type="text" id="combineXExpr" value="' + (App._combineXExpr || "") + '" style="width:54px;padding:2px 2px;border:1px solid var(--border);border-radius:4px;font-size:10px">' +
+      '<span style="font-size:10px;color:var(--text-muted)">Y:</span><input type="text" id="combineExpr" placeholder="a*T1-b*T2..." style="width:87px;padding:2px 4px;border:1px solid var(--border);border-radius:4px;font-size:10px">' +
+      '<div style="display:inline-flex;gap:2px;align-items:center;white-space:nowrap"><button id="combineDashBtn" style="background:none;border:1px solid var(--border);border-radius:3px;cursor:pointer;padding:0 2px;font-size:9px" title="Line style">' + ["━━","╴╴","○","●","□","■"][App._combineStyle] + '</button>' +
+      '<input type="number" id="combineWidth" value="' + App._combineWidth + '" min="0.5" max="5" step="0.5" style="width:30px;padding:1px 0;border:1px solid var(--border);border-radius:3px;font-size:10px;text-align:center">' +
+'<label style="font-size:12px;cursor:pointer;display:flex;align-items:center;gap:1px" title="Smooth"><input type="checkbox" id="combineSmooth" ' + (App._combineSmooth ? "checked" : "") + '>~</label></div>' +
+    '</div>' +
+  '</div>';
+  el.insertAdjacentHTML("beforeend", combineHtml);
+  // Bind combine events
+  var ce = document.getElementById("combineExpr");
+  if (ce) { ce.value = App._combineExpr || ""; ce.addEventListener("input", function(){ App._combineExpr = this.value; autoPlot(); }); }
+  var cc = document.getElementById("combineColor");
+  if (cc) cc.addEventListener("input", function(){ App._combineColor = this.value; autoPlot(); });var cd=document.getElementById("combineDashBtn");if(cd)cd.addEventListener("click",function(){App._combineStyle=(App._combineStyle+1)%6;var m=["━━","╴╴","○","●","□","■"];cd.textContent=m[App._combineStyle];autoPlot()});var cw=document.getElementById("combineWidth");if(cw){cw.addEventListener("change",function(){var v=parseFloat(this.value)||1.5;v=Math.max(0.5,Math.min(5,v));this.value=v;App._combineWidth=v;autoPlot()});cw.addEventListener("wheel",function(ev){ev.preventDefault();var d=ev.deltaY>0?-0.5:0.5;var v=parseFloat(this.value)||1.5;v=Math.max(0.5,Math.min(5,v+d));this.value=v;App._combineWidth=v;autoPlot()})} var cs2=document.getElementById("combineSmooth");if(cs2)cs2.addEventListener("change",function(){App._combineSmooth=this.checked;autoPlot()});var cx=document.getElementById("combineXExpr");if(cx)cx.addEventListener("input",function(){App._combineXExpr=this.value;autoPlot()});
+  var cb = document.getElementById("combineEnable");
+  if (cb) cb.addEventListener("change", function(){ if(!this.checked&&App.traces.every(function(x){return !x.visible})){ this.checked=true; return } App._combineEnabled = this.checked; if(this.checked)App._combineTime=Date.now(); autoPlot(); });
+
 }
 
 function renderRow(t,i){
@@ -854,8 +909,10 @@ function renderRow(t,i){
   return `<div class="trace-row" id="t-${t.id}">
     <div class="trace-row-header">
       <span class="trace-index" style="background:${t.color}">${i+1}</span>
-      <input type="text" class="tn" value="${esc(t.name)}" placeholder="Trace name">
+      <label style="font-size:14px;cursor:pointer;display:flex;align-items:center;line-height:1" title="Show/hide"><input type="checkbox" class="tv" ${t.visible?"checked":""}></label>
+      <input type="text" class="tn" value="${esc(t.name)}" placeholder="Trace name" style="width:60px">
       <button class="b-rm" title="Remove">✕</button>
+      <input type="number" class="ttn" value="${t.tension||0.01}" min="0" max="1" step="0.01" style="width:36px;padding:0;border:1px solid var(--border);border-radius:3px;font-size:9px;text-align:center"><label style="font-size:12px;cursor:pointer;display:flex;align-items:center;gap:1px" title="Smooth"><input type="checkbox" class="tsm" ${t.smooth?"checked":""}>~</label>
     </div>
     <div class="trace-exprs">
       <div class="eg"><label>X</label><div class="er"><select class="sx">${colOpts}</select><div><div class="hint">expression (e.g. B*2+1)</div><input type="text" class="tx" value="${esc(t.xExpr)}"></div></div></div>
@@ -864,9 +921,9 @@ function renderRow(t,i){
     <div class="trace-style">
       <input type="color" class="tc" value="${t.color}" title="Color">
       <select class="tl" title="Plot style">
-        <option value="l" ${l}>Line only</option>
-        <option value="lp" ${lp}>Line+Points</option>
-        <option value="p" ${p}>Points only</option>
+        <option value="l" ${l}>Line</option>
+        <option value="lp" ${lp}>Line/pts</option>
+        <option value="p" ${p}>Points</option>
       </select>
       <select class="tp" title="Point style">
         <option value="circle" ${t.pointStyle==='circle'?'selected':''}>●</option>
@@ -876,13 +933,13 @@ function renderRow(t,i){
       <label title="Hollow points" style="cursor:pointer;font-size:13px;display:flex;align-items:center;gap:2px;white-space:nowrap">
         <input type="checkbox" class="th" ${t.hollow?'checked':''}>○
       </label>
-      <span class="ts-wrap" style="margin-left:14px;">step <input type="number" class="ts" value="${t.step}" min="1" max="999" style="width:45px;padding:2px 3px;border:1px solid var(--border);border-radius:4px;font-size:11px;text-align:center"></span>
+      <span class="ts-wrap">step <input type="number" class="ts" value="${t.step}" min="1" max="999" style="width:43px;padding:2px 0;border:1px solid var(--border);border-radius:4px;font-size:11px;text-align:center"></span>
+      <span class="ts-wrap">start <input type="number" class="t-start" value="${t.start}" min="1" max="999" style="width:43px;padding:2px 0;border:1px solid var(--border);border-radius:4px;font-size:11px;text-align:center"></span>
     </div>
     <div class="trace-sub-style" style="display:flex;gap:2px;margin-top:4px;align-items:center">
-      <span style="font-size:11px;display:flex;align-items:center;gap:1px">Line: <input type="range" class="t-lw" value="${t.borderWidth}" min="0.5" max="5" step="0.5" style="width:32px;vertical-align:middle" title="Line width"><span class="t-lw-v" style="font-size:11px;min-width:14px;display:inline-block;text-align:center">${t.borderWidth}</span></span>
-      <span style="font-size:11px;display:flex;align-items:center;gap:1px">Point: <input type="range" class="t-ps" value="${t.pointRadius}" min="0.5" max="10" step="0.5" style="width:32px;vertical-align:middle" title="Point size"><span class="t-ps-v" style="font-size:11px;min-width:14px;display:inline-block;text-align:center">${t.pointRadius}</span></span>
-      <span style="font-size:11px;display:flex;align-items:center;gap:1px">Edge: <input type="range" class="t-pbw" value="${t.pointBorderWidth}" min="0.5" max="4" step="0.5" style="width:32px;vertical-align:middle" title="Point border width"><span class="t-pbw-v" style="font-size:11px;min-width:14px;display:inline-block;text-align:center">${t.pointBorderWidth}</span></span>
-      <span class="ts-wrap" style="margin-left:2px;">start <input type="number" class="t-start" value="${t.start}" min="1" max="999" style="width:45px;padding:2px 3px;border:1px solid var(--border);border-radius:4px;font-size:11px;text-align:center"></span>
+      <span style="font-size:11px;display:flex;align-items:center;gap:1px">Line: <input type="range" class="t-lw" value="${t.borderWidth}" min="0.5" max="5" step="0.5" style="width:50px;vertical-align:middle" title="Line width"><span class="t-lw-v" style="font-size:11px;min-width:14px;display:inline-block;text-align:center">${t.borderWidth}</span></span>
+      <span style="font-size:11px;display:flex;align-items:center;gap:1px;margin-left:4px">Point: <input type="range" class="t-ps" value="${t.pointRadius}" min="0.5" max="10" step="0.5" style="width:50px;vertical-align:middle" title="Point size"><span class="t-ps-v" style="font-size:11px;min-width:14px;display:inline-block;text-align:center">${t.pointRadius}</span></span>
+      <span style="font-size:11px;display:flex;align-items:center;gap:1px;margin-left:4px">Edge: <input type="range" class="t-pbw" value="${t.pointBorderWidth}" min="0.5" max="4" step="0.5" style="width:50px;vertical-align:middle" title="Point border width"><span class="t-pbw-v" style="font-size:11px;min-width:14px;display:inline-block;text-align:center">${t.pointBorderWidth}</span></span>
     </div>
     </div>
     <div class="trace-error" id="err-${t.id}"></div>
@@ -906,7 +963,7 @@ function renderChart(silent){
 
   const {d:h,cm}=App,datasets=[]; let hasData=false,hasErr=false;
 
-  for(const trace of App.traces){
+  for(var _ri=App.traces.length-1;_ri>=0;_ri--){var trace=App.traces[_ri];if(!trace||!trace.visible)continue;
     let xc,yc;
     try{xc=ExprEval.compile(trace.xExpr);yc=ExprEval.compile(trace.yExpr)}catch(e){if(!silent)Toast.error(`"${trace.name}" expr error: ${e.message}`);hasErr=true;continue}
     const pts=[]; let ok=false,fE=null,nE=0,s=0,so=(trace.start||1)-1;
@@ -916,23 +973,113 @@ function renderChart(silent){
     if(!ok){let d=`"${trace.name}" — all points invalid`;if(fE)d+=` (first: ${fE})`;console.warn('[XY-Plotter]',d);if(!silent)Toast.error(d);hasErr=true;continue}
     hasData=true;
     datasets.push({
-      label:trace.legendLabel || trace.name,data:pts,_showPoints:trace.showPoints,
+      label:trace.legendLabel || trace.name,data:trace.smooth?cubicSpline(pts,20):pts,_showPoints:trace.showPoints&&!trace.smooth,
       backgroundColor:trace.hollow?'transparent':trace.color+'80',borderColor:trace.color,borderWidth:trace.showLine?trace.borderWidth:0,
       pointBackgroundColor:!trace.showPoints?'transparent':(trace.hollow?'transparent':trace.color),
       pointBorderColor:!trace.showPoints?'transparent':trace.color,
       pointBorderWidth:trace.pointBorderWidth,
-      pointRadius:!trace.showPoints?0.01:trace.pointRadius,
+      pointRadius:!trace.showPoints||trace.smooth?0.01:trace.pointRadius,
       pointStyle:!trace.showPoints?function(){
         var c=document.createElement('canvas');c.width=20;c.height=4;
         var cx=c.getContext('2d');cx.fillStyle=trace.color;
         cx.fillRect(0,0,20,4);return c;
       }():trace.pointStyle,
-      pointHoverRadius:!trace.showPoints?0.01:trace.pointRadius,
-      showLine:trace.showLine,tension:0.01,fill:false,
+      pointHoverRadius:!trace.showPoints||trace.smooth?0.01:trace.pointRadius,
+      showLine:trace.showLine,tension:trace.tension||0.01,fill:false,_time:trace._time||0,
     });
+    if(trace.smooth&&trace.showPoints){
+      datasets.push({
+        label:(trace.legendLabel||trace.name)+" pts",data:pts,_showPoints:true,
+        backgroundColor:"transparent",borderColor:"transparent",borderWidth:0,
+        pointBackgroundColor:trace.hollow?"transparent":trace.color,
+        pointBorderColor:trace.color,pointBorderWidth:trace.pointBorderWidth,
+        pointRadius:trace.pointRadius,pointStyle:trace.pointStyle,
+        pointHoverRadius:trace.pointRadius,
+        showLine:true,borderWidth:0,fill:false,_time:trace._time||0
+      });
+    }
   }
+  // Combine 运算（简化版），邓改
+  if (App._combineExpr && App._combineEnabled && App.traces.length >= 2) {
+    if(!App._combineTime)App._combineTime=Date.now();
+    // 解析表达式中的 T1,T2,T3 引用
+    var refs = [];
+    var tmp = App._combineExpr;
+    var re = /T(\d+)/g, m;
+    while ((m = re.exec(tmp)) !== null) {
+      var idx = parseInt(m[1]) - 1;
+      if (refs.indexOf(idx) < 0 && idx >= 0 && idx < App.traces.length) refs.push(idx);
+    }
+    if (refs.length >= 1) {
+      // 每个 Trace 独立绘制
+      var _cY = [];
+      for (var ri = 0; ri < refs.length; ri++) {
+        var t = App.traces[refs[ri]], pts = [];
+        try {
+          var xc = ExprEval.compile(t.xExpr), yc = ExprEval.compile(t.yExpr);
+          var so = (t.start||1) - 1, st = t.step || 1;
+          for (var di = 0; di < App.d.length; di++) {
+            if (di < so || (di - so) % st !== 0) continue;
+            var row = App.d[di];
+            var x = xc(row, App.cm), y = yc(row, App.cm);
+            if (x !== null && isFinite(x) && y !== null && isFinite(y)) pts.push(y);
+          }
+        } catch(e) {}
+        _cY.push(pts);
+      }
+      // 左对齐截断到最短
+      var minL = Math.min.apply(null, _cY.map(function(p){return p.length}));
+      if (minL >= 1) {
+        var cpts = [], tr0 = App.traces[refs[0]];
+        var _xCE=App._combineXExpr,_xCV=[];if(!_xCE){xc0=ExprEval.compile(tr0.xExpr)}else{var _xRe=/T(\d+)/g,_xM,_xIdxs=[];while((_xM=_xRe.exec(App._combineXExpr))!==null){var _xIdx=parseInt(_xM[1])-1;if(_xIdx>=0&&_xIdx<App.traces.length&&_xIdxs.indexOf(_xIdx)<0)_xIdxs.push(_xIdx)}for(var _xi=0;_xi<_xIdxs.length;_xi++){var _xt=App.traces[_xIdxs[_xi]],_xp=[];try{var _xxc=ExprEval.compile(_xt.xExpr),_xso=(_xt.start||1)-1,_xst=_xt.step||1;for(var _xd=0;_xd<App.d.length;_xd++){if(_xd<_xso||(_xd-_xso)%_xst!==0)continue;var _xr=App.d[_xd],_xv=_xxc(_xr,App.cm);if(_xv!==null&&isFinite(_xv))_xp.push(_xv)}}catch(e){}_xCV.push(_xp)}}
+        var so0 = (tr0.start||1) - 1, st0 = tr0.step || 1, di0 = 0;
+        for (var di = 0; di < App.d.length && di0 < minL; di++) {
+          if (di < so0 || (di - so0) % st0 !== 0) continue;
+          var row = App.d[di];
+          var xx;if(_xCE){var _xex=App._combineXExpr;var _xs=_xIdxs.slice().sort(function(a,b){return b-a});for(var _xvj=0;_xvj<_xs.length;_xvj++){var _xri=_xs[_xvj],_xsi=_xIdxs.indexOf(_xri);_xex=_xex.split("T"+(_xri+1)).join("("+_xCV[_xsi][di0]+")")}try{xx=new Function("return "+_xex)()}catch(e){xx=null}}else{xx=xc0(row,App.cm)}
+          if (xx !== null && isFinite(xx)) {
+            var expr = App._combineExpr;
+            for (var vi = 0; vi < _cY.length; vi++) {
+              expr = expr.split('T' + (refs[vi]+1)).join('(' + _cY[vi][di0] + ')');
+            }
+            try {
+              var yy = new Function('return ' + expr)();
+              if (yy !== null && isFinite(yy)) cpts.push({x: xx, y: yy});
+            } catch(e) {}
+            di0++;
+          }
+        }
+        if (cpts.length > 0) {
+          datasets.push({
+            label: App._combineExpr,
+            data: App._combineSmooth?cubicSpline(cpts,20):cpts,
+            borderColor: App._combineColor,
+            backgroundColor: App._combineColor + '33',
+            borderWidth: App._combineWidth,
+            borderDash: App._combineStyle===1?[5,3]:undefined,
+            pointRadius: App._combineSmooth?0:(App._combineStyle>=2?3.5:0.01),
+            pointStyle: App._combineStyle>=4?"rect":App._combineStyle>=2?"circle":function(){var c=document.createElement("canvas");c.width=20;c.height=4;var cx=c.getContext("2d");cx.fillStyle=App._combineColor;cx.fillRect(0,0,20,4);return c;}(),
+            pointBackgroundColor: App._combineStyle===2||App._combineStyle===4?"transparent":App._combineColor,
+            pointBorderColor: App._combineColor,
+            showLine: true, tension: 0.01, fill: false,_time:App._combineTime||0,
+          });
+          if(App._combineSmooth&&App._combineStyle>=2){
+            datasets.push({
+              label:"Mix pts",data:cpts,_showPoints:true,
+              pointRadius:3.5,pointStyle:App._combineStyle>=4?"rect":App._combineStyle>=2?"circle":"circle",
+              pointBackgroundColor:App._combineStyle===2||App._combineStyle===4?"transparent":App._combineColor,
+              pointBorderColor:App._combineColor,pointBorderWidth:1.5,
+              showLine:true,borderColor:"transparent",borderWidth:0,fill:false,_time:App._combineTime||0
+            });
+          }
+        }
+      }
+    }
+  }
+
+  datasets.sort(function(a,b){return(b._time||0)-(a._time||0)});
   if(hasErr) return;
-  if(!hasData){if(!silent)Toast.error('All data points invalid — check expressions');return}
+  if(!hasData&&!(App._combineExpr&&App._combineEnabled)){if(!silent)Toast.error('All data points invalid — check expressions');return}
 
   document.getElementById('chartCard').style.display='block';
   document.getElementById('chartEmpty').style.display='none';
@@ -962,7 +1109,7 @@ function renderChart(silent){
       hover:{mode:null},
       layout:{padding:{left:App.padL,right:App.padR,top:_showLegend?0:App.padT,bottom:App.padB}},
       plugins:{
-        legend:{display:_showLegend,position:'top',labels:{usePointStyle:true,boxWidth:14,boxHeight:14,padding:16,font:{size:13},color:dark?'#ffffff':'#000000'},title:{display:false}},
+        legend:{display:_showLegend,position:'top',labels:{usePointStyle:true,boxWidth:14,boxHeight:14,padding:16,font:{size:13},color:dark?'#ffffff':'#000000',filter:function(i,d){return i.text.indexOf("pts")<0}},title:{display:false}},
         title:{display:!_showLegend,text:!_showLegend?App.fn:'',color:'#d32f2f',font:{size:14,weight:'600'},padding:{bottom:2}},
         tooltip:{enabled:App.showTooltips,backgroundColor:tc.tooltipBg,titleColor:tc.tooltipText,bodyColor:tc.tooltipText,cornerRadius:4,padding:10,titleFont:{size:14},bodyFont:{size:14},callbacks:{label:ctx=>{const p=ctx.parsed;return` ${ctx.dataset.label}: (${p.x.toPrecision(5)}, ${p.y.toPrecision(5)})`}}},
         zoom:{zoom:{wheel:{enabled:false},pinch:{enabled:true},drag:{enabled:true,backgroundColor:'rgba(79,110,247,0.08)',borderColor:'#4f6ef7',borderWidth:1},mode:'xy'},pan:{enabled:false},limits:{x:{min:'original',max:'original'},y:{min:'original',max:'original'}}}
@@ -1033,8 +1180,7 @@ document.getElementById('btnAddTrace').addEventListener('click',()=>{
   // 新 trace 图例名称为 Y 列名
   var yIdx = l.indexOf(defY);
   t.legendLabel = (yIdx >= 0 && yIdx < c.length) ? c[yIdx] : defY;
-  renderTraces();
-  autoPlot();
+  renderTraces(); if(App.chart)renderChart(true); else autoPlot();
 });
 document.getElementById('btnPlot').addEventListener('click',()=>{
   if(App.chart){App.padL=0;App.padR=0;App.padT=5;App.padB=0}
@@ -1253,6 +1399,7 @@ document.getElementById('dataModal').addEventListener('click',(e)=>{
 
 // --- Focus mode toggle (one button) ---
 let focusState=null;
+
 document.getElementById('btnFocus').addEventListener('click',()=>{
   if(focusState){exitFocus();return}
   const chart=document.getElementById('chartCard');
