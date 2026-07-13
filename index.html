@@ -1224,6 +1224,63 @@ function doClean() {
     if (n) c += n;
     t = t.replace(/\r\n/g, '\n');
     t = t.replace(/\r/g, '\n');
+    // 检测：如有超过 2 处 R_/C_/G_、+VALUE、*Network Model 前非换行符（文件分行异常），去掉所有已有换行符后统一重建
+    var _broken = (t.match(/[^\n][RCG]_[A-Za-z0-9]/g) || []).length +
+                   (t.match(/[^\n]\+VALUE/g) || []).length +
+                   (t.match(/[^\n]\*Network Model/g) || []).length;
+    if (_broken >= 3) {
+      c += (t.match(/\n/g) || []).length;
+      t = t.replace(/\n/g, '');
+      // 清零后所有 *** 标记独立成行
+      t = t.replace(/(?<!\*)\*\*\*(?!\*)/g, '\n***');
+    }
+    // 5) 补回缺失换行符：严格按已知行首特征分行，第一个点命令后元素不再分行
+    // 优先0：***--- 及所有 *** 开头的特定文本作为严格分行标记（整段保护到下一个***，后续不再被拆分）
+    t = t.replace(/(\n|[^\n])(\*\*\*-+)/g, '$1\n$2\n');
+    t = t.replace(/([^\n])(\*\*\*(?:AC Voltammetry|Staircase|Differential Pulse|Electrochemical Impedance|Exemplary PWL setup: V_Eapp \(or V_it\)|De-comment Vsawtooth_Eapp1 and comment out Vdc0_Eapp1|De-comment Vsin_Eapp1 and comment out Vdc0_Eapp1 for ACV|De-comment Vsawtooth_Eapp1 & Vpulse_Eapp_sum and comment out Vdc0_Eapp1 & Vdc0_Eapp_sum|De-comment Vpulse_Eapp_sum and comment out Vdc0_Eapp_sum|De-comment Vsawtooth_Eapp1 & Vdpv_Eapp_sum and comment out Vdc0_Eapp1 & Vdc0_Eapp_sum|De-comment \.include and comment out Vdc0_Eapp1)[\s\S]*?)(?=\*\*\*|$)/gi, '$1\n$2\n');
+    // 优先1：100+连续*号两行均分（优先于11+独立成行）
+    t = t.replace(/\*{100,}/g, function(m) { var h=Math.floor(m.length/2); return m.slice(0,h)+'\n|n|n|n|n|n|'+m.slice(h); });
+    // 优先2：连续11个以上*号独立成行
+    t = t.replace(/\*{11,}/g, '\n$&\n');
+    // 再处理其他分行特征（*** 开头行跳过，不被拆分）
+    // 元素标记前有字母的不拆分（如 white_noise 里的 e_），数字/空格前正常拆分
+    var _full = /([^\n])(?=(?:\*(?:[CREGF]_|V(?:dc0_|sin_|Sawtooth_|pulse_|dpv_|noise_)|V_(?!Vout_if\b)|\.(?:include|save|print|probe|watch|tran|options|opt))|(?<!\*)(?:(?<!whit)(?<!Vpuls)[CREGF]_|V(?:dc0_|sin_|Sawtooth_|pulse_|dpv_|noise_)|(?<!vdp)V_(?!Vout_if\b)|\.(?:include|save|print|probe|watch|tran|options|opt))|(?<!\*)\*\*\*(?!\*)|\* |\*(?:Network Model|Spherical|Cylindrical Diffusion|rotating Disk Convection|Rotational disk Convection|Chemical Kinetics|Homogeneous Kinetics|Adsorption Boundary Condition|Boundary Condition|info|method)|\+VALUE|\+ ))/gi;
+    var _limited = /([^\n])(?=(?:\*(?:[CREGF]_|V(?:dc0_|sin_|Sawtooth_|pulse_|dpv_|noise_)|V_(?!Vout_if\b)|\.(?:include|save|print|probe|watch|tran|options|opt))|(?<!\*)\.(?:include|save|print|probe|watch|tran|options|opt)|(?<!\*)\*\*\*(?!\*)|\* |\*(?:Network Model|Spherical|Cylindrical Diffusion|rotating Disk Convection|Rotational disk Convection|Chemical Kinetics|Homogeneous Kinetics|Adsorption Boundary Condition|Boundary Condition|info|method)|\+VALUE|\+ ))/gi;
+    var _dot = /(?<!\*)\.(?:save|print|probe|watch|tran|options|opt)\b/i;
+    // 先处理 *C_、*R_、*V_ 等注释行，不受 _skip 保护
+    t = t.replace(/([^\n])(\*(?:[CREGF]_|V(?:dc0_|sin_|Sawtooth_|pulse_|dpv_|noise_)|V_(?!Vout_if\b)|\.(?:include|save|print|probe|watch|tran|options|opt)))/g, '$1\n$2');
+    // 回调：如果匹配所在行以 *** 开头（优先级保护行），跳过
+    var _skip = function(m, b, o, s) {
+      var ln = s.lastIndexOf('\n', o - 1);
+      var ls = ln === -1 ? 0 : ln + 1;
+      if (s.slice(ls, ls + 3) === '***') {
+        if (b === '*') return b + '\n';
+        var snd = s.indexOf('***', ls + 3);
+        if (snd >= 0 && o + 2 >= snd) return b + '\n';
+        return m;
+      }
+      return b + '\n';
+    };
+    // 查找第一个不在 *** 行内的点命令
+    var _m = null;
+    var _tmp;
+    _dot.lastIndex = 0;
+    while ((_tmp = _dot.exec(t)) !== null) {
+      var _off = _tmp.index;
+      var _ln = t.lastIndexOf('\n', _off - 1);
+      var _ls = _ln === -1 ? 0 : _ln + 1;
+      if (t.slice(_ls, _ls + 3) !== '***') { _m = _tmp; break; }
+    }
+    if (_m) {
+      var _end = _m.index + _m[0].length;
+      var _h = t.slice(0, _end), _l = t.slice(_end);
+      _h = _h.replace(_full, _skip);
+      _l = _l.replace(_limited, _skip);
+      t = _h + _l;
+    } else {
+      t = t.replace(_full, _skip);
+    }
+    // 6) 去除每行首尾空白 + 去掉空行（同步完成）
     var lines = t.split('\n');
     var out = [];
     for (var i = 0; i < lines.length; i++) {
@@ -1232,6 +1289,8 @@ function doClean() {
       else out.push(l);
     }
     t = out.join('\n');
+    // 7) 还原 100+星号分拆空行标记
+    t = t.replace(/\n?\|n\|n\|n\|n\|n\|\n?/g, '\n\n');
     if (/^\n/.test(t)) { c++; t = t.replace(/^\n+/, ''); }
     return { text: t, count: c };
   }
