@@ -389,10 +389,11 @@ p.subtitle { color:#666; margin:-4px 0 10px; text-align:center; font-size: 13px;
 <!-- File operation -->
 <div class="file-select-row">
   <input type="file" id="fileInput" accept=".atn">
-  <button type="button" id="btnClear" class="btn-gray">Clear</button>
+  <button type="button" id="btnClear" class="btn-gray" title="Clear input and output content">Clear</button>
+  <button type="button" id="btnClean" class="btn-gray" title="Remove and correct hidden illegal characters">Fix UTF</button>
   <button type="button" id="btnChk" class="btn-dark" title="Download .chk file for error checking">&#128203; Check File (.chk)</button>
   <button type="button" id="btnLog" class="btn-dark">&#128203; Usage Log</button>
-  <button type="button" id="btnViewMechanism" class="btn-dark" title="View reaction mechanism diagram">&#9879; View Mechanism</button>
+  <button type="button" id="btnViewMechanism" class="btn-dark" title="View reaction mechanism diagram">&#9879; Mechanism</button>
   <span id="fileName"></span>
   <span id="logStatus" style="font-size:11px;color:#666;"></span>
 </div>
@@ -1207,6 +1208,50 @@ function doClear() {
   updateSaveButtons();
 }
 document.getElementById('btnClear').onclick = doClear;
+
+// Fix UTF 按钮功能 — 清除隐藏不合规字符（BOM、非断行空格、空行、换行异常等）
+function doClean() {
+  function cleanText(t) {
+    var c = 0;
+    if (t.charCodeAt(0) === 0xFEFF) { t = t.slice(1); c++; }
+    var n = (t.match(/\u00A0/g) || []).length;
+    if (n) c += n;
+    t = t.replace(/\u00A0/g, ' ');
+    n = (t.match(/[\u200B-\u200F\u2028\u2029\uFEFF]/g) || []).length;
+    if (n) c += n;
+    t = t.replace(/[\u200B-\u200F\u2028\u2029\uFEFF]/g, '');
+    n = (t.match(/\r/g) || []).length;
+    if (n) c += n;
+    t = t.replace(/\r\n/g, '\n');
+    t = t.replace(/\r/g, '\n');
+    var lines = t.split('\n');
+    var out = [];
+    for (var i = 0; i < lines.length; i++) {
+      var l = lines[i].trim();
+      if (l === '') c++;
+      else out.push(l);
+    }
+    t = out.join('\n');
+    if (/^\n/.test(t)) { c++; t = t.replace(/^\n+/, ''); }
+    return { text: t, count: c };
+  }
+  var inp = document.getElementById('inputEditor');
+  var out = document.getElementById('output');
+  var total = 0;
+  if (inp && inp.value) {
+    var r = cleanText(inp.value);
+    inp.value = r.text;
+    total += r.count;
+  }
+  if (out && out.value) {
+    var r2 = cleanText(out.value);
+    out.value = r2.text;
+    total += r2.count;
+  }
+  var st = document.getElementById('status');
+  if (st) { st.innerText = 'Cleaned: ' + total + ' item(s)'; st.style.color = '#4caf50'; }
+}
+document.getElementById('btnClean').onclick = doClean;
 
 // View Mechanism button
 document.getElementById('btnViewMechanism').onclick = function() {
