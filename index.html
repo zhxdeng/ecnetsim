@@ -535,6 +535,17 @@ document.getElementById('userNameInput').addEventListener('input', function() {
   _currentUserName = this.value.trim();
   updateSaveButtons();
 });
+// 姓名框失焦时检测 file#n 自动加载示例，邓改
+document.getElementById('userNameInput').addEventListener('blur', function() {
+  var val = this.value;
+  var m = val.match(/\\file#(\d+)/i);
+  if (m) {
+    var idx = parseInt(m[1], 10);
+    this.value = val.replace(/\\file#\d+/i, '').trim();
+    _currentUserName = this.value.trim();
+    loadExampleByIndex(idx);
+  }
+});
 
 // 自动加载随机 ATN 文件（从 examples/ 目录中随机选取）
 function loadDefaultFile() {
@@ -546,12 +557,13 @@ function loadDefaultFile() {
     })
     .then(function(fileList) {
       if (!fileList || fileList.length === 0) throw new Error('Empty file list');
-      var defaultFile = fileList[Math.floor(Math.random() * fileList.length)];
+      var _randIdx = Math.floor(Math.random() * fileList.length);
+      var defaultFile = fileList[_randIdx];
       return fetch('examples/' + defaultFile).then(function(response) {
         if (!response.ok) throw new Error('File not found: ' + defaultFile);
         return response.text();
       }).then(function(atnContent) {
-        return { name: defaultFile, content: atnContent };
+        return { name: defaultFile, content: atnContent, idx: _randIdx };
       });
     })
     .then(function(result) {
@@ -571,7 +583,7 @@ function loadDefaultFile() {
       }
       _currentATN = atnContent;
       _currentFileName = defaultFile;
-      document.getElementById('fileName').innerText = 'Imported: ' + defaultFile;
+      document.getElementById('fileName').innerText = 'Imported: ' + defaultFile + ' (file#' + (result.idx + 1) + ')';
       document.getElementById('inputEditor').value = atnRotationalToRotating(atnArfaToAlpha(atnSimPromptUpdate(_currentATN)));
       _defaultAtnFirstPreview = true; // 标记首次 Preview 需记录日志
       // 不调用 doAutoGenerate，保持输出框空白
@@ -580,6 +592,35 @@ function loadDefaultFile() {
       // 静默失败，不影响页面加载
       console.log('Default file not loaded: ' + err.message);
     });
+}
+
+// 按索引加载指定示例文件（file#n），邓改
+function loadExampleByIndex(n) {
+  fetch('examples/files.json')
+    .then(function(r) { if (!r.ok) throw Error(); return r.json(); })
+    .then(function(list) {
+      if (n < 1 || n > list.length) { console.log('loadExampleByIndex: invalid index ' + n); return; }
+      var f = list[n - 1];
+      return fetch('examples/' + f).then(function(r) {
+        if (!r.ok) throw Error('File not found: ' + f);
+        return r.text();
+      }).then(function(c) {
+        if (!/\bNetlist:\s*net\/cir\/sp\b/i.test(c)) {
+          var lines = c.split(/\r?\n/);
+          var newLines = [];
+          for (var i = 0; i < lines.length; i++) {
+            if (lines[i].indexOf('Do you want to run') !== -1) newLines.push('[Netlist: net/cir/sp]');
+            newLines.push(lines[i]);
+          }
+          c = newLines.join('\n');
+        }
+        _currentATN = c;
+        _currentFileName = f;
+        document.getElementById('fileName').innerText = 'Imported: ' + f + ' (file#' + n + ')';
+        document.getElementById('inputEditor').value = atnRotationalToRotating(atnArfaToAlpha(atnSimPromptUpdate(_currentATN)));
+      });
+    })
+    .catch(function(err) { console.log('loadExampleByIndex: ' + err.message); });
 }
 
 // 更新 API 状态显示
