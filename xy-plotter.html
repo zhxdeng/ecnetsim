@@ -468,7 +468,7 @@ const App = {
   },
   addTrace(x,y){
     const _a=this;const idx=_a.traces.length;
-    const t={id:this._nid++,name:'Trace',legendLabel:'',_nameCustomized:false,xExpr:x||'',yExpr:y||'',color:function(){var used=new Set(_a.traces.map(function(t){return t.color}));for(var _ci=0;_ci<_a._cs.length;_ci++){if(!used.has(_a._cs[_ci]))return _a._cs[_ci]}return _a._cs[_a.traces.length%_a._cs.length]}(),showLine:true,showPoints:false,pointRadius:0.5,borderWidth:1.5,pointBorderWidth:0.5,pointStyle:'circle',step:1,start:1,hollow:false,visible:true,smooth:false,tension:0.01,_time:Date.now()};
+    const t={id:this._nid++,name:'Trace',legendLabel:'',_nameCustomized:false,xExpr:x||'',yExpr:y||'',color:function(){var used=new Set(_a.traces.map(function(t){return t.color}));for(var _ci=0;_ci<_a._cs.length;_ci++){if(!used.has(_a._cs[_ci]))return _a._cs[_ci]}return _a._cs[_a.traces.length%_a._cs.length]}(),showLine:true,showPoints:false,pointRadius:0.5,borderWidth:1.5,pointBorderWidth:0.5,pointStyle:'circle',step:1,start:1,hollow:false,visible:true,smooth:false,tension:0.01,_time:Date.now(),_zTime:Date.now()};
     this.traces.push(t); return t;
   },
   rmTrace(id){const i=this.traces.findIndex(t=>t.id===id);if(i>=0)this.traces.splice(i,1)},
@@ -869,7 +869,7 @@ function renderTraces(){
     });
     // 点击 Trace 行头部设为当前活跃 Trace，用于预览跳行，邓改
     
-        e.querySelector(".tv").addEventListener("change",function(){if(!this.checked&&App.traces.filter(function(x){return x.visible&&x.id!==t.id}).length===0&&!App._combineEnabled){this.checked=true;return}if(this.checked){var _ix=App.traces.indexOf(t);if(_ix>=0){App.traces.splice(_ix,1);App.traces.push(t);t._time=Date.now()}}App.upTrace(t.id,{visible:this.checked});autoPlot()});
+        e.querySelector(".tv").addEventListener("change",function(){if(!this.checked&&App.traces.filter(function(x){return x.visible&&x.id!==t.id}).length===0&&!App._combineEnabled){this.checked=true;return}if(this.checked){t._zTime=Date.now()}else{t._zTime=null}App.upTrace(t.id,{visible:this.checked});autoPlot()});
     
     e.querySelector(".tsm").addEventListener("change",function(){App.upTrace(t.id,{smooth:this.checked});autoPlot()});e.querySelector(".ttn").addEventListener("input",function(){var v=parseFloat(this.value)||0.01;v=Math.max(0,Math.min(1,v));App.upTrace(t.id,{tension:v})});e.querySelector(".ttn").addEventListener("change",function(){autoPlot()});
     e.querySelector('.trace-row-header').addEventListener('click',function(){App._activeTraceId=t.id;showPreview()});
@@ -962,8 +962,12 @@ function renderChart(silent){
   for(const t of App.traces){if(!t.xExpr.trim()||!t.yExpr.trim()){if(!silent)Toast.error(`"${t.name}" — X/Y expression required`);return}}
 
   const {d:h,cm}=App,datasets=[]; let hasData=false,hasErr=false;
-
-  for(var _ri=App.traces.length-1;_ri>=0;_ri--){var trace=App.traces[_ri];if(!trace||!trace.visible)continue;
+  var _sortedTraces = App.traces.slice().sort(function(a,b) {
+    var az = a._zTime || 0, bz = b._zTime || 0;
+    if (az === bz) return App.traces.indexOf(a) - App.traces.indexOf(b);
+    return bz - az;
+  });
+  for(var _ri=0;_ri<_sortedTraces.length;_ri++){var trace=_sortedTraces[_ri];if(!trace||!trace.visible)continue;
     let xc,yc;
     try{xc=ExprEval.compile(trace.xExpr);yc=ExprEval.compile(trace.yExpr)}catch(e){if(!silent)Toast.error(`"${trace.name}" expr error: ${e.message}`);hasErr=true;continue}
     const pts=[]; let ok=false,fE=null,nE=0,s=0,so=(trace.start||1)-1;
@@ -985,7 +989,7 @@ function renderChart(silent){
         cx.fillRect(0,0,20,4);return c;
       }():trace.pointStyle,
       pointHoverRadius:!trace.showPoints||trace.smooth?0.01:trace.pointRadius,
-      showLine:trace.showLine,tension:trace.tension||0.01,fill:false,_time:trace._time||0,
+      showLine:trace.showLine,tension:trace.tension||0.01,fill:false,_time:trace._time||0,_zTime:trace._zTime||0,
     });
     if(trace.smooth&&trace.showPoints){
       datasets.push({
@@ -995,7 +999,7 @@ function renderChart(silent){
         pointBorderColor:trace.color,pointBorderWidth:trace.pointBorderWidth,
         pointRadius:trace.pointRadius,pointStyle:trace.pointStyle,
         pointHoverRadius:trace.pointRadius,
-        showLine:true,borderWidth:0,fill:false,_time:trace._time||0
+        showLine:true,borderWidth:0,fill:false,_time:trace._time||0,_zTime:trace._zTime||0
       });
     }
   }
@@ -1061,7 +1065,7 @@ function renderChart(silent){
             pointStyle: App._combineStyle>=4?"rect":App._combineStyle>=2?"circle":function(){var c=document.createElement("canvas");c.width=20;c.height=4;var cx=c.getContext("2d");cx.fillStyle=App._combineColor;cx.fillRect(0,0,20,4);return c;}(),
             pointBackgroundColor: App._combineStyle===2||App._combineStyle===4?"transparent":App._combineColor,
             pointBorderColor: App._combineColor,
-            showLine: true, tension: 0.01, fill: false,_time:App._combineTime||0,
+            showLine: true, tension: 0.01, fill: false,_time:App._combineTime||0,_zTime:App._combineTime||0,
           });
           if(App._combineSmooth&&App._combineStyle>=2){
             datasets.push({
@@ -1077,7 +1081,7 @@ function renderChart(silent){
     }
   }
 
-  datasets.sort(function(a,b){return(b._time||0)-(a._time||0)});
+  datasets.sort(function(a,b){return(b._zTime||0)-(a._zTime||0)});
   if(hasErr) return;
   if(!hasData&&!(App._combineExpr&&App._combineEnabled)){if(!silent)Toast.error('All data points invalid — check expressions');return}
 
